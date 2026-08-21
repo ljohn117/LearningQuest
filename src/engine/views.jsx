@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Shuffle, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
 import { S } from './styles.jsx';
 import { Visual } from './Visual.jsx';
+import { Question } from './Question.jsx';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { RANKS, levelInfo, todayStr, yesterday, dayKey, XP_CORRECT, XP_BONUS, PRACTICE_XP } from './progress.js';
 
@@ -65,7 +66,7 @@ export function ProfileSelect({ profiles, onPick, onCreate, onDemo }) {
 }
 
 /* ---- 8. DASHBOARD ------------------------------------------------------------ */
-export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onReset, onSetName, onSwitch, isDemo }) {
+export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onReset, onSetName, onSwitch, isDemo }) {
   const [confirm, setConfirm] = useState(false);
   const [editing, setEditing] = useState(false);
   const [backing, setBacking] = useState(false);
@@ -79,6 +80,15 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onReset, 
         <h1 style={S.h1}>Welcome back, {state.name}.</h1>
         <div style={S.muted}>{totalDone} of {totalDays} missions complete</div>
       </div>
+
+      <button className="lq-tap lq-rise" style={{ ...S.dailyBtn, animationDelay: '.04s' }} onClick={onDaily}>
+        <div style={{ ...S.planDot, background: '#5aa9ff33', color: '#5aa9ff' }}><Zap size={16} /></div>
+        <div style={{ flex: 1 }}>
+          <div style={{ ...S.planTitle, marginBottom: 1 }}>Today's quest</div>
+          <div style={{ ...S.muted, fontSize: 13 }}>Warm-up, then a new lesson</div>
+        </div>
+        <ChevronRight size={18} color="#5aa9ff" />
+      </button>
 
       <div className="lq-rise" style={{ ...S.heroCard, animationDelay: '.06s' }}>
         <div style={S.heroTop}>
@@ -323,93 +333,25 @@ export function Block({ b, accent, delay }) {
 export function QuizView({ subj, day, onExit, onDone }) {
   const accent = CURRICULUM[subj].accent;
   const [i, setI] = useState(0);
-  const [picked, setPicked] = useState(null);
-  const [num, setNum] = useState('');
-  const [revealed, setRevealed] = useState(false);
-  const [showHint, setShowHint] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
-  const q = day.quiz[i];
-  const checkCorrect = () => q.type === 'numeric' ? Math.abs(parseFloat(num) - q.answer) < 1e-9 : picked === q.answer;
-  function submit() {
-    if (revealed) return;
-    if (q.type === 'numeric' && num.trim() === '') return;
-    if (q.type !== 'numeric' && picked === null) return;
-    if (checkCorrect()) setCorrectCount((c) => c + 1);
-    setRevealed(true);
+
+  function next(ok) {
+    const c = correctCount + (ok ? 1 : 0);
+    if (i + 1 >= day.quiz.length) { onDone(c); return; }
+    setCorrectCount(c); setI(i + 1);
   }
-  function next() {
-    if (i + 1 >= day.quiz.length) { onDone(correctCount); return; }
-    setI(i + 1); setPicked(null); setNum(''); setRevealed(false); setShowHint(false);
-  }
-  const ok = revealed && checkCorrect();
+
   return (
     <div>
       <div style={S.quizTop}>
         <button className="lq-tap" style={S.iconBtn} onClick={onExit}><ArrowLeft size={18} color="#aeb4c4" /></button>
-        <div style={{ flex: 1 }}><Bar pct={(i + (revealed ? 1 : 0)) / day.quiz.length} accent={accent} thin /></div>
+        <div style={{ flex: 1 }}><Bar pct={i / day.quiz.length} accent={accent} thin /></div>
         <span style={{ ...S.mono, color: '#aeb4c4', fontSize: 13 }}>{i + 1}/{day.quiz.length}</span>
       </div>
       <div key={i} className="lq-rise" style={{ marginTop: 26 }}>
-        <div style={{ ...S.eyebrow, color: accent }}>Question {i + 1}</div>
-        <h2 style={S.qPrompt}>{q.prompt}</h2>
-
-        {q.type === 'mc' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 18 }}>
-            {q.choices.map((c, idx) => {
-              const isPick = picked === idx, isAns = idx === q.answer;
-              let bd = '#2a2f3d', bg = '#161a28';
-              if (revealed && isAns) { bd = '#3ddc97'; bg = '#3ddc9722'; }
-              else if (revealed && isPick && !isAns) { bd = '#ff6b6b'; bg = '#ff6b6b22'; }
-              else if (isPick) { bd = accent; bg = accent + '1f'; }
-              return <button key={idx} className="lq-tap" disabled={revealed} style={{ ...S.choice, borderColor: bd, background: bg }} onClick={() => setPicked(idx)}>{c}</button>;
-            })}
-          </div>
-        )}
-
-        {q.type === 'tf' && (
-          <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
-            {[{ v: true, t: 'True' }, { v: false, t: 'False' }].map((o) => {
-              const isPick = picked === o.v, isAns = o.v === q.answer;
-              let bd = '#2a2f3d', bg = '#161a28';
-              if (revealed && isAns) { bd = '#3ddc97'; bg = '#3ddc9722'; }
-              else if (revealed && isPick && !isAns) { bd = '#ff6b6b'; bg = '#ff6b6b22'; }
-              else if (isPick) { bd = accent; bg = accent + '1f'; }
-              return <button key={o.t} className="lq-tap" disabled={revealed} style={{ ...S.choice, flex: 1, textAlign: 'center', borderColor: bd, background: bg }} onClick={() => setPicked(o.v)}>{o.t}</button>;
-            })}
-          </div>
-        )}
-
-        {q.type === 'numeric' && (
-          <input type="number" inputMode="decimal" value={num} disabled={revealed}
-            onChange={(e) => setNum(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && submit()}
-            placeholder="Type your answer"
-            style={{ ...S.numInput, borderColor: revealed ? (ok ? '#3ddc97' : '#ff6b6b') : accent + '88' }} />
-        )}
-
-        {q.hint && !revealed && (
-          !showHint ? (
-            <button className="lq-tap" style={{ ...S.hintBtn }} onClick={() => setShowHint(true)}>
-              <HelpCircle size={14} /> Show a hint
-            </button>
-          ) : (
-            <div className="lq-rise" style={S.hintBox}>
-              <HelpCircle size={15} color="#5aa9ff" style={{ flexShrink: 0, marginTop: 2 }} />
-              <div style={{ ...S.body, fontSize: 14.5 }}>{q.hint}</div>
-            </div>
-          )
-        )}
-
-        {revealed && (
-          <div className="lq-rise" style={{ ...S.feedback, borderColor: ok ? '#3ddc9766' : '#ff6b6b66', background: ok ? '#3ddc9714' : '#ff6b6b14' }}>
-            <div style={{ ...S.fbTitle, color: ok ? '#3ddc97' : '#ff6b6b' }}>{ok ? <><Check size={16} /> Correct! +{XP_CORRECT} XP</> : <>Not quite — good try</>}</div>
-            <div style={{ ...S.body, marginTop: 4 }}>{q.explain}</div>
-          </div>
-        )}
+        <Question q={day.quiz[i]} accent={accent} eyebrow={`Question ${i + 1}`}
+          nextLabel={i + 1 >= day.quiz.length ? 'Finish' : 'Next question'} onNext={next} />
       </div>
-      <button className="lq-tap" style={{ ...S.primaryBtn, background: revealed ? accent : '#2a2f3d', color: revealed ? '#0c0e16' : '#e7e9f0', marginTop: 22 }}
-        onClick={revealed ? next : submit}>
-        {revealed ? (i + 1 >= day.quiz.length ? 'Finish' : 'Next question') : 'Check answer'}
-      </button>
     </div>
   );
 }

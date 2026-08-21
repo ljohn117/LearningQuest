@@ -10,6 +10,8 @@ import {
   ProfileSelect, Dashboard, SubjectView, LessonView, QuizView, ResultsView,
   PracticeHub, PracticeSession, PracticeResults,
 } from './engine/views.jsx';
+import { DailyPlan, WarmupSession, WarmupDone } from './engine/DailyQuest.jsx';
+import { recordReview, REVIEW_XP, pickLesson } from './engine/daily.js';
 
 export default function App() {
   const [db, setDb] = useState(null);          // { profiles: [], lastActive }
@@ -82,6 +84,17 @@ export default function App() {
     return earned;
   }
 
+  function finishWarmup(results) {
+    const earned = results.filter((r) => r.correct).length * REVIEW_XP;
+    updateProfile((p) => {
+      const t = todayStr();
+      let count = p.streak.count;
+      if (p.streak.last === t) {} else if (p.streak.last === yesterday()) count += 1; else count = 1;
+      return { ...p, xp: p.xp + earned, streak: { count, last: t }, review: recordReview(p, results) };
+    });
+    return earned;
+  }
+
   function finishPractice(drillId, correctCount, bestStreak) {
     const earned = correctCount * PRACTICE_XP;
     const key = drillId || 'mixed';
@@ -129,7 +142,22 @@ export default function App() {
           onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
           onSetName={(n) => updateProfile((p) => ({ ...p, name: n }))}
           onPractice={() => setView({ name: 'practice' })}
+          onDaily={() => setView({ name: 'daily' })}
           onSwitch={exitToProfiles} isDemo={!!demo} />
+      )}
+      {view.name === 'daily' && (
+        <DailyPlan profile={profile} onBack={() => setView({ name: 'dash' })}
+          onWarmup={(items) => setView({ name: 'warmup', items })}
+          onLesson={(l) => setView({ name: 'lesson', subj: l.subj, day: l.day, from: 'daily' })} />
+      )}
+      {view.name === 'warmup' && (
+        <WarmupSession items={view.items} onExit={() => setView({ name: 'dash' })}
+          onDone={(results) => { const earned = finishWarmup(results); setView({ name: 'warmdone', results, earned }); }} />
+      )}
+      {view.name === 'warmdone' && (
+        <WarmupDone results={view.results} earned={view.earned} lesson={pickLesson(profile)}
+          onLesson={(l) => setView({ name: 'lesson', subj: l.subj, day: l.day, from: 'daily' })}
+          onBack={() => setView({ name: 'dash' })} />
       )}
       {view.name === 'practice' && (
         <PracticeHub profile={profile} onBack={() => setView({ name: 'dash' })}
@@ -150,17 +178,17 @@ export default function App() {
       )}
       {view.name === 'lesson' && (
         <LessonView subj={view.subj} day={view.day} userName={profile.name}
-          onBack={() => setView({ name: 'subject', subj: view.subj })}
-          onStart={() => setView({ name: 'quiz', subj: view.subj, day: view.day })} />
+          onBack={() => setView(view.from === 'daily' ? { name: 'dash' } : { name: 'subject', subj: view.subj })}
+          onStart={() => setView({ name: 'quiz', subj: view.subj, day: view.day, from: view.from })} />
       )}
       {view.name === 'quiz' && (
         <QuizView subj={view.subj} day={view.day}
           onExit={() => setView({ name: 'subject', subj: view.subj })}
-          onDone={(correct) => { const earned = finishDay(view.subj, view.day, correct); setView({ name: 'results', subj: view.subj, day: view.day, correct, earned }); }} />
+          onDone={(correct) => { const earned = finishDay(view.subj, view.day, correct); setView({ name: 'results', subj: view.subj, day: view.day, correct, earned, from: view.from }); }} />
       )}
       {view.name === 'results' && (
         <ResultsView subj={view.subj} day={view.day} correct={view.correct} earned={view.earned} userName={profile.name}
-          leveledTo={profile._leveledTo} onContinue={() => setView({ name: 'subject', subj: view.subj })} />
+          leveledTo={profile._leveledTo} onContinue={() => setView(view.from === 'daily' ? { name: 'dash' } : { name: 'subject', subj: view.subj })} />
       )}
     </Shell>
   );
