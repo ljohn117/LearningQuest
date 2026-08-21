@@ -73,3 +73,29 @@ Ordered cheapest-highest-value first:
 
 Every step tuned by the same loop: he runs it, you report
 "too easy / too hard / just right," we adjust.
+
+---
+
+## Calibration data (update 2026-08-21)
+
+**Tested reading level: 7th grade.** That is three grades ahead, not two.
+
+Implications:
+
+- **Reading level is not the constraint.** Explore's prose measures
+  FKGL 5.7–7.3 — at or below his tested level. Core's math lane is
+  comparable. Nothing in the existing content is gated by vocabulary.
+- **The stretch belongs in concepts, not wording.** Difficulty should come
+  from the idea being genuinely new, never from prose he has to fight
+  through. If a lesson lands too hard, suspect the concept load — check
+  the one-new-idea-per-page rule first, not the vocabulary.
+- **Middle-school calibration is confirmed, with room at the top.** 7th
+  grade reading supports the upper end of the middle-school band. Algebra I
+  content stays reachable; high-school *prep* framing still does not.
+- **UI chrome stays simpler than his reading level anyway.** Interface text
+  is overhead, not content — keeping buttons and labels plain isn't
+  condescension, it's removing friction between him and the actual work.
+
+This retires the "content is too advanced" concern from `eval-apps.md`
+entirely. It was wrong on grade-band grounds, and it is now wrong on
+measured-reading-level grounds too.
