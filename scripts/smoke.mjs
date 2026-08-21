@@ -1,10 +1,16 @@
 import { chromium } from 'playwright';
+import { resolve } from 'node:path';
+
+/* Runs against the single-file build, so no server is needed.
+   Build it first:  npm run build && node scripts/build-singlefile.mjs  */
+const TARGET = process.env.LQ_TARGET
+  || 'file://' + resolve('dist/learning-quest.html');
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
 const p = await b.newPage();
 const errs = []; p.on('pageerror', e => errs.push(e.message));
 
 // Seed a profile with math day 1 complete + a legacy-shaped profile missing `completed`
-await p.goto('http://localhost:4173/', { waitUntil: 'domcontentloaded' });
+await p.goto(TARGET, { waitUntil: 'domcontentloaded' });
 await p.evaluate(() => {
   localStorage.clear();
   localStorage.setItem('lq_v3', JSON.stringify({

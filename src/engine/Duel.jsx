@@ -2,10 +2,18 @@ import React, { useState, useMemo, useRef } from 'react';
 import { ArrowLeft, Zap, Sparkles } from 'lucide-react';
 import { S } from './styles.jsx';
 import { Question } from './Question.jsx';
-import { DRILLS, rnd, pickOne, Bar } from './views.jsx';
+import { DRILLS as MATH_DRILLS, Bar } from './views.jsx';
+import { EXTRA_DRILLS, rnd, pickOne } from './drills.js';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { COMPANIONS, GUARDIANS, earnedCompanions } from '../content/companions.js';
 import { dayKey, PRACTICE_XP } from './progress.js';
+
+/* Math drills predate the others and carry no subject field. */
+const ALL_DRILLS = [
+  ...MATH_DRILLS.map((d) => ({ ...d, subj: 'math' })),
+  ...EXTRA_DRILLS,
+];
+const isUnlocked = (profile, d) => !!profile.completed?.[dayKey(d.subj, d.day)];
 
 /* Skill Duel — a battle wrapper around the procedural drill generators.
  *
@@ -24,7 +32,7 @@ const CHARGE_AT = 5;     // in a row before a charged hit
 
 export function DuelIntro({ profile, onBack, onStart }) {
   const unlocked = useMemo(
-    () => DRILLS.filter((d) => !!profile.completed?.[dayKey('math', d.day)]),
+    () => ALL_DRILLS.filter((d) => isUnlocked(profile, d)),
     [profile]
   );
   const companions = earnedCompanions(profile, CURRICULUM, SUBJECT_ORDER);
@@ -69,7 +77,9 @@ export function DuelIntro({ profile, onBack, onStart }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
         {unlocked.map((d) => (
           <button key={d.id} className="lq-tap" style={S.duelRow} onClick={() => onStart(d.id)}>
+            <span style={{ width: 8, height: 8, borderRadius: 4, background: CURRICULUM[d.subj]?.accent || '#5aa9ff', flexShrink: 0 }} />
             <span style={{ flex: 1, textAlign: 'left' }}>{d.name}</span>
+            <span style={{ ...S.muted, fontSize: 12 }}>{CURRICULUM[d.subj]?.name}</span>
             <Zap size={14} color="#5aa9ff" />
           </button>
         ))}
@@ -80,9 +90,9 @@ export function DuelIntro({ profile, onBack, onStart }) {
 
 export function DuelSession({ drillId, profile, onExit, onDone }) {
   const pool = useMemo(() => {
-    const unlocked = DRILLS.filter((d) => !!profile.completed?.[dayKey('math', d.day)]);
-    const p = drillId ? DRILLS.filter((d) => d.id === drillId) : unlocked;
-    return p.length ? p : [DRILLS[0]];
+    const unlocked = ALL_DRILLS.filter((d) => isUnlocked(profile, d));
+    const p = drillId ? ALL_DRILLS.filter((d) => d.id === drillId) : unlocked;
+    return p.length ? p : [ALL_DRILLS[0]];
   }, [drillId, profile]);
 
   const guardian = useMemo(() => GUARDIANS[rnd(0, GUARDIANS.length - 1)], []);
