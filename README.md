@@ -1,6 +1,6 @@
 # Learning Quest
 
-A gamified, self-hosted learning app — seven subject lanes, paged lessons,
+A gamified, self-hosted learning app — eleven subject lanes, paged lessons,
 quizzes with penalty-free hints, generated practice drills, and a live
 JavaScript sandbox.
 
@@ -14,16 +14,18 @@ JavaScript sandbox.
 | Mathematics | 16 |
 | Computer Science | 12 |
 | Business & Money | 12 |
-| Physical Science | 6 |
-| Logic | 6 |
-| Earth & Space | 6 |
-| Biology | 6 |
-| English & Writing | 6 |
-| Government & Civics | 6 |
-| Fossils & Deep Time | 6 |
-| **Total** | **82** |
+| Biology | 10 |
+| English & Writing | 10 |
+| Government & Civics | 10 |
+| Fossils & Deep Time | 10 |
+| Physical Science | 7 |
+| Logic | 7 |
+| Earth & Space | 7 |
+| Connections | 7 |
+| **Total** | **108** |
 
-361 questions, every one with a hint and an explanation.
+474 questions, every one with a hint and an explanation.
+33 procedural drill generators across seven lanes.
 
 ## The daily loop
 
@@ -33,9 +35,13 @@ Built to be opened after homework, every school day.
 from days already finished — mixed across lanes, unlabelled — then one new
 lesson, rotating through whichever lanes have something unlocked.
 
-The warm-up is what makes this last. 82 days is about 16 school weeks at one
-a day; recycling finished work through spaced retrieval is what carries it
-across a year, and it is better practice than re-reading anyway.
+The warm-up is what makes this last. Lesson content is finite; recycling
+finished work through spaced retrieval is what carries it across a year,
+and it is better practice than re-reading anyway.
+
+After about twelve minutes the results screen suggests stopping. It never
+blocks anything — a nine-year-old should not be the one deciding when to
+stop, but being cut off reads as punishment and this app does not punish.
 
 **Skill Duels** wrap the procedural drill generators in a battle. Questions
 are generated fresh each time, so nothing can be memorised. The guardian has
@@ -43,6 +49,16 @@ no attack and deals no damage — a wrong answer fizzles and the next question
 comes. Every duel is winnable; accuracy only changes the rank at the end.
 
 **Companions** are earned by finishing a whole lane, never bought.
+
+**Connections** is a lane that teaches nothing new. Each day takes two or
+three things already finished in different lanes and shows they were the
+same idea — binary and half-life and compound interest are all repeated
+multiplication; homeostasis and supply-and-demand and checks-and-balances
+are one feedback mechanism. Days declare cross-lane prerequisites, so a
+connector only opens once both halves are genuinely learned.
+
+**For parents** — a progress view behind the dashboard footer: per-lane
+accuracy and the questions currently sticking. Deliberately off his path.
 
 ## Design rules
 
