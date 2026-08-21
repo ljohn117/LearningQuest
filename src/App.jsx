@@ -8,9 +8,9 @@ import {
 } from './engine/progress.js';
 import {
   ProfileSelect, Dashboard, SubjectView, LessonView, QuizView, ResultsView,
-  PracticeHub, PracticeSession, PracticeResults,
 } from './engine/views.jsx';
 import { DailyPlan, WarmupSession, WarmupDone } from './engine/DailyQuest.jsx';
+import { DuelIntro, DuelSession, DuelWon } from './engine/Duel.jsx';
 import { recordReview, REVIEW_XP, pickLesson } from './engine/daily.js';
 
 export default function App() {
@@ -160,16 +160,16 @@ export default function App() {
           onBack={() => setView({ name: 'dash' })} />
       )}
       {view.name === 'practice' && (
-        <PracticeHub profile={profile} onBack={() => setView({ name: 'dash' })}
-          onStart={(drillId) => setView({ name: 'psession', drillId })} />
+        <DuelIntro profile={profile} onBack={() => setView({ name: 'dash' })}
+          onStart={(drillId) => setView({ name: 'duel', drillId })} />
       )}
-      {view.name === 'psession' && (
-        <PracticeSession drillId={view.drillId} profile={profile}
+      {view.name === 'duel' && (
+        <DuelSession drillId={view.drillId} profile={profile}
           onExit={() => setView({ name: 'practice' })}
-          onDone={(correct, bestStreak) => { const earned = finishPractice(view.drillId, correct, bestStreak); setView({ name: 'presults', correct, earned, bestStreak }); }} />
+          onDone={(result) => { const earned = finishPractice(view.drillId, result.right, result.bestStreak); setView({ name: 'duelwon', result, earned }); }} />
       )}
-      {view.name === 'presults' && (
-        <PracticeResults correct={view.correct} earned={view.earned} bestStreak={view.bestStreak}
+      {view.name === 'duelwon' && (
+        <DuelWon result={view.result} earned={view.earned}
           onContinue={() => setView({ name: 'practice' })} />
       )}
       {view.name === 'subject' && (

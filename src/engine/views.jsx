@@ -123,11 +123,11 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
         })}
       </div>
 
-      <div style={S.sectionLabel}>Practice Range</div>
+      <div style={S.sectionLabel}>Skill Duel</div>
       <div className="lq-rise lq-tap lq-card" style={{ ...S.subjCard, borderColor: '#f6b73c55' }} onClick={onPractice}>
         <div style={{ ...S.subjIcon, background: '#f6b73c22', border: '1px solid #f6b73c55' }}><Target size={22} color="#f6b73c" /></div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={S.subjName}>Skill Drills</div>
+          <div style={S.subjName}>Battle a guardian</div>
           <div style={S.subjBlurb}>Endless fresh practice questions from every math skill you have unlocked.</div>
         </div>
         <ChevronRight size={18} color="#5b6275" />
@@ -468,133 +468,6 @@ export const DRILLS = [
   { id: 'dr13', day: 'm13', name: 'Function Notation', gen: () => { const a = rnd(2, 6), b = rnd(1, 9), k = rnd(2, 8); return { prompt: `If f(x) = ${a}x + ${b}, what is f(${k})?`, answer: a * k + b, hint: `Replace every x with ${k}, then compute.` }; } },
   { id: 'dr14', day: 'm14', name: 'Quadratics', gen: () => { const c = rnd(0, 6), k = pickOne([-4, -3, -2, 2, 3, 4, 5]); return { prompt: `For y = x²${c ? ' + ' + c : ''}, what is y when x = ${k}?`, answer: k * k + c, hint: 'Square the input first — a negative squared turns positive.' }; } },
 ];
-
-export function PracticeHub({ profile, onBack, onStart }) {
-  const accent = CURRICULUM.math.accent;
-  const pr = profile.practice || {};
-  const unlocked = DRILLS.filter((d) => !!profile.completed[dayKey('math', d.day)]);
-  const mastered = unlocked.filter((d) => (pr[d.id]?.bestStreak || 0) >= 5).length;
-  return (
-    <div>
-      <BackBar onBack={onBack} />
-      <div className="lq-rise">
-        <div style={{ ...S.eyebrow, color: accent }}>Practice Range</div>
-        <h1 style={{ ...S.h1, fontSize: 26 }}>Sharpen your skills</h1>
-        <div style={S.muted}>{unlocked.length} skill{unlocked.length === 1 ? '' : 's'} unlocked · {mastered} mastered</div>
-      </div>
-      {unlocked.length === 0 ? (
-        <div style={{ ...S.callout, marginTop: 22 }}>
-          <Sparkles size={16} color="#f6b73c" style={{ flexShrink: 0, marginTop: 2 }} />
-          <div style={S.body}>Finish a Mathematics day to unlock practice for that skill. Each lesson you complete adds a new drill here.</div>
-        </div>
-      ) : (
-        <>
-          <div className="lq-rise lq-tap lq-card" style={{ ...S.subjCard, marginTop: 18, borderColor: accent + '66' }} onClick={() => onStart(null)}>
-            <div style={{ ...S.subjIcon, background: accent + '22', border: `1px solid ${accent}55` }}><Shuffle size={20} color={accent} /></div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={S.subjName}>Mixed Review</div>
-              <div style={S.subjBlurb}>Random questions from every skill you know — the best way to remember.</div>
-            </div>
-            <ChevronRight size={18} color="#5b6275" />
-          </div>
-          <div style={S.sectionLabel}>Single Skills</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {unlocked.map((d, i) => {
-              const st = pr[d.id] || {}; const best = st.bestStreak || 0; const isMaster = best >= 5;
-              return (
-                <div key={d.id} className="lq-rise lq-tap lq-card" style={{ ...S.dayCard, animationDelay: `${.04 * i}s` }} onClick={() => onStart(d.id)}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={S.dayTitle}>{d.name}</div>
-                    <div style={S.daySub}>{st.runs ? `${st.runs} session${st.runs === 1 ? '' : 's'} · best streak ${best}` : 'Not practiced yet'}</div>
-                  </div>
-                  {isMaster && <span style={{ ...S.tag, color: '#3ddc97', borderColor: '#3ddc9755' }}>SHARP</span>}
-                  <ChevronRight size={18} color="#5b6275" />
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-export function PracticeSession({ drillId, profile, onExit, onDone }) {
-  const accent = CURRICULUM.math.accent;
-  const TOTAL = 8;
-  const pool = useMemo(() => {
-    const unlocked = DRILLS.filter((d) => !!profile.completed[dayKey('math', d.day)]);
-    const p = drillId ? DRILLS.filter((d) => d.id === drillId) : unlocked;
-    return p.length ? p : [DRILLS[0]];
-  }, [drillId, profile]);
-  const [i, setI] = useState(0);
-  const [q, setQ] = useState(() => pickOne(pool).gen());
-  const [num, setNum] = useState('');
-  const [revealed, setRevealed] = useState(false);
-  const [showHint, setShowHint] = useState(false);
-  const [correct, setCorrect] = useState(0);
-  const [streak, setStreak] = useState(0);
-  const [bestStreak, setBestStreak] = useState(0);
-  const ok = revealed && Math.abs(parseFloat(num) - q.answer) < 1e-9;
-  function submit() {
-    if (revealed || num.trim() === '') return;
-    const good = Math.abs(parseFloat(num) - q.answer) < 1e-9;
-    if (good) { setCorrect((c) => c + 1); setStreak((s) => { const n = s + 1; setBestStreak((b) => Math.max(b, n)); return n; }); }
-    else setStreak(0);
-    setRevealed(true);
-  }
-  function next() {
-    if (i + 1 >= TOTAL) { onDone(correct, bestStreak); return; }
-    setI(i + 1); setQ(pickOne(pool).gen()); setNum(''); setRevealed(false); setShowHint(false);
-  }
-  return (
-    <div>
-      <div style={S.quizTop}>
-        <button className="lq-tap" style={S.iconBtn} onClick={onExit}><ArrowLeft size={18} color="#aeb4c4" /></button>
-        <div style={{ flex: 1 }}><Bar pct={(i + (revealed ? 1 : 0)) / TOTAL} accent={accent} thin /></div>
-        <span style={{ ...S.mono, color: '#aeb4c4', fontSize: 13 }}>{i + 1}/{TOTAL}</span>
-      </div>
-      <div key={i} className="lq-rise" style={{ marginTop: 26 }}>
-        <div style={{ ...S.eyebrow, color: accent }}>Practice{streak >= 2 ? ` · ${streak} in a row` : ''}</div>
-        <h2 style={S.qPrompt}>{q.prompt}</h2>
-        <input type="number" inputMode="decimal" value={num} disabled={revealed} placeholder="Your answer"
-          onChange={(e) => setNum(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') (revealed ? next() : submit()); }}
-          style={{ ...S.numInput, borderColor: revealed ? (ok ? '#3ddc97' : '#ff6b6b') : accent + '88' }} />
-        {!revealed && !showHint && (
-          <button className="lq-tap" style={S.hintBtn} onClick={() => setShowHint(true)}><HelpCircle size={14} /> Need a hint?</button>
-        )}
-        {showHint && !revealed && <div style={S.hintBox}>{q.hint}</div>}
-        {revealed && (
-          <div style={{ ...S.feedback, borderColor: ok ? '#3ddc9755' : '#ff6b6b55', background: ok ? '#3ddc9712' : '#ff6b6b12' }}>
-            <div style={{ ...S.fbTitle, color: ok ? '#3ddc97' : '#ff8b8b' }}>{ok ? 'Correct' : `Answer: ${q.answer}`}</div>
-            <div style={S.body}>{q.hint}</div>
-          </div>
-        )}
-        <button className="lq-tap" style={{ ...S.primaryBtn, background: revealed ? accent : '#2a2f3d', color: revealed ? '#0c0e16' : '#e7e9f0', marginTop: 22 }}
-          onClick={() => (revealed ? next() : submit())}>
-          {revealed ? (i + 1 >= TOTAL ? 'Finish' : 'Next') : 'Check answer'} <ChevronRight size={18} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-export function PracticeResults({ correct, earned, bestStreak, onContinue }) {
-  const accent = CURRICULUM.math.accent;
-  const great = correct >= 6;
-  return (
-    <div style={{ textAlign: 'center', paddingTop: 30 }}>
-      <div className="lq-rise" style={{ ...S.medal, borderColor: accent + '66', background: accent + '18' }}>
-        <Target size={34} color={accent} />
-      </div>
-      <h1 className="lq-rise" style={{ ...S.h1, fontSize: 28 }}>{great ? 'Sharp work.' : 'Good reps.'}</h1>
-      <div className="lq-rise" style={S.muted}>{correct} of 8 correct · best streak {bestStreak}</div>
-      {bestStreak >= 5 && <div className="lq-rise" style={{ ...S.levelUp, marginTop: 14 }}>Skill mastered — 5 in a row!</div>}
-      <div className="lq-rise" style={{ ...S.xpBadge, borderColor: accent + '66', color: accent, marginTop: 16 }}>+{earned} XP</div>
-      <div><button className="lq-tap" style={{ ...S.primaryBtn, background: accent, marginTop: 26, maxWidth: 260, marginLeft: 'auto', marginRight: 'auto' }} onClick={onContinue}>Continue <ChevronRight size={18} /></button></div>
-    </div>
-  );
-}
 
 export const IMPORTABLE = [
   { subj: 'gov', label: 'Government & Civics', note: 'all 6 days' },

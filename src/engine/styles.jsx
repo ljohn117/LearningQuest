@@ -70,6 +70,14 @@ export const S = {
   planDot: { width: 34, height: 34, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   planTitle: { fontSize: 15.5, fontWeight: 600, color: '#e7e9f0', marginBottom: 2 },
   dailyBtn: { display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left', background: 'linear-gradient(135deg, #5aa9ff22, #12151f)', border: '1px solid #5aa9ff55', borderRadius: 18, padding: '16px 18px', cursor: 'pointer', marginBottom: 16 },
+  duelCard: { display: 'flex', alignItems: 'center', gap: 13, width: '100%', background: 'linear-gradient(135deg, #ff9f5a22, #12151f)', border: '1px solid #ff9f5a55', borderRadius: 16, padding: '14px 16px', cursor: 'pointer' },
+  duelRow: { display: 'flex', alignItems: 'center', gap: 10, width: '100%', background: '#12151f', border: '1px solid #262c3d', borderRadius: 12, padding: '12px 14px', cursor: 'pointer', color: '#e7e9f0', fontSize: 14.5, fontFamily: "'DM Sans', sans-serif" },
+  duelStage: { textAlign: 'center', padding: '22px 10px 16px', background: 'radial-gradient(340px 150px at 50% 0%, #ff9f5a18, rgba(12,14,22,0))', borderRadius: 18, marginTop: 14 },
+  duelAlly: { display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 14, background: '#12151f', border: '1px solid #262c3d', borderRadius: 999, padding: '6px 12px' },
+  chargeTag: { display: 'inline-flex', alignItems: 'center', gap: 3, marginLeft: 4, background: '#ffd76a22', border: '1px solid #ffd76a66', color: '#ffd76a', borderRadius: 999, padding: '2px 8px', fontSize: 11, fontWeight: 700 },
+  duelFlash: { marginTop: 12, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" },
+  companionRow: { display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16 },
+  companionChip: { display: 'inline-flex', alignItems: 'center', gap: 7, background: '#12151f', border: '1px solid #262c3d', borderRadius: 999, padding: '6px 12px' },
   confirmRow: { display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
   backupBox: { marginTop: 18, background: '#12151f', border: '1px solid #262c3d', borderRadius: 14, padding: 14, textAlign: 'left' },
   backupTa: { width: '100%', height: 90, margin: '9px 0', background: '#0c0e16', color: '#8b91a3', border: '1px solid #2a2f3d', borderRadius: 9, padding: 9, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", outline: 'none', boxSizing: 'border-box' },
@@ -92,6 +100,8 @@ export function FontAndStyle() {
       @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=DM+Sans:opsz,wght@9..40,400..600&family=JetBrains+Mono:wght@500..700&display=swap');
       * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
       @keyframes fadeUp { from { opacity:0; transform: translateY(14px);} to {opacity:1; transform:none;} }
+      @keyframes lqHit { 0%{transform:none;} 25%{transform:translateX(-7px) scale(1.06);} 55%{transform:translateX(6px) scale(1.03);} 100%{transform:none;} }
+      .lq-hit { animation: lqHit .34s ease-out; }
       @keyframes pop { 0%{transform:scale(.8);opacity:0;} 60%{transform:scale(1.08);} 100%{transform:scale(1);opacity:1;} }
       @keyframes flicker { 0%,100%{ transform: scale(1) rotate(-2deg);} 50%{ transform: scale(1.12) rotate(2deg);} }
       @keyframes glow { 0%,100%{ box-shadow:0 0 0 0 rgba(246,183,60,0);} 50%{ box-shadow:0 0 28px 2px rgba(246,183,60,.35);} }
