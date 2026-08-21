@@ -13,6 +13,7 @@ export const COMPANIONS = {
   math:    { glyph: '🔷', name: 'Tessel',  title: 'the Pattern-Keeper', blurb: 'Sees the shape a number is hiding.' },
   cs:      { glyph: '🤖', name: 'Bitwing', title: 'the Loop-Runner',    blurb: 'Does the boring part a thousand times without complaining.' },
   bio:     { glyph: '🌿', name: 'Sprig',   title: 'the Cell-Singer',    blurb: 'Knows what every living thing is quietly doing.' },
+  chem:    { glyph: '⚗️', name: 'Reagent', title: 'the Bond-Breaker',  blurb: 'Knows what happens when two things finally meet.' },
   ela:     { glyph: '🦉', name: 'Quill',   title: 'the Word-Binder',    blurb: 'Finds the sentence that proves it.' },
   biz:     { glyph: '🦊', name: 'Ledger',  title: 'the Trade-Weaver',   blurb: 'Can tell profit from noise.' },
   gov:     { glyph: '🦅', name: 'Gavel',   title: 'the Rule-Reader',    blurb: 'Follows how a rule actually becomes a rule.' },

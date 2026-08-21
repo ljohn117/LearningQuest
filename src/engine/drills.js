@@ -250,4 +250,79 @@ export const EXTRA_DRILLS = [
       };
     },
   },
+
+  /* ---- Chemistry -------------------------------------------------------- */
+  /* Formula reading is the one part of this lane that is genuinely mechanical,
+     which makes it the part worth drilling. The rest of chemistry is
+     conceptual and belongs in the lessons, not in a duel. */
+  {
+    id: 'chem5a', subj: 'chem', day: 'ch5', name: 'Counting Atoms',
+    gen: () => {
+      const f = pickOne([
+        { s: 'H2O',   el: 'hydrogen', n: 2 },
+        { s: 'H2O',   el: 'oxygen',   n: 1 },
+        { s: 'CO2',   el: 'oxygen',   n: 2 },
+        { s: 'CH4',   el: 'hydrogen', n: 4 },
+        { s: 'NH3',   el: 'hydrogen', n: 3 },
+        { s: 'C6H12O6', el: 'carbon', n: 6 },
+        { s: 'C6H12O6', el: 'hydrogen', n: 12 },
+        { s: 'H2SO4', el: 'oxygen',   n: 4 },
+      ]);
+      const c = rnd(1, 5);
+      return {
+        prompt: `How many ${f.el} atoms are in ${c === 1 ? '' : c}${f.s}?`,
+        answer: f.n * c,
+        hint: c === 1
+          ? 'The small number counts only the symbol right before it.'
+          : `The ${c} out front multiplies every atom in the formula.`,
+      };
+    },
+  },
+  {
+    id: 'chem5b', subj: 'chem', day: 'ch5', name: 'Brackets in Formulas',
+    gen: () => {
+      const f = pickOne([
+        { s: 'Ca(OH)2',  el: 'oxygen',   inner: 1, mult: 2 },
+        { s: 'Ca(OH)2',  el: 'hydrogen', inner: 1, mult: 2 },
+        { s: 'Mg(NO3)2', el: 'oxygen',   inner: 3, mult: 2 },
+        { s: 'Al(OH)3',  el: 'oxygen',   inner: 1, mult: 3 },
+        { s: 'Al(OH)3',  el: 'hydrogen', inner: 1, mult: 3 },
+        { s: 'Fe(NO3)3', el: 'oxygen',   inner: 3, mult: 3 },
+      ]);
+      return {
+        prompt: `How many ${f.el} atoms are in ${f.s}?`,
+        answer: f.inner * f.mult,
+        hint: 'The number outside the bracket multiplies everything inside it — same as 3(x + 4) in algebra.',
+      };
+    },
+  },
+  {
+    id: 'chem8a', subj: 'chem', day: 'ch8', name: 'pH Steps',
+    gen: () => {
+      /* Both values stay on the acidic side of 7 — comparing an acid to a
+         base with "more acidic" is true but reads as a trick question. */
+      const steps = rnd(1, 4);
+      const low = rnd(0, 7 - steps);
+      return {
+        prompt: `How many times more acidic is pH ${low} than pH ${low + steps}?`,
+        answer: Math.pow(10, steps),
+        hint: `${steps} step${steps > 1 ? 's' : ''} apart, and each step is ten times. Multiply, do not add.`,
+      };
+    },
+  },
+  {
+    id: 'chem9a', subj: 'chem', day: 'ch9', name: 'Concentration',
+    gen: () => {
+      const litres = pickOne([2, 3, 4, 5, 8, 10]);
+      const perL = rnd(2, 25);
+      const findTotal = Math.random() < 0.5;
+      return findTotal
+        ? { prompt: `A solution holds ${perL} grams of solute per litre. How many grams are in ${litres} litres?`,
+            answer: perL * litres,
+            hint: 'Per litre times the number of litres.' }
+        : { prompt: `${perL * litres} grams of solute are dissolved in ${litres} litres. What is the concentration in grams per litre?`,
+            answer: perL,
+            hint: '"Per litre" means divide by the number of litres — the same unit rate from Mathematics day 1.' };
+    },
+  },
 ];
