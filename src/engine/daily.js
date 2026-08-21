@@ -43,8 +43,11 @@ export function availableLessons(profile) {
     const days = s.days;
     for (let i = 0; i < days.length; i++) {
       if (profile.completed?.[`${subj}:${days[i].id}`]) continue;
-      // unlocked when it's the first day, or the one before it is done
-      if (i === 0 || profile.completed?.[`${subj}:${days[i - 1].id}`]) out.push({ subj, day: days[i] });
+      const req = days[i].requires;
+      const reqMet = !req || req.every((k) => !!profile.completed?.[k]);
+      // unlocked when it's the first day, or the one before it is done —
+      // and any cross-lane prerequisites are satisfied
+      if (reqMet && (i === 0 || profile.completed?.[`${subj}:${days[i - 1].id}`])) out.push({ subj, day: days[i] });
       break; // anything past the first unfinished day in a subject is locked
     }
   }

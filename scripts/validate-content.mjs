@@ -41,6 +41,18 @@ for (const subj of SUBJECT_ORDER) {
   }
 }
 
+// every `requires` key must name a real subject:dayId that exists
+const allKeys = new Set();
+for (const subj of SUBJECT_ORDER) for (const d of CURRICULUM[subj]?.days || []) allKeys.add(`${subj}:${d.id}`);
+for (const subj of SUBJECT_ORDER) {
+  for (const d of CURRICULUM[subj]?.days || []) {
+    for (const key of d.requires || []) {
+      if (!allKeys.has(key)) fail(`${d.id}: requires "${key}" which does not exist`);
+      if (key.startsWith(subj + ':')) fail(`${d.id}: requires "${key}" from its own lane — use ordering instead`);
+    }
+  }
+}
+
 // visual kinds must all exist in the Visual component
 const visualSrc = (await import('node:fs')).readFileSync('src/engine/Visual.jsx', 'utf8');
 const implemented = new Set([...visualSrc.matchAll(/v\.kind === '(\w+)'/g)].map((m) => m[1]));

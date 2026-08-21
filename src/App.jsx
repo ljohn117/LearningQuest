@@ -59,7 +59,14 @@ export default function App() {
   }
 
   const isDayDone = (subj, id) => !!profile.completed[dayKey(subj, id)];
-  const isDayUnlocked = (subj, idx) => idx === 0 || isDayDone(subj, CURRICULUM[subj].days[idx - 1].id);
+  /* A day may also declare cross-lane prerequisites, e.g.
+     requires: ['cs:c2', 'math:m7']. Connector days use this so they only
+     open once both halves of the connection have actually been learned. */
+  const isDayUnlocked = (subj, idx) => {
+    const day = CURRICULUM[subj].days[idx];
+    if (day.requires && !day.requires.every((k) => !!profile.completed[k])) return false;
+    return idx === 0 || isDayDone(subj, CURRICULUM[subj].days[idx - 1].id);
+  };
   function subjStats(subj) {
     const days = CURRICULUM[subj].days;
     const done = days.filter((d) => isDayDone(subj, d.id)).length;

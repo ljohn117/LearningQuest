@@ -231,7 +231,11 @@ export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onD
                 </div>
                 <div style={S.dayTitle}>{d.title}</div>
               </div>
-              {open && <ChevronRight size={18} color="#5b6275" />}
+              {open ? <ChevronRight size={18} color="#5b6275" />
+                : d.requires ? <span style={{ ...S.muted, fontSize: 11.5, textAlign: 'right', maxWidth: 118 }}>
+                    needs {d.requires.map((k) => CURRICULUM[k.split(':')[0]]?.name).filter((v, i, a) => v && a.indexOf(v) === i).join(' + ')}
+                  </span>
+                : null}
             </button>
           );
         })}
