@@ -78,6 +78,7 @@ export const S = {
   duelFlash: { marginTop: 12, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" },
   companionRow: { display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16 },
   companionChip: { display: 'inline-flex', alignItems: 'center', gap: 7, background: '#12151f', border: '1px solid #262c3d', borderRadius: 999, padding: '6px 12px' },
+  cardBtn: { font: 'inherit', color: 'inherit', textAlign: 'left', width: '100%', appearance: 'none', WebkitAppearance: 'none' },
   confirmRow: { display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
   backupBox: { marginTop: 18, background: '#12151f', border: '1px solid #262c3d', borderRadius: 14, padding: 14, textAlign: 'left' },
   backupTa: { width: '100%', height: 90, margin: '9px 0', background: '#0c0e16', color: '#8b91a3', border: '1px solid #2a2f3d', borderRadius: 9, padding: 9, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", outline: 'none', boxSizing: 'border-box' },
@@ -108,6 +109,7 @@ export function FontAndStyle() {
       @keyframes drift { 0%{transform:translate(0,0);} 25%{transform:translate(3px,-2px);} 50%{transform:translate(-2px,3px);} 75%{transform:translate(2px,2px);} 100%{transform:translate(0,0);} }
       @keyframes orbitSpin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
       .lq-rise { animation: fadeUp .5s cubic-bezier(.2,.7,.2,1) both; }
+      :focus-visible { outline: 3px solid #5aa9ff; outline-offset: 3px; border-radius: 8px; }
       .lq-tap { transition: transform .12s ease, filter .15s ease, background .15s ease; cursor:pointer; }
       .lq-tap:active { transform: scale(.97); }
       .lq-card:hover { transform: translateY(-2px); }

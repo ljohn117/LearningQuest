@@ -42,9 +42,10 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
       <h2 style={S.qPrompt}>{q.prompt}</h2>
 
       {q.type === 'mc' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 18 }}>
+        <div role="radiogroup" aria-label="Answer choices" style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 18 }}>
           {q.choices.map((c, idx) => (
-            <button key={idx} className="lq-tap" disabled={revealed}
+            <button key={idx} type="button" className="lq-tap" disabled={revealed}
+              role="radio" aria-checked={picked === idx}
               style={{ ...S.choice, ...swatch(picked === idx, idx === q.answer) }}
               onClick={() => setPicked(idx)}>{c}</button>
           ))}
@@ -52,9 +53,10 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
       )}
 
       {q.type === 'tf' && (
-        <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+        <div role="radiogroup" aria-label="True or false" style={{ display: 'flex', gap: 10, marginTop: 18 }}>
           {[{ v: true, t: 'True' }, { v: false, t: 'False' }].map((o) => (
-            <button key={o.t} className="lq-tap" disabled={revealed}
+            <button key={o.t} type="button" className="lq-tap" disabled={revealed}
+              role="radio" aria-checked={picked === o.v}
               style={{ ...S.choice, flex: 1, textAlign: 'center', ...swatch(picked === o.v, o.v === q.answer) }}
               onClick={() => setPicked(o.v)}>{o.t}</button>
           ))}
@@ -64,7 +66,7 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
       {q.type === 'numeric' && (
         <input type="number" inputMode="decimal" value={num} disabled={revealed} autoFocus
           onChange={(e) => setNum(e.target.value)} onKeyDown={onKey}
-          placeholder="Type your answer"
+          placeholder="Type your answer" aria-label="Your answer"
           style={{ ...S.numInput, borderColor: revealed ? (ok ? '#3ddc97' : '#ff6b6b') : accent + '88' }} />
       )}
 
@@ -82,7 +84,8 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
       )}
 
       {revealed && (
-        <div className="lq-rise" style={{ ...S.feedback, borderColor: ok ? '#3ddc9766' : '#ff6b6b66', background: ok ? '#3ddc9714' : '#ff6b6b14' }}>
+        <div className="lq-rise" role="status" aria-live="polite"
+          style={{ ...S.feedback, borderColor: ok ? '#3ddc9766' : '#ff6b6b66', background: ok ? '#3ddc9714' : '#ff6b6b14' }}>
           <div style={{ ...S.fbTitle, color: ok ? '#3ddc97' : '#ff6b6b' }}>
             {ok ? <><Check size={16} /> Correct! +{xp} XP</> : <>Not quite — good try</>}
           </div>

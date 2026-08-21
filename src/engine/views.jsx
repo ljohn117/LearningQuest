@@ -110,7 +110,9 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
         {SUBJECT_ORDER.map((id, i) => {
           const s = CURRICULUM[id], st = subjStats(id), Icon = s.icon;
           return (
-            <div key={id} className="lq-rise lq-tap lq-card" style={{ ...S.subjCard, animationDelay: `${.1 + i * .05}s` }} onClick={() => onOpen(id)}>
+            <button key={id} type="button" className="lq-rise lq-tap lq-card"
+              aria-label={`${s.name}, ${st.done} of ${st.total} days complete`}
+              style={{ ...S.cardBtn, ...S.subjCard, animationDelay: `${.1 + i * .05}s` }} onClick={() => onOpen(id)}>
               <div style={{ ...S.subjIcon, background: s.accent + '22', border: `1px solid ${s.accent}55` }}><Icon size={22} color={s.accent} /></div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={S.subjName}>{s.name}</div>
@@ -118,20 +120,21 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
                 <div style={{ marginTop: 8 }}><Bar pct={st.pct} accent={s.accent} thin /></div>
               </div>
               <div style={S.subjMeta}><span style={{ ...S.mono, color: s.accent }}>{st.done}/{st.total}</span><ChevronRight size={18} color="#5b6275" /></div>
-            </div>
+            </button>
           );
         })}
       </div>
 
       <div style={S.sectionLabel}>Skill Duel</div>
-      <div className="lq-rise lq-tap lq-card" style={{ ...S.subjCard, borderColor: '#f6b73c55' }} onClick={onPractice}>
+      <button type="button" className="lq-rise lq-tap lq-card" aria-label="Skill Duel — battle a guardian"
+        style={{ ...S.cardBtn, ...S.subjCard, borderColor: '#f6b73c55' }} onClick={onPractice}>
         <div style={{ ...S.subjIcon, background: '#f6b73c22', border: '1px solid #f6b73c55' }}><Target size={22} color="#f6b73c" /></div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={S.subjName}>Battle a guardian</div>
           <div style={S.subjBlurb}>Endless fresh practice questions from every math skill you have unlocked.</div>
         </div>
         <ChevronRight size={18} color="#5b6275" />
-      </div>
+      </button>
 
       <div style={{ marginTop: 22, textAlign: 'center' }}>
         {editing ? (
@@ -213,8 +216,10 @@ export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onD
         {s.days.map((d, i) => {
           const done = isDayDone(subj, d.id), open = isDayUnlocked(subj, i);
           return (
-            <div key={d.id} className={`lq-rise ${open ? 'lq-tap lq-card' : ''}`}
-              style={{ ...S.dayCard, animationDelay: `${i * .06}s`, opacity: open ? 1 : .55, cursor: open ? 'pointer' : 'default' }}
+            <button key={d.id} type="button" disabled={!open}
+              className={`lq-rise ${open ? 'lq-tap lq-card' : ''}`}
+              aria-label={`Day ${i + 1}, ${d.title}${done ? ', complete' : open ? '' : ', locked'}`}
+              style={{ ...S.cardBtn, ...S.dayCard, animationDelay: `${i * .06}s`, opacity: open ? 1 : .55, cursor: open ? 'pointer' : 'default' }}
               onClick={() => open && onDay(d)}>
               <div style={{ ...S.dayNode, borderColor: done ? s.accent : open ? '#3a4154' : '#2a2f3d', background: done ? s.accent : 'transparent' }}>
                 {done ? <Check size={16} color="#0c0e16" /> : open ? <span style={{ ...S.mono, color: '#aeb4c4', fontSize: 13 }}>{i + 1}</span> : <Lock size={13} color="#5b6275" />}
@@ -227,7 +232,7 @@ export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onD
                 <div style={S.dayTitle}>{d.title}</div>
               </div>
               {open && <ChevronRight size={18} color="#5b6275" />}
-            </div>
+            </button>
           );
         })}
       </div>
@@ -380,9 +385,9 @@ export function ResultsView({ subj, day, correct, earned, leveledTo, userName, o
 }
 
 /* ---- 13. SMALL PIECES ---------------------------------------------------------------- */
-export function Bar({ pct, accent, thin }) {
+export function Bar({ pct, accent, thin, label }) {
   return (
-    <div style={{ ...S.track, height: thin ? 6 : 9 }}>
+    <div role="progressbar" aria-label={label || "Progress"} aria-valuenow={Math.round((pct || 0) * 100)} aria-valuemin={0} aria-valuemax={100} style={{ ...S.track, height: thin ? 6 : 9 }}>
       <div style={{ width: `${Math.round(pct * 100)}%`, height: '100%', borderRadius: 99, background: `linear-gradient(90deg, ${accent}cc, ${accent})`, transition: 'width .6s cubic-bezier(.2,.7,.2,1)' }} />
     </div>
   );
