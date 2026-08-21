@@ -25,6 +25,7 @@ import {
 
 /* ---- 1. STORAGE WRAPPER (swap when porting) ------------------------------ */
 const PROFILES_KEY = 'lq_profiles_v2';
+const APP_ID = 'core';
 const Store = {
   async load() {
     try {
@@ -1434,6 +1435,7 @@ function ProfileSelect({ profiles, onPick, onCreate, onDemo }) {
 function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onReset, onSetName, onSwitch, isDemo }) {
   const [confirm, setConfirm] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [backing, setBacking] = useState(false);
   const [nameVal, setNameVal] = useState(state.name);
   const totalDone = SUBJECT_ORDER.reduce((n, s) => n + subjStats(s).done, 0);
   const totalDays = SUBJECT_ORDER.reduce((n, s) => n + subjStats(s).total, 0);
@@ -1499,6 +1501,7 @@ function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onReset, onSetNa
           <div style={S.confirmRow}>
             <button className="lq-tap" style={S.ghostBtn} onClick={onSwitch}><Users size={13} /> Switch explorer</button>
             {!isDemo && <button className="lq-tap" style={S.ghostBtn} onClick={() => setEditing(true)}>Change name</button>}
+            <button className="lq-tap" style={S.ghostBtn} onClick={() => setBacking(true)}>Back up</button>
             <button className="lq-tap" style={S.ghostBtn} onClick={() => setConfirm(true)}><RotateCcw size={13} /> Reset progress</button>
           </div>
         ) : (
@@ -1509,9 +1512,46 @@ function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onReset, onSetNa
           </div>
         )}
       </div>
+      {backing && <BackupPanel onClose={() => setBacking(false)} />}
     </div>
   );
 }
+
+/* ---- BACKUP BRIDGE: window.storage is origin-scoped; a Vite build won't
+   inherit it. Copy this payload out before porting. Downloads are blocked
+   in artifacts, so this is copy-to-clipboard by design. -------------------- */
+function BackupPanel({ onClose }) {
+  const [txt, setTxt] = useState('Reading...');
+  const ta = useRef(null);
+  useEffect(() => { (async () => {
+    let raw = null;
+    try {
+      raw = (typeof window !== 'undefined' && window.storage && window.storage.get)
+        ? ((await window.storage.get(PROFILES_KEY, false)) || {}).value
+        : localStorage.getItem(PROFILES_KEY);
+    } catch {}
+    setTxt(raw
+      ? JSON.stringify({ lqBackup: 1, app: APP_ID, key: PROFILES_KEY, at: new Date().toISOString(), data: JSON.parse(raw) })
+      : 'No saved progress found.');
+  })(); }, []);
+  let days = null;
+  try { days = JSON.parse(txt).data.profiles.reduce((n, p) => n + Object.keys(p.completed || {}).length, 0); } catch {}
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(txt); }
+    catch { try { ta.current.select(); document.execCommand('copy'); } catch {} }
+  };
+  return (
+    <div style={S.backupBox}>
+      <div style={S.muted}>Copy this and save it somewhere safe.{days !== null ? ' ' + days + ' finished days found.' : ''}</div>
+      <textarea ref={ta} readOnly value={txt} style={S.backupTa} onFocus={(e) => e.target.select()} />
+      <div style={S.confirmRow}>
+        <button className="lq-tap" style={S.ghostBtn} onClick={copy}>Copy</button>
+        <button className="lq-tap" style={S.ghostBtn} onClick={onClose}>Done</button>
+      </div>
+    </div>
+  );
+}
+
 
 /* ---- 9. SUBJECT VIEW ----------------------------------------------------------- */
 function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onDay }) {
@@ -2048,6 +2088,8 @@ const S = {
   ghostBtn: { display: 'inline-flex', alignItems: 'center', gap: 6, background: 'transparent', border: '1px solid #2a2f3d', color: '#8b91a3', padding: '8px 14px', borderRadius: 10, fontSize: 13, cursor: 'pointer' },
   dangerBtn: { background: '#ff6b6b22', border: '1px solid #ff6b6b66', color: '#ff8f8f', padding: '8px 14px', borderRadius: 10, fontSize: 13, cursor: 'pointer' },
   confirmRow: { display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
+  backupBox: { marginTop: 18, background: '#12151f', border: '1px solid #262c3d', borderRadius: 14, padding: 14, textAlign: 'left' },
+  backupTa: { width: '100%', height: 90, margin: '9px 0', background: '#0c0e16', color: '#8b91a3', border: '1px solid #2a2f3d', borderRadius: 9, padding: 9, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", outline: 'none', boxSizing: 'border-box' },
   demoBar: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: '8px 12px', borderRadius: 10, background: '#5aa9ff14', border: '1px dashed #5aa9ff55', color: '#9cc6ff', fontSize: 13, marginBottom: 16 },
   demoExit: { background: 'transparent', border: '1px solid #5aa9ff66', color: '#9cc6ff', borderRadius: 8, padding: '3px 12px', fontSize: 12, cursor: 'pointer' },
   profileCard: { display: 'flex', alignItems: 'center', gap: 14, padding: 16, borderRadius: 16, background: '#141826', border: '1px solid #232838', width: '100%', textAlign: 'left', cursor: 'pointer' },
