@@ -3,6 +3,7 @@ import { EXPLORE } from './explore.js';
 import { RESTORED } from './restored.js';
 import { CONNECTIONS } from './connections.js';
 import { ELA_EXTRA, BIO_EXTRA } from './depth.js';
+import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
 
 /* Merged curriculum. Subject keys are distinct across all sources and every
    day id is unique, so the merge cannot collide.
@@ -17,6 +18,8 @@ const append = (subj, days) => {
 };
 append('ela', ELA_EXTRA);
 append('bio', BIO_EXTRA);
+append('gov', GOV_EXTRA);
+append('fossils', FOSSILS_EXTRA);
 
 export const CURRICULUM = merged;
 
