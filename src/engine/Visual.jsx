@@ -1,0 +1,296 @@
+import React from 'react';
+import { S } from './styles.jsx';
+
+/* Named SVG diagrams. Union of both prototypes' cases — the three that
+   appeared in both (branches, supplydemand, strata) were byte-identical. */
+export function Visual({ v, accent }) {
+  const wrap = (children, h = 150) => (
+    <div style={S.vizBox}><svg viewBox={`0 0 320 ${h}`} width="100%" style={{ display: 'block' }}>{children}</svg></div>
+  );
+  if (v.kind === 'bars') {
+    const unit = 30, y1 = v.scaled ? 28 : 44, y2 = v.scaled ? 88 : 96;
+    const Row = ({ y, n, color, label, max }) => (
+      <g>
+        {Array.from({ length: n }).map((_, i) => (
+          <rect key={i} x={14 + i * (unit + 4)} y={y} width={unit} height={26} rx={6} fill={color} opacity={.9} />
+        ))}
+        <text x={14} y={y - 8} fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">{label}</text>
+      </g>
+    );
+    if (v.scaled) return wrap(<>
+      <Row y={y1} n={Math.min(v.a, 8)} color={accent} label={v.labelA} />
+      <Row y={y2} n={Math.min(v.a2, 8)} color={accent + '88'} label={`${v.labelB} — same ratio, scaled up`} />
+    </>, 130);
+    return wrap(<>
+      <Row y={y1} n={v.a} color={accent} label={v.labelA} />
+      <Row y={y2} n={v.b} color="#5aa9ff" label={v.labelB} />
+    </>, 140);
+  }
+  if (v.kind === 'scale') return wrap(<>
+    <line x1="160" y1="34" x2="160" y2="96" stroke="#3a4154" strokeWidth="6" strokeLinecap="round" />
+    <rect x="118" y="96" width="84" height="10" rx="5" fill="#3a4154" />
+    <line x1="60" y1="40" x2="260" y2="40" stroke="#8b91a3" strokeWidth="5" strokeLinecap="round" />
+    <line x1="78" y1="40" x2="78" y2="56" stroke="#8b91a3" strokeWidth="3" />
+    <line x1="242" y1="40" x2="242" y2="56" stroke="#8b91a3" strokeWidth="3" />
+    <rect x="36" y="56" width="84" height="30" rx="9" fill={accent + '33'} stroke={accent} strokeWidth="1.5" />
+    <text x="78" y="76" textAnchor="middle" fill={accent} fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">{v.left}</text>
+    <rect x="200" y="56" width="84" height="30" rx="9" fill="#5aa9ff33" stroke="#5aa9ff" strokeWidth="1.5" />
+    <text x="242" y="76" textAnchor="middle" fill="#5aa9ff" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">{v.right}</text>
+    <text x="160" y="128" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">balanced — both sides equal</text>
+  </>, 140);
+  if (v.kind === 'atom') {
+    const shells = [[2, 30], [4, 56]];
+    return wrap(<>
+      <circle cx="160" cy="74" r="14" fill={accent} opacity=".9" />
+      <text x="160" y="78" textAnchor="middle" fill="#0c0e16" fontSize="10" fontWeight="800" fontFamily="JetBrains Mono, monospace">{v.protons}p</text>
+      {shells.map(([n, r], si) => (
+        <g key={si}>
+          <circle cx="160" cy="74" r={r} fill="none" stroke="#3a4154" strokeWidth="1.5" strokeDasharray="3 4" />
+          {Array.from({ length: n }).map((_, i) => {
+            const a = (i / n) * Math.PI * 2 + si;
+            return <circle key={i} cx={160 + r * Math.cos(a)} cy={74 + r * Math.sin(a)} r="5" fill="#5aa9ff" style={{ animation: `drift ${3 + si}s ease-in-out infinite` }} />;
+          })}
+        </g>
+      ))}
+      <text x="160" y="146" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">carbon: 6 protons · electrons in shells</text>
+    </>, 156);
+  }
+  if (v.kind === 'particles') {
+    const Box = ({ x, label, dots }) => (
+      <g>
+        <rect x={x} y="22" width="88" height="78" rx="10" fill="#161a28" stroke="#2a2f3d" />
+        {dots}
+        <text x={x + 44} y="120" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">{label}</text>
+      </g>
+    );
+    const grid = []; for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) grid.push(<circle key={`s${r}${c}`} cx={26 + c * 24} cy={40 + r * 24} r="6" fill={accent} />);
+    const liq = [[36, 78], [58, 84], [80, 76], [44, 58], [70, 60], [58, 40]].map(([x, y], i) => <circle key={`l${i}`} cx={x + 102} cy={y} r="6" fill={accent} style={{ animation: `drift ${2.4 + i * .3}s ease-in-out infinite` }} />);
+    const gas = [[228, 36], [262, 52], [240, 78], [286, 34], [292, 86], [256, 92]].map(([x, y], i) => <circle key={`g${i}`} cx={x} cy={y} r="5" fill={accent} opacity=".85" style={{ animation: `drift ${1.2 + i * .2}s ease-in-out infinite` }} />);
+    return wrap(<>
+      <Box x={12} label="solid" dots={grid} />
+      <Box x={114} label="liquid" dots={liq} />
+      <Box x={216} label="gas" dots={gas} />
+    </>, 134);
+  }
+  if (v.kind === 'graph') {
+    const pts = [[0, 1], [1, 3], [2, 5]];
+    const px = (x) => 60 + x * 84, py = (y) => 124 - y * 17;
+    return wrap(<>
+      <line x1="48" y1="124" x2="300" y2="124" stroke="#3a4154" strokeWidth="2" />
+      <line x1="60" y1="18" x2="60" y2="136" stroke="#3a4154" strokeWidth="2" />
+      <line x1={px(-0.1)} y1={py(0.8)} x2={px(2.6)} y2={py(6.2)} stroke={accent} strokeWidth="2.5" strokeLinecap="round" />
+      {pts.map(([x, y], i) => (
+        <g key={i}>
+          <circle cx={px(x)} cy={py(y)} r="6" fill={accent} stroke="#0c0e16" strokeWidth="2" />
+          <text x={px(x) + 11} y={py(y) - 7} fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">({x},{y})</text>
+        </g>
+      ))}
+      <text x="174" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">{v.label} — every input lands on the line</text>
+    </>, 156);
+  }
+  if (v.kind === 'rtriangle') return wrap(<>
+    <polygon points="62,118 62,42 256,118" fill={accent + '22'} stroke={accent} strokeWidth="2" strokeLinejoin="round" />
+    <rect x="62" y="102" width="16" height="16" fill="none" stroke={accent} strokeWidth="1.5" />
+    <text x="46" y="84" fill="#8b91a3" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">a</text>
+    <text x="150" y="134" fill="#8b91a3" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">b</text>
+    <text x="166" y="74" fill={accent} fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">c</text>
+    <text x="160" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">a² + b² = c²</text>
+  </>, 156);
+  if (v.kind === 'parabola') {
+    const pts = [-3, -2, -1, 0, 1, 2, 3].map((x) => [160 + x * 38, 122 - x * x * 11]);
+    const d = pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ');
+    return wrap(<>
+      <line x1="34" y1="122" x2="286" y2="122" stroke="#3a4154" strokeWidth="2" />
+      <line x1="160" y1="14" x2="160" y2="134" stroke="#3a4154" strokeWidth="2" />
+      <path d={d} fill="none" stroke={accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="160" cy="122" r="5" fill={accent} stroke="#0c0e16" strokeWidth="2" />
+      <text x="160" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">y = x² — a parabola, not a line</text>
+    </>, 156);
+  }
+  if (v.kind === 'branches') {
+    const Box = (x, label, sub) => (
+      <g>
+        <rect x={x} y="72" width="80" height="36" rx="8" fill={accent + '22'} stroke={accent} strokeWidth="1.5" />
+        <text x={x + 40} y="89" textAnchor="middle" fill={accent} fontSize="10.5" fontWeight="700" fontFamily="JetBrains Mono, monospace">{label}</text>
+        <text x={x + 40} y="102" textAnchor="middle" fill="#8b91a3" fontSize="8.5" fontFamily="JetBrains Mono, monospace">{sub}</text>
+      </g>
+    );
+    return wrap(<>
+      <rect x="118" y="14" width="84" height="30" rx="8" fill={accent + '33'} stroke={accent} strokeWidth="1.5" />
+      <text x="160" y="33" textAnchor="middle" fill={accent} fontSize="10.5" fontWeight="700" fontFamily="JetBrains Mono, monospace">GOVERNMENT</text>
+      <line x1="160" y1="44" x2="160" y2="56" stroke="#3a4154" strokeWidth="2" />
+      <line x1="50" y1="56" x2="270" y2="56" stroke="#3a4154" strokeWidth="2" />
+      <line x1="50" y1="56" x2="50" y2="72" stroke="#3a4154" strokeWidth="2" />
+      <line x1="160" y1="56" x2="160" y2="72" stroke="#3a4154" strokeWidth="2" />
+      <line x1="270" y1="56" x2="270" y2="72" stroke="#3a4154" strokeWidth="2" />
+      {Box(10, 'LEGIS.', 'makes laws')}
+      {Box(120, 'EXEC.', 'enforces')}
+      {Box(230, 'JUDIC.', 'interprets')}
+    </>, 124);
+  }
+  if (v.kind === 'flow') return wrap(<>
+    <ellipse cx="58" cy="38" rx="38" ry="17" fill={accent + '22'} stroke={accent} strokeWidth="1.5" />
+    <text x="58" y="42" textAnchor="middle" fill={accent} fontSize="10" fontWeight="700" fontFamily="JetBrains Mono, monospace">START</text>
+    <line x1="58" y1="55" x2="58" y2="72" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
+    <rect x="20" y="72" width="76" height="30" rx="6" fill="#161a28" stroke={accent} strokeWidth="1.5" />
+    <text x="58" y="91" textAnchor="middle" fill="#e7e9f0" fontSize="10" fontFamily="JetBrains Mono, monospace">do a step</text>
+    <line x1="96" y1="87" x2="148" y2="87" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
+    <polygon points="200,66 242,87 200,108 158,87" fill={accent + '18'} stroke={accent} strokeWidth="1.5" />
+    <text x="200" y="90" textAnchor="middle" fill={accent} fontSize="9.5" fontFamily="JetBrains Mono, monospace">done?</text>
+    <text x="250" y="90" fill="#3ddc97" fontSize="10" fontFamily="JetBrains Mono, monospace">yes</text>
+    <text x="200" y="128" textAnchor="middle" fill="#8b91a3" fontSize="9.5" fontFamily="JetBrains Mono, monospace">no → loop back</text>
+    <defs><marker id="fa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8b91a3" /></marker></defs>
+  </>, 138);
+  if (v.kind === 'supplydemand') return wrap(<>
+    <line x1="52" y1="120" x2="290" y2="120" stroke="#3a4154" strokeWidth="2" />
+    <line x1="60" y1="20" x2="60" y2="130" stroke="#3a4154" strokeWidth="2" />
+    <line x1="72" y1="116" x2="268" y2="34" stroke={accent} strokeWidth="2.5" strokeLinecap="round" />
+    <line x1="72" y1="34" x2="268" y2="116" stroke="#5aa9ff" strokeWidth="2.5" strokeLinecap="round" />
+    <circle cx="170" cy="75" r="6" fill="#fff" stroke="#0c0e16" strokeWidth="1.5" />
+    <text x="240" y="30" fill={accent} fontSize="10" fontFamily="JetBrains Mono, monospace">supply</text>
+    <text x="232" y="128" fill="#5aa9ff" fontSize="10" fontFamily="JetBrains Mono, monospace">demand</text>
+    <text x="160" y="150" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">they cross at the equilibrium price</text>
+  </>, 158);
+  if (v.kind === 'strata') {
+    const layers = [['#d3ab78', 30], ['#bf9568', 56], ['#a37f58', 82], ['#876a4c', 108]];
+    return wrap(<>
+      {layers.map(([c, y], i) => <rect key={i} x="40" y={y} width="240" height="24" fill={c} stroke="#0c0e16" strokeWidth="1" />)}
+      <circle cx="118" cy="120" r="6" fill="#1a1208" stroke="#fff" strokeWidth="1.5" />
+      <text x="134" y="124" fill="#1a1208" fontSize="9.5" fontWeight="700" fontFamily="JetBrains Mono, monospace">older</text>
+      <circle cx="210" cy="42" r="5" fill="#1a1208" stroke="#fff" strokeWidth="1.5" />
+      <text x="224" y="46" fill="#1a1208" fontSize="9.5" fontWeight="700" fontFamily="JetBrains Mono, monospace">younger</text>
+      <text x="160" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">deeper = older (law of superposition)</text>
+    </>, 156);
+  }
+  if (v.kind === 'machine') return wrap(<>
+    <rect x="104" y="34" width="112" height="64" rx="14" fill={accent + '22'} stroke={accent} strokeWidth="1.5" />
+    <text x="160" y="60" textAnchor="middle" fill={accent} fontSize="13" fontWeight="800" fontFamily="JetBrains Mono, monospace">RULE</text>
+    <text x="160" y="82" textAnchor="middle" fill="#e7e9f0" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">{v.rule}</text>
+    <text x="46" y="72" textAnchor="middle" fill="#5aa9ff" fontSize="20" fontWeight="800" fontFamily="JetBrains Mono, monospace">{v.inn}</text>
+    <text x="276" y="72" textAnchor="middle" fill="#3ddc97" fontSize="20" fontWeight="800" fontFamily="JetBrains Mono, monospace">{v.out}</text>
+    <path d={v.reverse ? 'M212 110 H 108' : 'M66 66 H 100'} stroke="#8b91a3" strokeWidth="2.5" markerEnd="url(#arr)" fill="none" />
+    <path d={v.reverse ? 'M104 110 H 96' : 'M220 66 H 254'} stroke="#8b91a3" strokeWidth="2.5" markerEnd="url(#arr)" fill="none" opacity={v.reverse ? 0 : 1} />
+    {v.reverse && <text x="160" y="128" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">run it backward: undo the rule</text>}
+    <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8b91a3" /></marker></defs>
+  </>, v.reverse ? 140 : 120);
+  if (v.kind === 'orbit') return wrap(<>
+    <circle cx="160" cy="78" r="22" fill="#f6b73c" opacity=".95" />
+    <circle cx="160" cy="78" r="30" fill="#f6b73c" opacity=".15" />
+    <ellipse cx="160" cy="78" rx="120" ry="52" fill="none" stroke="#3a4154" strokeWidth="1.5" strokeDasharray="4 5" />
+    <g style={{ transformOrigin: '160px 78px', animation: 'orbitSpin 14s linear infinite' }}>
+      <g>
+        <circle cx="280" cy="78" r="10" fill="#5aa9ff" />
+        <circle cx="280" cy="78" r="10" fill="none" stroke="#5aa9ff55" strokeWidth="4" />
+      </g>
+    </g>
+    <text x="160" y="144" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">one lap = one year · one spin = one day</text>
+  </>, 152);
+  if (v.kind === 'gravity') return wrap(<>
+    <circle cx="92" cy="70" r="30" fill={accent} opacity=".9" />
+    <circle cx="236" cy="70" r="15" fill="#5aa9ff" />
+    <path d="M130 70 H 174" stroke="#8b91a3" strokeWidth="2.5" markerEnd="url(#ar2)" fill="none" />
+    <path d="M214 70 H 196" stroke="#8b91a3" strokeWidth="2.5" markerEnd="url(#ar3)" fill="none" />
+    <text x="92" y="116" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">more mass = bigger pull</text>
+    <text x="236" y="116" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">pulled too</text>
+    <defs>
+      <marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8b91a3" /></marker>
+      <marker id="ar3" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto-start-reverse"><path d="M8,0 L0,4 L8,8 z" fill="#8b91a3" /></marker>
+    </defs>
+  </>, 130);
+
+  if (v.kind === 'cell') return wrap(<>
+    <ellipse cx="160" cy="78" rx="118" ry="62" fill={accent + '18'} stroke={accent} strokeWidth="2.5" />
+    <circle cx="140" cy="72" r="26" fill={accent + '33'} stroke={accent} strokeWidth="1.5" />
+    <circle cx="140" cy="72" r="8" fill={accent} opacity="0.5" />
+    <text x="140" y="76" textAnchor="middle" fill="#e7e9f0" fontSize="9" fontWeight="700" fontFamily="JetBrains Mono, monospace">DNA</text>
+    <ellipse cx="222" cy="60" rx="20" ry="11" fill="#0c0e16" stroke={accent} strokeWidth="1.5" transform="rotate(-18 222 60)" />
+    <ellipse cx="96" cy="106" rx="18" ry="10" fill="#0c0e16" stroke={accent} strokeWidth="1.5" transform="rotate(14 96 106)" />
+    <text x="140" y="44" textAnchor="middle" fill={accent} fontSize="9.5" fontFamily="JetBrains Mono, monospace">nucleus</text>
+    <text x="222" y="40" textAnchor="middle" fill="#8b91a3" fontSize="9" fontFamily="JetBrains Mono, monospace">mitochondria</text>
+    <text x="160" y="156" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">the membrane controls what goes in and out</text>
+  </>, 166);
+
+  if (v.kind === 'punnett') {
+    const cells = [['BB', 1], ['Bb', 1], ['Bb', 1], ['bb', 0]];
+    return wrap(<>
+      <text x="122" y="26" textAnchor="middle" fill="#8b91a3" fontSize="12" fontFamily="JetBrains Mono, monospace">B</text>
+      <text x="196" y="26" textAnchor="middle" fill="#8b91a3" fontSize="12" fontFamily="JetBrains Mono, monospace">b</text>
+      <text x="70" y="66" textAnchor="middle" fill="#8b91a3" fontSize="12" fontFamily="JetBrains Mono, monospace">B</text>
+      <text x="70" y="122" textAnchor="middle" fill="#8b91a3" fontSize="12" fontFamily="JetBrains Mono, monospace">b</text>
+      {cells.map((c, i) => {
+        const x = 86 + (i % 2) * 74, y = 36 + Math.floor(i / 2) * 56;
+        return (
+          <g key={i}>
+            <rect x={x} y={y} width="72" height="54" rx="6" fill={c[1] ? accent + '2a' : '#1b2030'} stroke={c[1] ? accent : '#3a4154'} strokeWidth="1.5" />
+            <text x={x + 36} y={y + 33} textAnchor="middle" fill={c[1] ? accent : '#8b91a3'} fontSize="16" fontWeight="700" fontFamily="JetBrains Mono, monospace">{c[0]}</text>
+          </g>
+        );
+      })}
+      <text x="160" y="166" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">3 dominant to 1 recessive — a 3:1 ratio</text>
+    </>, 176);
+  }
+
+  if (v.kind === 'pyramid') {
+    const rows = [['Top predators', '0.1%', 74], ['Secondary consumers', '1%', 122], ['Primary consumers', '10%', 170], ['Producers (plants)', '100%', 218]];
+    return wrap(<>
+      {rows.map((r, i) => {
+        const y = 20 + i * 32, w = r[2];
+        return (
+          <g key={i}>
+            <rect x={160 - w / 2} y={y} width={w} height="27" rx="4" fill={accent + (0x18 + i * 0x10).toString(16)} stroke={accent} strokeWidth="1.4" />
+            <text x="160" y={y + 18} textAnchor="middle" fill="#e7e9f0" fontSize="9.5" fontFamily="JetBrains Mono, monospace">{r[0]}</text>
+            <text x={160 + w / 2 + 8} y={y + 18} fill={accent} fontSize="9.5" fontFamily="JetBrains Mono, monospace">{r[1]}</text>
+          </g>
+        );
+      })}
+      <text x="160" y="172" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">only ~10% of energy reaches the next level</text>
+    </>, 182);
+  }
+
+  if (v.kind === 'funnel') {
+    const rows = [['AWARE', 250], ['INTERESTED', 190], ['DECIDING', 130], ['BUYS', 70]];
+    return wrap(<>
+      {rows.map((r, i) => {
+        const y = 18 + i * 34, w = r[1];
+        return (
+          <g key={i}>
+            <rect x={160 - w / 2} y={y} width={w} height="28" rx="5" fill={accent + '22'} stroke={accent} strokeWidth="1.5" />
+            <text x="160" y={y + 19} textAnchor="middle" fill={accent} fontSize="10.5" fontWeight="700" fontFamily="JetBrains Mono, monospace">{r[0]}</text>
+          </g>
+        );
+      })}
+      <text x="160" y="172" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">many hear of you · fewer buy</text>
+    </>, 182);
+  }
+
+  if (v.kind === 'paragraph') {
+    const rows = [['TOPIC SENTENCE', 'states the one idea'], ['EVIDENCE', 'facts, examples, quotes'], ['ANALYSIS', 'why the evidence proves it'], ['CLOSING', 'wraps up or bridges on']];
+    return wrap(<>
+      {rows.map((r, i) => (
+        <g key={i}>
+          <rect x="30" y={16 + i * 38} width="260" height="30" rx="7" fill={accent + '1e'} stroke={accent} strokeWidth="1.4" />
+          <text x="42" y={35 + i * 38} fill={accent} fontSize="10" fontWeight="700" fontFamily="JetBrains Mono, monospace">{r[0]}</text>
+          <text x="278" y={35 + i * 38} textAnchor="end" fill="#8b91a3" fontSize="9" fontFamily="JetBrains Mono, monospace">{r[1]}</text>
+        </g>
+      ))}
+    </>, 172);
+  }
+
+  if (v.kind === 'argument') return wrap(<>
+    <rect x="96" y="14" width="128" height="34" rx="8" fill={accent + '33'} stroke={accent} strokeWidth="1.6" />
+    <text x="160" y="36" textAnchor="middle" fill={accent} fontSize="11" fontWeight="700" fontFamily="JetBrains Mono, monospace">CLAIM</text>
+    <line x1="160" y1="48" x2="160" y2="60" stroke="#3a4154" strokeWidth="2" />
+    <line x1="72" y1="60" x2="248" y2="60" stroke="#3a4154" strokeWidth="2" />
+    <line x1="72" y1="60" x2="72" y2="74" stroke="#3a4154" strokeWidth="2" />
+    <line x1="248" y1="60" x2="248" y2="74" stroke="#3a4154" strokeWidth="2" />
+    <rect x="20" y="74" width="104" height="32" rx="7" fill="#161a28" stroke={accent} strokeWidth="1.4" />
+    <text x="72" y="94" textAnchor="middle" fill="#e7e9f0" fontSize="10" fontFamily="JetBrains Mono, monospace">REASON</text>
+    <rect x="196" y="74" width="104" height="32" rx="7" fill="#161a28" stroke={accent} strokeWidth="1.4" />
+    <text x="248" y="94" textAnchor="middle" fill="#e7e9f0" fontSize="10" fontFamily="JetBrains Mono, monospace">EVIDENCE</text>
+    <rect x="86" y="118" width="148" height="30" rx="7" fill="#1b2030" stroke="#5b6275" strokeWidth="1.4" strokeDasharray="4 3" />
+    <text x="160" y="137" textAnchor="middle" fill="#aeb4c4" fontSize="9.5" fontFamily="JetBrains Mono, monospace">COUNTERARGUMENT</text>
+    <text x="160" y="166" textAnchor="middle" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">answer the objection to get stronger</text>
+  </>, 176);
+
+  return null;
+}

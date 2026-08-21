@@ -1,0 +1,168 @@
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Store } from './store.js';
+import { S, Shell, FontAndStyle } from './engine/styles.jsx';
+import { CURRICULUM } from './content/index.js';
+import {
+  levelInfo, todayStr, yesterday, dayKey,
+  XP_CORRECT, XP_BONUS, PRACTICE_XP, DEFAULT_STATE,
+} from './engine/progress.js';
+import {
+  ProfileSelect, Dashboard, SubjectView, LessonView, QuizView, ResultsView,
+  PracticeHub, PracticeSession, PracticeResults,
+} from './engine/views.jsx';
+
+export default function App() {
+  const [db, setDb] = useState(null);          // { profiles: [], lastActive }
+  const [activeId, setActiveId] = useState(null);
+  const [demo, setDemo] = useState(null);      // ephemeral profile — never saved
+  const [view, setView] = useState({ name: 'dash' });
+  const [saveFailed, setSaveFailed] = useState(false);
+  const firstSave = useRef(true);
+
+  useEffect(() => {
+    const d = Store.load();
+    const data = d && Array.isArray(d.profiles) ? d : { profiles: [], lastActive: null };
+    setDb(data);
+    if (data.lastActive && data.profiles.some((p) => p.id === data.lastActive)) setActiveId(data.lastActive);
+  }, []);
+  useEffect(() => {
+    if (!db) return;
+    if (firstSave.current) { firstSave.current = false; return; }
+    if (!Store.save(db)) setSaveFailed(true);
+  }, [db]);
+
+  const profile = demo || (db ? db.profiles.find((p) => p.id === activeId) : null) || null;
+  const lvl = useMemo(() => levelInfo(profile ? profile.xp : 0), [profile]);
+
+  function updateProfile(fn) {
+    if (demo) { setDemo((p) => fn(p)); return; }
+    setDb((d) => ({ ...d, profiles: d.profiles.map((p) => (p.id === activeId ? fn(p) : p)) }));
+  }
+  function createProfile(name) {
+    const prof = { id: 'p' + Date.now().toString(36), ...DEFAULT_STATE, name: name.slice(0, 24) };
+    setDb((d) => ({ profiles: [...d.profiles, prof], lastActive: prof.id }));
+    setActiveId(prof.id); setView({ name: 'dash' });
+  }
+  function pickProfile(id) {
+    setDb((d) => ({ ...d, lastActive: id }));
+    setActiveId(id); setView({ name: 'dash' });
+  }
+  function startDemo() {
+    setDemo({ id: 'demo', ...DEFAULT_STATE, name: 'Demo Explorer' });
+    setView({ name: 'dash' });
+  }
+  function exitToProfiles() {
+    setDemo(null); setActiveId(null); setView({ name: 'dash' });
+    setDb((d) => ({ ...d, lastActive: null }));
+  }
+
+  const isDayDone = (subj, id) => !!profile.completed[dayKey(subj, id)];
+  const isDayUnlocked = (subj, idx) => idx === 0 || isDayDone(subj, CURRICULUM[subj].days[idx - 1].id);
+  function subjStats(subj) {
+    const days = CURRICULUM[subj].days;
+    const done = days.filter((d) => isDayDone(subj, d.id)).length;
+    return { done, total: days.length, pct: days.length ? done / days.length : 0 };
+  }
+  function finishDay(subj, day, correctCount) {
+    const earned = correctCount * XP_CORRECT + XP_BONUS;
+    updateProfile((p) => {
+      const beforeLvl = levelInfo(p.xp).level;
+      const t = todayStr();
+      let count = p.streak.count;
+      if (p.streak.last === t) {} else if (p.streak.last === yesterday()) count += 1; else count = 1;
+      const xp = p.xp + earned;
+      const key = dayKey(subj, day.id);
+      const prevBest = p.completed[key]?.best ?? 0;
+      return {
+        ...p, xp, streak: { count, last: t },
+        completed: { ...p.completed, [key]: { best: Math.max(prevBest, correctCount), total: day.quiz.length } },
+        _leveledTo: levelInfo(xp).level > beforeLvl ? levelInfo(xp).level : null,
+      };
+    });
+    return earned;
+  }
+
+  function finishPractice(drillId, correctCount, bestStreak) {
+    const earned = correctCount * PRACTICE_XP;
+    const key = drillId || 'mixed';
+    updateProfile((p) => {
+      const beforeLvl = levelInfo(p.xp).level;
+      const t = todayStr();
+      let count = p.streak.count;
+      if (p.streak.last === t) {} else if (p.streak.last === yesterday()) count += 1; else count = 1;
+      const xp = p.xp + earned;
+      const pr = p.practice || {};
+      const prev = pr[key] || { runs: 0, bestStreak: 0 };
+      return {
+        ...p, xp, streak: { count, last: t },
+        practice: { ...pr, [key]: { runs: prev.runs + 1, bestStreak: Math.max(prev.bestStreak, bestStreak) } },
+        _leveledTo: levelInfo(xp).level > beforeLvl ? levelInfo(xp).level : null,
+      };
+    });
+    return earned;
+  }
+
+  if (!db) return <Shell><FontAndStyle /><div style={S.loading}>Loading your quest…</div></Shell>;
+  if (!profile) return (
+    <Shell><FontAndStyle />
+      <ProfileSelect profiles={db.profiles} onPick={pickProfile} onCreate={createProfile} onDemo={startDemo} />
+    </Shell>
+  );
+
+  return (
+    <Shell>
+      <FontAndStyle />
+      {saveFailed && (
+        <div style={S.demoBar}>
+          <span>Progress could not be saved. Check that this browser allows site data.</span>
+        </div>
+      )}
+      {demo && (
+        <div style={S.demoBar}>
+          <span>Demo mode — progress will not be saved</span>
+          <button className="lq-tap" style={S.demoExit} onClick={exitToProfiles}>Exit</button>
+        </div>
+      )}
+      {view.name === 'dash' && (
+        <Dashboard lvl={lvl} state={profile} subjStats={subjStats}
+          onOpen={(subj) => setView({ name: 'subject', subj })}
+          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
+          onSetName={(n) => updateProfile((p) => ({ ...p, name: n }))}
+          onPractice={() => setView({ name: 'practice' })}
+          onSwitch={exitToProfiles} isDemo={!!demo} />
+      )}
+      {view.name === 'practice' && (
+        <PracticeHub profile={profile} onBack={() => setView({ name: 'dash' })}
+          onStart={(drillId) => setView({ name: 'psession', drillId })} />
+      )}
+      {view.name === 'psession' && (
+        <PracticeSession drillId={view.drillId} profile={profile}
+          onExit={() => setView({ name: 'practice' })}
+          onDone={(correct, bestStreak) => { const earned = finishPractice(view.drillId, correct, bestStreak); setView({ name: 'presults', correct, earned, bestStreak }); }} />
+      )}
+      {view.name === 'presults' && (
+        <PracticeResults correct={view.correct} earned={view.earned} bestStreak={view.bestStreak}
+          onContinue={() => setView({ name: 'practice' })} />
+      )}
+      {view.name === 'subject' && (
+        <SubjectView subj={view.subj} isDayDone={isDayDone} isDayUnlocked={isDayUnlocked} stats={subjStats(view.subj)}
+          onBack={() => setView({ name: 'dash' })} onDay={(day) => setView({ name: 'lesson', subj: view.subj, day })} />
+      )}
+      {view.name === 'lesson' && (
+        <LessonView subj={view.subj} day={view.day} userName={profile.name}
+          onBack={() => setView({ name: 'subject', subj: view.subj })}
+          onStart={() => setView({ name: 'quiz', subj: view.subj, day: view.day })} />
+      )}
+      {view.name === 'quiz' && (
+        <QuizView subj={view.subj} day={view.day}
+          onExit={() => setView({ name: 'subject', subj: view.subj })}
+          onDone={(correct) => { const earned = finishDay(view.subj, view.day, correct); setView({ name: 'results', subj: view.subj, day: view.day, correct, earned }); }} />
+      )}
+      {view.name === 'results' && (
+        <ResultsView subj={view.subj} day={view.day} correct={view.correct} earned={view.earned} userName={profile.name}
+          leveledTo={profile._leveledTo} onContinue={() => setView({ name: 'subject', subj: view.subj })} />
+      )}
+    </Shell>
+  );
+}
+
