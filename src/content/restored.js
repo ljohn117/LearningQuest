@@ -29,7 +29,7 @@ export const RESTORED = {
         pages: [
           { title: 'What counts as matter', blocks: [
             { type: 'text', text: 'Matter is anything that takes up space and has mass. That covers almost everything you can point at — air included, even though you cannot see it.' },
-            { type: 'concept', term: 'Matter', def: 'Anything with mass that takes up volume. Light and sound are not matter; they are energy moving through it.' },
+            { type: 'concept', term: 'Matter', def: 'Anything with mass that takes up volume. Light and sound are not matter — they are energy, not stuff.' },
           ]},
           { title: 'The states are about spacing', blocks: [
             { type: 'text', text: 'Solid, liquid, gas. The difference is not what the particles are — it is how close together they sit and how freely they move.' },
@@ -431,7 +431,7 @@ export const RESTORED = {
         pages: [
           { title: 'Four layers, wildly different', blocks: [
             { type: 'text', text: 'Crust on the outside — thin and rocky. Then the mantle, hot rock that flows slowly. Then a liquid outer core and a solid inner core of mostly iron.' },
-            { type: 'concept', term: 'Crust', def: 'Earth’s thin outer rock layer. Under the oceans it is only about 5 km thick.' },
+            { type: 'concept', term: 'Crust', def: 'Earth’s thin outer rock layer. Under the oceans it is only about 5 to 10 km thick — under continents, far thicker.' },
           ]},
           { title: 'Nobody has ever been down there', blocks: [
             { type: 'text', text: 'The deepest hole ever drilled barely scratched the crust. Everything we know about the interior comes from watching earthquake waves travel through the planet and change speed.' },
@@ -462,8 +462,8 @@ export const RESTORED = {
         subtitle: 'Day 2 · The ground is moving right now',
         pages: [
           { title: 'The crust is broken into pieces', blocks: [
-            { type: 'text', text: "Earth's outer shell is cracked into plates that drift on the hot rock beneath. They move a few centimetres a year — about the speed your fingernails grow." },
-            { type: 'concept', term: 'Tectonic plate', def: 'A large slab of Earth’s outer shell that moves slowly over the mantle.' },
+            { type: 'text', text: "Earth's outer shell is cracked into plates that drift on the hotter, softer rock beneath. They move a few centimetres a year — about the speed your fingernails grow." },
+            { type: 'concept', term: 'Tectonic plate', def: 'A large slab of Earth’s rigid outer shell that slides slowly over the hotter, softer rock beneath it.' },
           ]},
           { title: 'Three things plates do at their edges', blocks: [
             { type: 'text', text: 'They pull apart, push together, or slide past each other. Nearly every earthquake, volcano and mountain range on Earth sits at one of these boundaries.' },
