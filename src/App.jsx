@@ -93,6 +93,18 @@ export default function App() {
     return earned;
   }
 
+  /* His own read on the difficulty of a day, tapped once on the results
+     screen. Keyed like everything else by subject:dayId, overwritten if he
+     changes his mind, and never required. */
+  function recordCalibration(subj, dayId, level) {
+    updateProfile((p) => {
+      const next = { ...(p.calibration || {}) };
+      if (level) next[dayKey(subj, dayId)] = { level, at: todayStr() };
+      else delete next[dayKey(subj, dayId)];
+      return { ...p, calibration: next };
+    });
+  }
+
   function finishWarmup(results) {
     const earned = results.filter((r) => r.correct).length * REVIEW_XP;
     updateProfile((p) => {
@@ -153,7 +165,7 @@ export default function App() {
       {view.name === 'dash' && (
         <Dashboard lvl={lvl} state={profile} subjStats={subjStats}
           onOpen={(subj) => setView({ name: 'subject', subj })}
-          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, review: {}, writing: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
+          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, review: {}, writing: {}, calibration: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
           onSetName={(n) => updateProfile((p) => ({ ...p, name: n }))}
           onPractice={() => setView({ name: 'practice' })}
           onDaily={() => { sessionStart.current = Date.now(); setView({ name: 'daily' }); }}
@@ -210,6 +222,8 @@ export default function App() {
         <ResultsView subj={view.subj} day={view.day} correct={view.correct} earned={view.earned} userName={profile.name}
           leveledTo={profile._leveledTo}
           sessionMinutes={view.from === 'daily' && sessionStart.current ? (Date.now() - sessionStart.current) / 60000 : 0}
+          rating={profile.calibration?.[dayKey(view.subj, view.day.id)]?.level || null}
+          onRate={(level) => recordCalibration(view.subj, view.day.id, level)}
           onContinue={() => { if (view.from === 'daily') sessionStart.current = null; setView(view.from === 'daily' ? { name: 'dash' } : { name: 'subject', subj: view.subj }); }} />
       )}
     </Shell>

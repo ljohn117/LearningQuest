@@ -22,12 +22,13 @@ function validProfile(p) {
    older schema can't crash a newer read path. */
 function normalize(p) {
   return {
-    xp: 0, completed: {}, practice: {}, review: {}, writing: {}, streak: { count: 0, last: null }, name: '',
+    xp: 0, completed: {}, practice: {}, review: {}, writing: {}, calibration: {}, streak: { count: 0, last: null }, name: '',
     ...p,
     completed: p.completed && typeof p.completed === 'object' ? p.completed : {},
     practice: p.practice && typeof p.practice === 'object' ? p.practice : {},
     review: p.review && typeof p.review === 'object' ? p.review : {},
     writing: p.writing && typeof p.writing === 'object' ? p.writing : {},
+    calibration: p.calibration && typeof p.calibration === 'object' ? p.calibration : {},
     streak: p.streak && typeof p.streak === 'object' ? p.streak : { count: 0, last: null },
   };
 }

@@ -54,20 +54,59 @@ export function availableLessons(profile) {
   return out;
 }
 
-/* Rotate subjects instead of always serving whichever comes first in
-   SUBJECT_ORDER — otherwise math runs dry before biology is ever offered. */
-export function pickLesson(profile) {
-  const avail = availableLessons(profile);
-  if (!avail.length) return null;
-  const done = Object.keys(profile.completed || {}).length;
-  return avail[done % avail.length];
-}
-
 const daysSince = (iso) => {
   if (!iso) return 999;
   const then = new Date(iso + 'T00:00:00'), now = new Date(todayStr() + 'T00:00:00');
   return Math.max(0, Math.round((now - then) / 86400000));
 };
+
+/* A rating steers the rotation for three days and then stops counting.
+ *
+ * Without the expiry a single "rough going" would push a lane down the queue
+ * forever — and since he can only re-rate a lane the app actually serves
+ * him, the lane would have no way back. Three days is long enough for the
+ * warm-up to bring that material round again and short enough that one bad
+ * afternoon does not quietly delete a subject. */
+const RATING_WINDOW_DAYS = 3;
+
+/* His own difficulty rating for the last day he finished in a lane, if he
+   gave one recently. Days are appended in order, so the last rated one is
+   the most recent read on that lane. */
+function laneRating(profile, subj) {
+  const cal = profile.calibration || {};
+  const days = CURRICULUM[subj]?.days || [];
+  for (let i = days.length - 1; i >= 0; i--) {
+    const rec = cal[`${subj}:${days[i].id}`];
+    if (!rec?.level) continue;
+    return daysSince(rec.at) <= RATING_WINDOW_DAYS ? rec.level : null;
+  }
+  return null;
+}
+
+/* Rotate subjects instead of always serving whichever comes first in
+   SUBJECT_ORDER — otherwise math runs dry before biology is ever offered.
+ *
+ * The rotation is then nudged by what he said on the results screen. A lane
+ * he breezed comes round sooner; a lane he found rough waits a turn so the
+ * warm-up can catch up on it first. The nudge is deliberately small — it
+ * reorders, it never locks a lane out, and a lane can only be skipped once
+ * in a row so "rough going" can never strand him.
+ */
+export function pickLesson(profile) {
+  const avail = availableLessons(profile);
+  if (!avail.length) return null;
+  const done = Object.keys(profile.completed || {}).length;
+  const base = done % avail.length;
+
+  const eased = [];
+  for (let i = 0; i < avail.length; i++) {
+    const c = avail[(base + i) % avail.length];
+    const r = laneRating(profile, c.subj);
+    if (r === 'easy') return c;          // he is ready to move — go there now
+    if (r !== 'hard') eased.push(c);     // unrated or "good stretch"
+  }
+  return eased[0] || avail[base];        // everything rough? serve the rotation
+}
 
 /**
  * Warm-up questions from finished days.
@@ -79,6 +118,7 @@ const daysSince = (iso) => {
  */
 export function pickReview(profile, n = WARMUP_SIZE) {
   const seen = profile.review || {};
+  const roughLanes = new Set(SUBJECT_ORDER.filter((s) => laneRating(profile, s) === 'hard'));
   const pool = [];
   for (const { subj, day } of completedDays(profile)) {
     day.quiz.forEach((q, qi) => {
@@ -88,7 +128,10 @@ export function pickReview(profile, n = WARMUP_SIZE) {
       pool.push({
         subj, dayId: day.id, qi, q,
         dayTitle: day.title,
-        score: daysSince(last) + (missed ? 6 : 0),
+        /* A lane he called rough gets its questions back sooner — that is
+           what makes "rough going" produce help rather than just a note in
+           the parent view. */
+        score: daysSince(last) + (missed ? 6 : 0) + (roughLanes.has(subj) ? 4 : 0),
       });
     });
   }

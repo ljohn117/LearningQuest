@@ -375,7 +375,64 @@ export function QuizView({ subj, day, onExit, onDone }) {
 }
 
 /* ---- 12. RESULTS VIEW -------------------------------------------------------------- */
-export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue, sessionMinutes }) {
+/* "How did that land?" — the calibration tap.
+ *
+ * The whole curriculum is pitched at an assumed middle-school band. Nobody
+ * has ever checked that assumption against the actual kid, and the app had
+ * no way to find out. This asks him, once, at the only moment he actually
+ * knows the answer.
+ *
+ * Three framing decisions, all deliberate:
+ *
+ *   1. It rates the LESSON, not him. "Rough going" describes a day of
+ *      material. "Too hard for me" describes a person, and for a kid whose
+ *      whole problem is that he underrates himself, that is the wrong
+ *      sentence to put in his mouth.
+ *   2. It is skippable and never blocks. Continue is always right there.
+ *      A question he can decline is a question he can answer honestly.
+ *   3. Every answer gets a warm, specific reply — including "rough going",
+ *      which is answered as normal and handled, never as a flag.
+ *
+ * The reading is used, not just filed: daily.js moves faster in a lane he
+ * breezed and lets review catch up in one he found rough. */
+const CAL = [
+  { key: 'easy',  glyph: '\u{1F60C}', label: 'Breezed it',   reply: 'Noted. We will aim higher in this one.' },
+  { key: 'right', glyph: '\u{1F4AA}', label: 'Good stretch', reply: 'That is exactly the target. More like that.' },
+  { key: 'hard',  glyph: '\u{1F9D7}', label: 'Rough going',  reply: 'Good to know. Pieces of it come back in a warm-up, and it gets easier.' },
+];
+
+export function Calibration({ accent, value, onRate }) {
+  const picked = CAL.find((c) => c.key === value);
+  return (
+    <div className="lq-rise" style={{ ...S.calBox, animationDelay: '.36s' }}>
+      <div style={{ fontSize: 14.5, color: '#e7e9f0' }}>How did that one land?</div>
+      <div style={{ ...S.muted, fontSize: 12.5, marginTop: 3 }}>
+        {picked ? picked.reply : 'This picks what comes next. There is no wrong answer, and you can skip it.'}
+      </div>
+      <div style={S.calRow}>
+        {CAL.map((c) => {
+          const on = value === c.key;
+          return (
+            <button
+              key={c.key}
+              type="button"
+              className="lq-tap"
+              aria-pressed={on}
+              aria-label={c.label}
+              onClick={() => onRate(on ? null : c.key)}
+              style={{ ...S.calBtn, borderColor: on ? accent : '#2a2f3d', background: on ? accent + '18' : 'transparent', color: on ? '#e7e9f0' : '#aeb4c4' }}
+            >
+              <span style={{ fontSize: 19, lineHeight: 1 }}>{c.glyph}</span>
+              <span style={{ fontSize: 12 }}>{c.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue, sessionMinutes, rating, onRate }) {
   const accent = CURRICULUM[subj].accent;
   const total = day.quiz.length, perfect = correct === total;
   const msg = perfect ? 'Flawless!' : correct >= total - 1 ? 'So close to perfect!' : 'Day complete!';
@@ -392,6 +449,7 @@ export function ResultsView({ subj, day, correct, earned, leveledTo, userName, o
       </p>
       <div className="lq-rise" style={{ ...S.xpBadge, animationDelay: '.2s' }}><Zap size={18} color="#f6b73c" /> <span style={{ ...S.mono, fontSize: 20 }}>+{earned} XP</span></div>
       {leveledTo && <div className="lq-rise" style={{ ...S.levelUp, animationDelay: '.28s' }}><Sparkles size={16} color="#f6b73c" /> Level up! You reached Level {leveledTo}</div>}
+      {onRate && <Calibration accent={accent} value={rating} onRate={onRate} />}
       {/* Research puts a productive session for this age at 10-15 minutes,
           and a nine-year-old should not be the one deciding when to stop.
           Suggested at a clean boundary, never mid-question, and framed as

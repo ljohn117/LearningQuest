@@ -63,12 +63,36 @@ export function ParentView({ profile, onBack }) {
       })
       .sort((a, b) => (b.at || '').localeCompare(a.at || ''));
 
+    /* What he said about difficulty, tapped once at the end of a day.
+       This is the closest thing to a direct answer to the question the whole
+       curriculum has been guessing at: is the level right? */
+    const cal = profile.calibration || {};
+    const calCounts = { easy: 0, right: 0, hard: 0 };
+    const byLane = {};
+    const calRecent = [];
+    for (const [key, rec] of Object.entries(cal)) {
+      if (!rec?.level || !(rec.level in calCounts)) continue;
+      const [subj, dayId] = key.split(':');
+      calCounts[rec.level]++;
+      byLane[subj] = byLane[subj] || { easy: 0, right: 0, hard: 0 };
+      byLane[subj][rec.level]++;
+      const day = CURRICULUM[subj]?.days.find((d) => d.id === dayId);
+      calRecent.push({ key, level: rec.level, at: rec.at, lane: CURRICULUM[subj]?.name, day: day?.title });
+    }
+    calRecent.sort((a, b) => (b.at || '').localeCompare(a.at || ''));
+    const calTotal = calCounts.easy + calCounts.right + calCounts.hard;
+    const calLanes = Object.entries(byLane)
+      .map(([subj, c]) => ({ subj, name: CURRICULUM[subj]?.name || subj, accent: CURRICULUM[subj]?.accent, ...c, n: c.easy + c.right + c.hard }))
+      .filter((l) => l.n >= 2)
+      .sort((a, b) => (b.hard - b.easy) - (a.hard - a.easy));
+
     const reviewed = Object.keys(review).length;
     const drills = Object.entries(profile.practice || {});
     const totalDone = Object.keys(completed).length;
     const totalDays = SUBJECT_ORDER.reduce((n, s) => n + (CURRICULUM[s]?.days.length || 0), 0);
 
-    return { lanes, sticking, writing, reviewed, drills, totalDone, totalDays, overall: accuracy(completed) };
+    return { lanes, sticking, writing, reviewed, drills, totalDone, totalDays, overall: accuracy(completed),
+      calCounts, calTotal, calRecent, calLanes };
   }, [profile]);
 
   const lvl = levelInfo(profile.xp || 0);
@@ -103,6 +127,52 @@ export function ParentView({ profile, onBack }) {
           </div>
         ))}
       </div>
+
+      <div style={S.sectionLabel}>Is the level right?</div>
+      {data.calTotal === 0 ? (
+        <div style={{ ...S.muted, fontSize: 14, lineHeight: 1.6 }}>
+          Nothing rated yet. At the end of each day he is asked how it landed —
+          breezed it, good stretch, or rough going. It is one tap, entirely
+          optional, and it is the only direct read anyone gets on whether the
+          material is pitched correctly. Answers appear here.
+        </div>
+      ) : (
+        <>
+          <div style={{ display: 'flex', gap: 7, marginBottom: 11 }}>
+            {[['easy', 'Breezed it', '#5aa9ff'], ['right', 'Good stretch', '#3ddc97'], ['hard', 'Rough going', '#f6b73c']].map(([k, label, col]) => (
+              <div key={k} style={{ ...S.pCard, flex: 1, textAlign: 'center', padding: '11px 6px' }}>
+                <div style={{ ...S.mono, fontSize: 21, color: col }}>{data.calCounts[k]}</div>
+                <div style={{ ...S.mono, fontSize: 10.5, color: '#8b91a3', marginTop: 3 }}>{label}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ ...S.muted, fontSize: 13.5, lineHeight: 1.6, marginBottom: data.calLanes.length ? 11 : 0 }}>
+            {(() => {
+              const { easy, right, hard } = data.calCounts, n = data.calTotal;
+              if (easy / n > 0.5) return 'He is finding most of this easy. The band is probably set too low — worth pushing the level up.';
+              if (hard / n > 0.4) return 'A lot of this is landing hard. Worth easing off, and worth checking he is not rating himself rather than the material.';
+              if (right / n >= 0.5) return 'Mostly "good stretch", which is exactly where this is meant to sit. No change needed.';
+              return 'Mixed so far. A few more ratings will make the pattern readable.';
+            })()}
+          </div>
+          {data.calLanes.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+              {data.calLanes.map((l) => (
+                <div key={l.subj} style={S.pRow}>
+                  <span style={{ width: 9, height: 9, borderRadius: 5, background: l.accent, flexShrink: 0 }} />
+                  <span style={{ flex: 1, minWidth: 0 }}>{l.name}</span>
+                  <span style={{ ...S.mono, fontSize: 12, color: '#8b91a3' }}>
+                    {l.easy ? `${l.easy} easy ` : ''}{l.right ? `${l.right} right ` : ''}{l.hard ? `${l.hard} hard` : ''}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{ ...S.muted, fontSize: 12.5, marginTop: 10 }}>
+            Most recent: {data.calRecent.slice(0, 3).map((r) => `${r.day} (${r.level === 'right' ? 'good stretch' : r.level === 'easy' ? 'breezed' : 'rough'})`).join(' · ')}
+          </div>
+        </>
+      )}
 
       <div style={S.sectionLabel}>Still sticking</div>
       {data.sticking.length === 0 ? (
