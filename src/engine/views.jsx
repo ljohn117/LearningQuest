@@ -337,6 +337,18 @@ export function Block({ b, accent, delay, writeKey, writing, onWrite }) {
       {b.label && <div style={{ ...S.muted, marginTop: 6, textAlign: 'center' }}>{b.label}</div>}
     </div>
   );
+  /* A number that exists to produce awe, not to be answered.
+     Branch Education's habit: stop and say how astonishing the quantity is.
+     Nothing in a scale block is ever quizzed — the audit enforces that — so
+     it is the one place in the app with genuinely zero stakes attached. */
+  if (b.type === 'scale') return (
+    <div className="lq-rise" style={{ ...S.scaleBox, ...base }}>
+      <div style={S.scaleTag}>NOT ON THE QUIZ</div>
+      <div style={{ ...S.scaleNum, color: accent }}>{b.value}</div>
+      <div style={S.scaleUnit}>{b.unit}</div>
+      <div style={S.scaleNote}>{b.note}</div>
+    </div>
+  );
   if (b.type === 'visual') return <div className="lq-rise" style={base}><Visual v={b} accent={accent} /></div>;
   if (b.type === 'codelab') return <CodeLab b={b} accent={accent} />;
   if (b.type === 'write') return (

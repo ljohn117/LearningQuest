@@ -21,6 +21,7 @@ export const COMPANIONS = {
   physics: { glyph: '⚛️', name: 'Quark',   title: 'the Force-Feeler',   blurb: 'Knows why things fall the way they do.' },
   logic:   { glyph: '🧩', name: 'Syllo',   title: 'the Thread-Puller',  blurb: 'Pulls one loose thread until the whole thing unravels.' },
   earth:   { glyph: '🪐', name: 'Orbit',   title: 'the Sky-Mapper',     blurb: 'Never loses track of which way is up.' },
+  teardown:{ glyph: '\u{1F527}', name: 'Sprocket', title: 'the Lid-Lifter',    blurb: 'Cannot walk past anything without wondering what is inside it.' },
   connect: { glyph: '🧵', name: 'Loom',    title: 'the Link-Finder',    blurb: 'Spots the same idea wearing different clothes.' },
 };
 

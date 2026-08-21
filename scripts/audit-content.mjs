@@ -85,6 +85,19 @@ for (const subj of SUBJECT_ORDER) {
       }
     }
 
+    /* A scale block is labelled "not on the quiz" on screen. That is a
+       promise to the reader, so it is checked rather than trusted: the
+       block's figure must not appear anywhere in the day's questions. */
+    const scaleValues = day.pages.flatMap((p) => p.blocks
+      .filter((b) => b.type === 'scale').map((b) => String(b.value)));
+    const quizText = day.quiz.map((q) =>
+      [q.prompt, q.explain, q.hint, ...(q.choices || [])].join(' ')).join(' ');
+    for (const v of scaleValues) {
+      if (v.length > 2 && quizText.includes(v)) {
+        flag(`${day.id}: scale figure "${v}" is marked "not on the quiz" but appears in a question`);
+      }
+    }
+
     for (const [i, q] of day.quiz.entries()) {
       // a hint should not contain the answer verbatim
       if (q.type === 'mc' && q.hint && q.choices[q.answer]) {
