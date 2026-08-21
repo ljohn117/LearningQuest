@@ -810,7 +810,7 @@ export const CORE = {
             { type: 'text', text: 'Careful — in code, = does not mean "is equal to." It means "put this value into this box." So score = score + 10 is not a strange algebra puzzle; it means "take what is in score, add 10, and put it back."' },
           ]},
           { title: 'Doing math', blocks: [
-            { type: 'concept', term: 'Operators', def: 'The math symbols code uses: + add, − subtract, * multiply, / divide. Note that multiplication is a star, not an × sign.' },
+            { type: 'concept', term: 'Operators', def: 'The math symbols code uses: + add, - subtract, * multiply, / divide. Note that multiplication is a star, not an × sign — and subtraction is a plain hyphen, not a typographic minus.' },
             { type: 'example', text: 'let price = 4; let count = 3; let total = price * count; console.log(total); prints 12. You just wrote the revenue formula from the Business lane as real code.' },
           ]},
           { title: 'Using a variable', blocks: [

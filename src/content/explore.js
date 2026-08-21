@@ -70,7 +70,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'Which part is the cell’s control center?', choices: ['cell wall', 'nucleus', 'membrane', 'mitochondria'], answer: 1, hint: 'It holds the DNA.', explain: 'The nucleus controls the cell.' },
           { type: 'mc', prompt: 'Which part releases usable energy from food?', choices: ['mitochondria', 'nucleus', 'cell wall', 'chloroplast'], answer: 0, hint: 'Known as the powerhouse.', explain: 'Mitochondria release energy.' },
-          { type: 'mc', prompt: 'Which is found in plant cells but NOT animal cells?', choices: ['nucleus', 'membrane', 'mitochondria', 'cell wall'], answer: 3, hint: 'It gives plants stiffness.', explain: 'Only plant cells have a cell wall.' },
+          { type: 'mc', prompt: 'Which is found in plant cells but NOT animal cells?', choices: ['nucleus', 'membrane', 'mitochondria', 'cell wall'], answer: 3, hint: 'It gives plants stiffness.', explain: 'Plant cells have one and animal cells do not. Bacteria and fungi have walls too — animals are the odd ones out here.' },
           { type: 'tf', prompt: 'Cell theory says every cell comes from another cell.', answer: true, hint: 'Cells do not appear from nothing.', explain: 'Yes — cells come from pre-existing cells.' },
         ],
       },
@@ -646,10 +646,10 @@ export const EXPLORE = {
             { type: 'visual', kind: 'supplydemand' },
           ]},
           { title: 'The demand rule', blocks: [
-            { type: 'concept', term: 'Demand', def: 'How much of something buyers want at a given price. Lower price usually means MORE demand — bargains attract crowds.' },
+            { type: 'concept', term: 'Demand', def: 'How much buyers want at each possible price. Drop the price and the quantity people will buy goes up — bargains attract crowds.' },
           ]},
           { title: 'The supply rule', blocks: [
-            { type: 'concept', term: 'Supply', def: 'How much of something sellers are willing to offer. Higher price usually means MORE supply — profit attracts sellers.' },
+            { type: 'concept', term: 'Supply', def: 'How much sellers will offer at each possible price. Raise the price and the quantity they will produce goes up — profit attracts sellers.' },
             { type: 'text', text: 'The price where supply exactly matches demand is the equilibrium — the natural resting point where the market is balanced.' },
           ]},
           { title: 'When it is off balance', blocks: [
@@ -663,7 +663,7 @@ export const EXPLORE = {
           'Equilibrium is where supply meets demand — the natural price.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'When the price drops, demand usually:', choices: ['falls', 'disappears', 'stays frozen', 'rises'], answer: 3, hint: 'Bargains attract buyers.', explain: 'Lower price, more demand.' },
+          { type: 'mc', prompt: 'When the price drops, demand usually:', choices: ['falls', 'disappears', 'stays frozen', 'rises'], answer: 3, hint: 'Bargains attract buyers.', explain: 'Lower price, more of it bought.' },
           { type: 'mc', prompt: 'The price where supply meets demand is the:', choices: ['surplus', 'equilibrium price', 'opportunity cost', 'profit'], answer: 1, hint: 'The balance point.', explain: 'That is the equilibrium price.' },
           { type: 'tf', prompt: 'Higher prices usually encourage LESS supply.', answer: false, hint: 'Profit attracts sellers.', explain: 'Higher prices make selling more profitable, so suppliers produce more.' },
           { type: 'mc', prompt: 'Too few goods for too many buyers is a:', choices: ['shortage', 'surplus', 'profit', 'tax'], answer: 0, hint: 'Demand outruns supply.', explain: 'That is a shortage.' },
@@ -1035,7 +1035,7 @@ export const EXPLORE = {
             { type: 'text', text: 'Skin, muscle, and organs decay away. The hard parts — bones, teeth, shells — last far longer. That is why almost all fossils are of hard structures.' },
           ]},
           { title: 'Turning bone to stone', blocks: [
-            { type: 'concept', term: 'Permineralization', def: 'Over thousands of years, mineral-rich water seeps into the buried bone and slowly replaces it with stone — copying its shape in rock.' },
+            { type: 'concept', term: 'Permineralization', def: 'Over thousands of years, mineral-rich water seeps into the buried bone and fills every tiny space inside it with stone, hardening the original into rock.' },
             { type: 'example', text: 'Meanwhile the sediment above presses down, hardening into solid rock around the fossil. Bury, replace, compress — repeated over deep time, this preserves a creature for millions of years.' },
           ]},
           { title: 'Why it stays rare', blocks: [
@@ -1094,7 +1094,7 @@ export const EXPLORE = {
           ]},
           { title: 'The atomic clock', blocks: [
             { type: 'concept', term: 'Absolute dating', def: 'Finding an actual age in years by measuring radioactive decay — atoms breaking down at a steady, known rate.' },
-            { type: 'concept', term: 'Half-life', def: 'The time it takes for HALF of a radioactive material to decay. It is always the same for a given element.' },
+            { type: 'concept', term: 'Half-life', def: 'The time it takes for HALF of a radioactive material to decay. It never changes for a given isotope — and different isotopes of the same element can have wildly different half-lives.' },
           ]},
           { title: 'Halving, again and again', blocks: [
             { type: 'example', text: 'After one half-life, half the material remains. After two, half of that — a quarter. After three, an eighth. That repeated halving (1/2, 1/4, 1/8) is exponential decay — the flip side of your Math exponents.' },
