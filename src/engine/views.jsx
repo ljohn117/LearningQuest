@@ -4,6 +4,7 @@ import { S } from './styles.jsx';
 import { Visual } from './Visual.jsx';
 import { Question } from './Question.jsx';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
+import { KEY as STORE_KEY, SCHEMA_VERSION } from '../store.js';
 import { RANKS, levelInfo, todayStr, yesterday, dayKey, XP_CORRECT, XP_BONUS, PRACTICE_XP } from './progress.js';
 
 export function ProfileSelect({ profiles, onPick, onCreate, onDemo }) {
@@ -170,15 +171,13 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
 export function BackupPanel({ onClose }) {
   const [txt, setTxt] = useState('Reading...');
   const ta = useRef(null);
-  useEffect(() => { (async () => {
-    let raw = null;
-    try {
-      raw = (typeof window !== 'undefined' && window.storage && window.storage.get)
-        ? ((await window.storage.get(PROFILES_KEY, false)) || {}).value
-        : localStorage.getItem(PROFILES_KEY);
-    } catch {}
+  useEffect(() => { (() => {
+    let raw = null, failed = null;
+    try { raw = localStorage.getItem(STORE_KEY); }
+    catch (e) { failed = e.message; }
+    if (failed) { setTxt('Could not read saved progress: ' + failed); return; }
     setTxt(raw
-      ? JSON.stringify({ lqBackup: 1, app: APP_ID, key: PROFILES_KEY, at: new Date().toISOString(), data: JSON.parse(raw) })
+      ? JSON.stringify({ lqBackup: 1, version: SCHEMA_VERSION, key: STORE_KEY, at: new Date().toISOString(), data: JSON.parse(raw) })
       : 'No saved progress found.');
   })(); }, []);
   let days = null;
@@ -437,31 +436,66 @@ export function BackBar({ onBack }) { return <button className="lq-tap" style={{
 
 const MAX_STEPS = 200000;
 
-/** Inject a step counter into the body of every braced loop. */
+/** Inject a step counter into the body of every braced loop.
+ *
+ * Scans character by character so `for (` and `while (` inside a string or
+ * comment are ignored, and tracks open `do` blocks so the trailing
+ * `while (...)` of a do-while is not mistaken for an unguarded loop. The
+ * earlier version sniffed the last emitted character for `}`, which let
+ * `for (...) {}` followed by an unbraced `while` slip through unguarded —
+ * re-opening the tab hang this exists to prevent. */
 function instrument(src) {
   let out = '', i = 0, unbraced = false;
+  const doStack = [];        // brace depths at which a `do` block opened
+  let depth = 0, lastDoClose = -1;
+
+  const atCode = (j) => {    // is index j outside any string or comment?
+    let q = null, line = false, block = false;
+    for (let k = 0; k < j; k++) {
+      const c = src[k], n = src[k + 1], p = src[k - 1];
+      if (line) { if (c === '\n') line = false; continue; }
+      if (block) { if (c === '*' && n === '/') { block = false; k++; } continue; }
+      if (q) { if (c === q && p !== '\\') q = null; continue; }
+      if (c === '/' && n === '/') { line = true; k++; continue; }
+      if (c === '/' && n === '*') { block = true; k++; continue; }
+      if (c === '"' || c === "'" || c === '`') q = c;
+    }
+    return !q && !line && !block;
+  };
+
   while (i < src.length) {
+    if (src[i] === '{') depth++;
+    if (src[i] === '}') {
+      depth--;
+      if (doStack.length && doStack[doStack.length - 1] === depth) { doStack.pop(); lastDoClose = i; }
+    }
+
     const rest = src.slice(i);
     const m = rest.match(/^\b(for|while)\s*\(/);
-    if (m) {
-      // walk to the matching close paren
-      let depth = 0, j = i + m[0].length - 1;
+    if (m && atCode(i)) {
+      // walk to the matching close paren, ignoring parens inside strings
+      let d = 0, j = i + m[0].length - 1;
       for (; j < src.length; j++) {
-        if (src[j] === '(') depth++;
-        else if (src[j] === ')') { depth--; if (!depth) break; }
+        if (!atCode(j)) continue;
+        if (src[j] === '(') d++;
+        else if (src[j] === ')') { d--; if (!d) break; }
       }
       const head = src.slice(i, j + 1);
       let k = j + 1;
       while (k < src.length && /\s/.test(src[k])) k++;
-      if (src[k] === '{') { out += head + src.slice(j + 1, k + 1) + '__tick();'; i = k + 1; continue; }
-      // the trailing `while (...)` of a do-while needs no body of its own —
-      // the `do {` branch below already injected the counter
-      const isDoTail = m[1] === 'while' && /\}\s*$/.test(out);
-      if (!isDoTail) unbraced = true;        // `for (...) doThing();`
+      if (src[k] === '{') { out += head + src.slice(j + 1, k + 1) + '__tick();'; depth++; i = k + 1; continue; }
+      /* The tail of a do-while needs no body of its own — the `do {` branch
+         already injected the counter. It qualifies only when nothing but
+         whitespace separates it from the `}` that closed that do block. */
+      const isDoTail = m[1] === 'while' && lastDoClose >= 0
+        && src.slice(lastDoClose + 1, i).trim() === '';
+      if (!isDoTail) unbraced = true;
       out += head; i = j + 1; continue;
     }
-    const d = rest.match(/^\bdo\s*\{/);
-    if (d) { out += d[0] + '__tick();'; i += d[0].length; continue; }
+
+    const d2 = rest.match(/^\bdo\s*\{/);
+    if (d2 && atCode(i)) { doStack.push(depth); out += d2[0] + '__tick();'; depth++; i += d2[0].length; continue; }
+
     out += src[i]; i++;
   }
   return { code: out, unbraced };

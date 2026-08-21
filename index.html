@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Learning Quest</title>
+    <style>
+      /* Mirrors scripts/build-singlefile.mjs. The dev and production builds
+         are the documented path, and without this they shipped no
+         reduced-motion handling and no explicit page ground. */
+      html, body { margin: 0; padding: 0; background: #0c0e16; color: #e7e9f0; }
+      #root { min-height: 100vh; }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: .01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: .01ms !important;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

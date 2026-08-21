@@ -96,10 +96,15 @@ export default function App() {
   function finishWarmup(results) {
     const earned = results.filter((r) => r.correct).length * REVIEW_XP;
     updateProfile((p) => {
+      const beforeLvl = levelInfo(p.xp).level;
       const t = todayStr();
       let count = p.streak.count;
       if (p.streak.last === t) {} else if (p.streak.last === yesterday()) count += 1; else count = 1;
-      return { ...p, xp: p.xp + earned, streak: { count, last: t }, review: recordReview(p, results) };
+      const xp = p.xp + earned;
+      return {
+        ...p, xp, streak: { count, last: t }, review: recordReview(p, results),
+        _leveledTo: levelInfo(xp).level > beforeLvl ? levelInfo(xp).level : null,
+      };
     });
     return earned;
   }
@@ -148,7 +153,7 @@ export default function App() {
       {view.name === 'dash' && (
         <Dashboard lvl={lvl} state={profile} subjStats={subjStats}
           onOpen={(subj) => setView({ name: 'subject', subj })}
-          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
+          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, review: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
           onSetName={(n) => updateProfile((p) => ({ ...p, name: n }))}
           onPractice={() => setView({ name: 'practice' })}
           onDaily={() => { sessionStart.current = Date.now(); setView({ name: 'daily' }); }}

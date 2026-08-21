@@ -55,7 +55,7 @@ export function DuelIntro({ profile, onBack, onStart }) {
 
       {companions.length > 0 && (
         <div className="lq-rise" style={{ ...S.companionRow, animationDelay: '.04s' }}>
-          {companions.map((c) => (
+          {companions.filter((c) => COMPANIONS[c]).map((c) => (
             <div key={c} style={S.companionChip} title={`${COMPANIONS[c].name} — ${COMPANIONS[c].title}`}>
               <span style={{ fontSize: 19 }}>{COMPANIONS[c].glyph}</span>
               <span style={{ fontSize: 12.5, color: '#aeb4c4' }}>{COMPANIONS[c].name}</span>
@@ -98,7 +98,7 @@ export function DuelSession({ drillId, profile, onExit, onDone }) {
   const guardian = useMemo(() => GUARDIANS[rnd(0, GUARDIANS.length - 1)], []);
   const ally = useMemo(() => {
     const earned = earnedCompanions(profile, CURRICULUM, SUBJECT_ORDER);
-    return COMPANIONS[earned[0] || 'math'];
+    return COMPANIONS[earned.find((c) => COMPANIONS[c])] || COMPANIONS.math;
   }, [profile]);
 
   const [hp, setHp] = useState(HP);

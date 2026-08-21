@@ -66,8 +66,13 @@ for (;;) {
 
   seen++;
   const oldIdx = Number(m[1]);
-  // send this answer to whichever slot is currently least used
-  const target = counts.indexOf(Math.min(...counts));
+  /* Send this answer to a least-used slot, chosen at random among ties.
+     Taking the first minimum every time produces a strict 0,1,2,3 cycle —
+     which is just as learnable as putting everything at index 0, and was
+     exactly the failure this script exists to prevent. */
+  const min = Math.min(...counts);
+  const candidates = counts.map((c, i) => (c === min ? i : -1)).filter((i) => i >= 0);
+  const target = candidates[Math.floor(Math.random() * candidates.length)];
   const shift = (target - oldIdx + 4) % 4;
   const rotated = items.map((_, i) => items[(i - shift + 4) % 4]);
   counts[target]++;
@@ -82,5 +87,12 @@ out += src.slice(cursor);
 
 console.log(`${seen} multiple-choice questions · ${changed} rotated`);
 console.log(`distribution now: idx0=${counts[0]} idx1=${counts[1]} idx2=${counts[2]} idx3=${counts[3]}`);
+{
+  const seq = [...out.matchAll(/choices: \[[^\]]*\], answer: (\d)/g)].map((x) => Number(x[1]));
+  let plus1 = 0;
+  for (let i = 1; i < seq.length; i++) if (seq[i] === (seq[i - 1] + 1) % 4) plus1++;
+  const pct = seq.length > 1 ? Math.round((100 * plus1) / (seq.length - 1)) : 0;
+  console.log(`consecutive +1 mod 4: ${pct}% (random baseline ~25%)`);
+}
 if (write) { writeFileSync(file, out); console.log('written'); }
 else console.log('(dry run — pass --write to apply)');

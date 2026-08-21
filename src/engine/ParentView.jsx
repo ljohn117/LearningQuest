@@ -14,6 +14,9 @@ import { levelInfo } from './progress.js';
  * Everything here is derived from data the app already stores. Nothing is
  * sent anywhere; there is no network call in this file or any other. */
 
+/* Uses each day's `best` score, which is the highest across every attempt --
+   days stay replayable, so this is not a first-attempt figure and must not be
+   labelled as one. */
 function accuracy(completed) {
   let best = 0, total = 0;
   for (const v of Object.values(completed || {})) { best += v.best || 0; total += v.total || 0; }
@@ -67,7 +70,7 @@ export function ParentView({ profile, onBack }) {
         <h1 style={S.h1}>{profile.name}'s progress</h1>
         <div style={S.muted}>
           {data.totalDone} of {data.totalDays} days · {profile.xp || 0} XP · {lvl.rank}
-          {data.overall.pct !== null && ` · ${data.overall.pct}% on first attempts`}
+          {data.overall.pct !== null && ` · ${data.overall.pct}% best score`}
         </div>
       </div>
 

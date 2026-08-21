@@ -20,6 +20,7 @@ export const COMPANIONS = {
   physics: { glyph: '⚛️', name: 'Quark',   title: 'the Force-Feeler',   blurb: 'Knows why things fall the way they do.' },
   logic:   { glyph: '🧩', name: 'Syllo',   title: 'the Thread-Puller',  blurb: 'Pulls one loose thread until the whole thing unravels.' },
   earth:   { glyph: '🪐', name: 'Orbit',   title: 'the Sky-Mapper',     blurb: 'Never loses track of which way is up.' },
+  connect: { glyph: '🧵', name: 'Loom',    title: 'the Link-Finder',    blurb: 'Spots the same idea wearing different clothes.' },
 };
 
 /* Guardians face you in a duel. They aren't enemies exactly — they're the

@@ -20,7 +20,9 @@ export function levelInfo(xp) {
   const isMax = !next;
   const nextAt = isMax ? cur.xp + 700 : next.xp;
   const span = nextAt - cur.xp;
-  return { level: i + 1, rank: cur.name, pct: span > 0 ? Math.min(100, ((xp - cur.xp) / span) * 100) : 100, nextAt, isMax };
+  /* pct is a 0-1 fraction, matching every other producer the Bar component
+     consumes. Returning 0-100 here made the dashboard XP bar 100x too wide. */
+  return { level: i + 1, rank: cur.name, pct: span > 0 ? Math.min(1, (xp - cur.xp) / span) : 1, nextAt, isMax };
 }
 
 /* Local calendar date as YYYY-MM-DD (no UTC shift). */

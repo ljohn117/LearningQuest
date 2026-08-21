@@ -25,9 +25,16 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
   }
   const ok = revealed && isCorrect();
 
-  /* Enter submits, then advances — the prototype only wired the first half
-     on the lesson quiz, so the keyboard dead-ended after every answer. */
-  const onKey = (e) => { if (e.key === 'Enter') (revealed ? onNext(ok) : submit()); };
+  /* Enter submits, then advances. This lives on the wrapper rather than the
+     numeric input: the input carries disabled={revealed}, and a disabled
+     input neither holds focus nor fires key events, so binding it there
+     made the advance half unreachable — and left multiple-choice and
+     true/false questions with no Enter handling at all. */
+  const onKey = (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    if (revealed) onNext(ok); else submit();
+  };
 
   const swatch = (isPick, isAns) => {
     if (revealed && isAns) return { borderColor: '#3ddc97', background: '#3ddc9722' };
@@ -37,7 +44,7 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
   };
 
   return (
-    <div>
+    <div onKeyDown={onKey}>
       {eyebrow && <div style={{ ...S.eyebrow, color: accent }}>{eyebrow}</div>}
       <h2 style={S.qPrompt}>{q.prompt}</h2>
 
@@ -63,9 +70,12 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
         </div>
       )}
 
+      {/* inputMode="text" rather than "decimal": the iOS decimal keypad has no
+          minus key, and math m8 answers -3. type="number" keeps desktop
+          steppers and numeric validation. */}
       {q.type === 'numeric' && (
-        <input type="number" inputMode="decimal" value={num} disabled={revealed} autoFocus
-          onChange={(e) => setNum(e.target.value)} onKeyDown={onKey}
+        <input type="number" inputMode="text" value={num} disabled={revealed} autoFocus
+          onChange={(e) => setNum(e.target.value)}
           placeholder="Type your answer" aria-label="Your answer"
           style={{ ...S.numInput, borderColor: revealed ? (ok ? '#3ddc97' : '#ff6b6b') : accent + '88' }} />
       )}
