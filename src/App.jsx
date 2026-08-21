@@ -21,6 +21,7 @@ export default function App() {
   const [view, setView] = useState({ name: 'dash' });
   const [saveFailed, setSaveFailed] = useState(false);
   const firstSave = useRef(true);
+  const sessionStart = useRef(null);   // set when a daily session begins
 
   useEffect(() => {
     const d = Store.load();
@@ -150,7 +151,7 @@ export default function App() {
           onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
           onSetName={(n) => updateProfile((p) => ({ ...p, name: n }))}
           onPractice={() => setView({ name: 'practice' })}
-          onDaily={() => setView({ name: 'daily' })}
+          onDaily={() => { sessionStart.current = Date.now(); setView({ name: 'daily' }); }}
           onParent={() => setView({ name: 'parent' })}
           onSwitch={exitToProfiles} isDemo={!!demo} />
       )}
@@ -200,7 +201,9 @@ export default function App() {
       )}
       {view.name === 'results' && (
         <ResultsView subj={view.subj} day={view.day} correct={view.correct} earned={view.earned} userName={profile.name}
-          leveledTo={profile._leveledTo} onContinue={() => setView(view.from === 'daily' ? { name: 'dash' } : { name: 'subject', subj: view.subj })} />
+          leveledTo={profile._leveledTo}
+          sessionMinutes={view.from === 'daily' && sessionStart.current ? (Date.now() - sessionStart.current) / 60000 : 0}
+          onContinue={() => { if (view.from === 'daily') sessionStart.current = null; setView(view.from === 'daily' ? { name: 'dash' } : { name: 'subject', subj: view.subj }); }} />
       )}
     </Shell>
   );

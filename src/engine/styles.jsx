@@ -81,6 +81,7 @@ export const S = {
   cardBtn: { font: 'inherit', color: 'inherit', textAlign: 'left', width: '100%', appearance: 'none', WebkitAppearance: 'none' },
   pRow: { display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', background: '#12151f', border: '1px solid #1e2331', borderRadius: 10, fontSize: 14.5 },
   pCard: { background: '#12151f', border: '1px solid #262c3d', borderRadius: 11, padding: '10px 12px' },
+  stopNote: { marginTop: 22, background: '#12151f', border: '1px solid #262c3d', borderRadius: 13, padding: '12px 15px', fontSize: 14, color: '#aeb4c4', lineHeight: 1.55, maxWidth: 340, marginLeft: 'auto', marginRight: 'auto' },
   confirmRow: { display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
   backupBox: { marginTop: 18, background: '#12151f', border: '1px solid #262c3d', borderRadius: 14, padding: 14, textAlign: 'left' },
   backupTa: { width: '100%', height: 90, margin: '9px 0', background: '#0c0e16', color: '#8b91a3', border: '1px solid #2a2f3d', borderRadius: 9, padding: 9, fontSize: 11, fontFamily: "'JetBrains Mono', monospace", outline: 'none', boxSizing: 'border-box' },

@@ -367,7 +367,7 @@ export function QuizView({ subj, day, onExit, onDone }) {
 }
 
 /* ---- 12. RESULTS VIEW -------------------------------------------------------------- */
-export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue }) {
+export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue, sessionMinutes }) {
   const accent = CURRICULUM[subj].accent;
   const total = day.quiz.length, perfect = correct === total;
   const msg = perfect ? 'Flawless!' : correct >= total - 1 ? 'So close to perfect!' : 'Day complete!';
@@ -384,7 +384,19 @@ export function ResultsView({ subj, day, correct, earned, leveledTo, userName, o
       </p>
       <div className="lq-rise" style={{ ...S.xpBadge, animationDelay: '.2s' }}><Zap size={18} color="#f6b73c" /> <span style={{ ...S.mono, fontSize: 20 }}>+{earned} XP</span></div>
       {leveledTo && <div className="lq-rise" style={{ ...S.levelUp, animationDelay: '.28s' }}><Sparkles size={16} color="#f6b73c" /> Level up! You reached Level {leveledTo}</div>}
-      <div><button className="lq-tap" style={{ ...S.primaryBtn, background: accent, marginTop: 26, maxWidth: 260, marginLeft: 'auto', marginRight: 'auto' }} onClick={onContinue}>Continue <ChevronRight size={18} /></button></div>
+      {/* Research puts a productive session for this age at 10-15 minutes,
+          and a nine-year-old should not be the one deciding when to stop.
+          Suggested at a clean boundary, never mid-question, and framed as
+          finishing rather than being cut off. */}
+      {sessionMinutes >= 12 && (
+        <div className="lq-rise" style={{ ...S.stopNote, animationDelay: '.32s' }}>
+          That is about {Math.round(sessionMinutes)} minutes today — a good place to stop.
+          Coming back tomorrow works better than pushing on.
+        </div>
+      )}
+      <div><button className="lq-tap" style={{ ...S.primaryBtn, background: accent, marginTop: sessionMinutes >= 12 ? 14 : 26, maxWidth: 260, marginLeft: 'auto', marginRight: 'auto' }} onClick={onContinue}>
+        {sessionMinutes >= 12 ? 'Done for today' : <>Continue <ChevronRight size={18} /></>}
+      </button></div>
     </div>
   );
 }
