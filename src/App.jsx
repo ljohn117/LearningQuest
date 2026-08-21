@@ -11,6 +11,7 @@ import {
 } from './engine/views.jsx';
 import { DailyPlan, WarmupSession, WarmupDone } from './engine/DailyQuest.jsx';
 import { DuelIntro, DuelSession, DuelWon } from './engine/Duel.jsx';
+import { ParentView } from './engine/ParentView.jsx';
 import { recordReview, REVIEW_XP, pickLesson } from './engine/daily.js';
 
 export default function App() {
@@ -150,7 +151,11 @@ export default function App() {
           onSetName={(n) => updateProfile((p) => ({ ...p, name: n }))}
           onPractice={() => setView({ name: 'practice' })}
           onDaily={() => setView({ name: 'daily' })}
+          onParent={() => setView({ name: 'parent' })}
           onSwitch={exitToProfiles} isDemo={!!demo} />
+      )}
+      {view.name === 'parent' && (
+        <ParentView profile={profile} onBack={() => setView({ name: 'dash' })} />
       )}
       {view.name === 'daily' && (
         <DailyPlan profile={profile} onBack={() => setView({ name: 'dash' })}

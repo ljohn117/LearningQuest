@@ -66,7 +66,7 @@ export function ProfileSelect({ profiles, onPick, onCreate, onDemo }) {
 }
 
 /* ---- 8. DASHBOARD ------------------------------------------------------------ */
-export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onReset, onSetName, onSwitch, isDemo }) {
+export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onReset, onSetName, onSwitch, isDemo }) {
   const [confirm, setConfirm] = useState(false);
   const [editing, setEditing] = useState(false);
   const [backing, setBacking] = useState(false);
@@ -147,6 +147,7 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
           <div style={S.confirmRow}>
             <button className="lq-tap" style={S.ghostBtn} onClick={onSwitch}><Users size={13} /> Switch explorer</button>
             {!isDemo && <button className="lq-tap" style={S.ghostBtn} onClick={() => setEditing(true)}>Change name</button>}
+            <button className="lq-tap" style={S.ghostBtn} onClick={onParent}>For parents</button>
             <button className="lq-tap" style={S.ghostBtn} onClick={() => setBacking(true)}>Back up</button>
             <button className="lq-tap" style={S.ghostBtn} onClick={() => setConfirm(true)}><RotateCcw size={13} /> Reset progress</button>
           </div>
