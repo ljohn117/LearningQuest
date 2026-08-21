@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "smoke": "node scripts/smoke.mjs",
-    "validate": "node scripts/validate-content.mjs"
+    "validate": "node scripts/validate-content.mjs",
+    "audit": "node scripts/audit-content.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.460.0",
