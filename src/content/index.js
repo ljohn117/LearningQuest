@@ -7,7 +7,7 @@ import { TEARDOWNS } from './teardowns.js';
 import { ELA_EXTRA, BIO_EXTRA } from './depth.js';
 import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
 import { CHECKPOINTS } from './checkpoints.js';
-import { SPIRAL, WRITING } from './spiral.js';
+import { SPIRAL, WRITING, SCALE } from './spiral.js';
 
 /* Merged curriculum. Subject keys are distinct across all sources and every
    day id is unique, so the merge cannot collide.
@@ -33,9 +33,11 @@ for (const lane of Object.values(merged)) {
   lane.days = lane.days.map((day) => {
     const note = SPIRAL[day.id];
     const write = WRITING[day.id];
-    if (!note && !write) return day;
+    const awe = SCALE[day.id];
+    if (!note && !write && !awe) return day;
     const extra = [
       ...(note ? [{ type: 'callout', text: note }] : []),
+      ...(awe ? [{ type: 'scale', ...awe }] : []),
       ...(write ? [{ type: 'write', ...write }] : []),
     ];
     const pages = day.pages.map((p, i) =>

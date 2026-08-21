@@ -12,6 +12,7 @@ import {
 import { DailyPlan, WarmupSession, WarmupDone } from './engine/DailyQuest.jsx';
 import { DuelIntro, DuelSession, DuelWon } from './engine/Duel.jsx';
 import { ParentView } from './engine/ParentView.jsx';
+import { LadderView } from './engine/Ladder.jsx';
 import { recordReview, REVIEW_XP, pickLesson } from './engine/daily.js';
 
 export default function App() {
@@ -170,7 +171,16 @@ export default function App() {
           onPractice={() => setView({ name: 'practice' })}
           onDaily={() => { sessionStart.current = Date.now(); setView({ name: 'daily' }); }}
           onParent={() => setView({ name: 'parent' })}
+          onLadder={() => setView({ name: 'ladder' })}
           onSwitch={exitToProfiles} isDemo={!!demo} />
+      )}
+      {view.name === 'ladder' && (
+        <LadderView profile={profile}
+          onBack={() => setView({ name: 'dash' })}
+          onOpenDay={(subj, dayId) => {
+            const day = CURRICULUM[subj]?.days.find((d) => d.id === dayId);
+            if (day) setView({ name: 'lesson', subj, day, from: 'ladder' });
+          }} />
       )}
       {view.name === 'parent' && (
         <ParentView profile={profile} onBack={() => setView({ name: 'dash' })} />
@@ -210,12 +220,12 @@ export default function App() {
         <LessonView subj={view.subj} day={view.day} userName={profile.name}
           writing={profile.writing}
           onWrite={(key, v) => updateProfile((p) => ({ ...p, writing: { ...(p.writing || {}), [key]: { ...v, at: todayStr() } } }))}
-          onBack={() => setView(view.from === 'daily' ? { name: 'dash' } : { name: 'subject', subj: view.subj })}
+          onBack={() => setView(view.from === 'daily' ? { name: 'dash' } : view.from === 'ladder' ? { name: 'ladder' } : { name: 'subject', subj: view.subj })}
           onStart={() => setView({ name: 'quiz', subj: view.subj, day: view.day, from: view.from })} />
       )}
       {view.name === 'quiz' && (
         <QuizView subj={view.subj} day={view.day}
-          onExit={() => setView({ name: 'subject', subj: view.subj })}
+          onExit={() => setView(view.from === 'ladder' ? { name: 'ladder' } : { name: 'subject', subj: view.subj })}
           onDone={(correct) => { const earned = finishDay(view.subj, view.day, correct); setView({ name: 'results', subj: view.subj, day: view.day, correct, earned, from: view.from }); }} />
       )}
       {view.name === 'results' && (
@@ -224,7 +234,7 @@ export default function App() {
           sessionMinutes={view.from === 'daily' && sessionStart.current ? (Date.now() - sessionStart.current) / 60000 : 0}
           rating={profile.calibration?.[dayKey(view.subj, view.day.id)]?.level || null}
           onRate={(level) => recordCalibration(view.subj, view.day.id, level)}
-          onContinue={() => { if (view.from === 'daily') sessionStart.current = null; setView(view.from === 'daily' ? { name: 'dash' } : { name: 'subject', subj: view.subj }); }} />
+          onContinue={() => { if (view.from === 'daily') sessionStart.current = null; setView(view.from === 'daily' ? { name: 'dash' } : view.from === 'ladder' ? { name: 'ladder' } : { name: 'subject', subj: view.subj }); }} />
       )}
     </Shell>
   );

@@ -16,7 +16,7 @@ export function DailyPlan({ profile, onBack, onWarmup, onLesson }) {
     const l = s.lesson;
     return (
       <div>
-        <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack}>
+        <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack} aria-label="Back">
           <ArrowLeft size={18} color="#aeb4c4" />
         </button>
         <div className="lq-rise">
@@ -36,7 +36,7 @@ export function DailyPlan({ profile, onBack, onWarmup, onLesson }) {
 
   return (
     <div>
-      <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack}>
+      <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack} aria-label="Back">
         <ArrowLeft size={18} color="#aeb4c4" />
       </button>
 
@@ -105,7 +105,7 @@ export function WarmupSession({ items, onDone, onExit }) {
   return (
     <div>
       <div style={S.quizTop}>
-        <button className="lq-tap" style={S.iconBtn} onClick={onExit}>
+        <button className="lq-tap" style={S.iconBtn} onClick={onExit} aria-label="Leave warm-up">
           <ArrowLeft size={18} color="#aeb4c4" />
         </button>
         <div style={{ flex: 1 }}><Bar pct={i / items.length} accent="#5aa9ff" thin /></div>

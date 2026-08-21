@@ -39,7 +39,7 @@ export function DuelIntro({ profile, onBack, onStart }) {
 
   return (
     <div>
-      <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack}>
+      <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack} aria-label="Back">
         <ArrowLeft size={18} color="#aeb4c4" />
       </button>
 
@@ -142,7 +142,7 @@ export function DuelSession({ drillId, profile, onExit, onDone }) {
   return (
     <div>
       <div style={S.quizTop}>
-        <button className="lq-tap" style={S.iconBtn} onClick={onExit}>
+        <button className="lq-tap" style={S.iconBtn} onClick={onExit} aria-label="Leave duel">
           <ArrowLeft size={18} color="#aeb4c4" />
         </button>
         <div style={{ flex: 1 }}><Bar pct={(HP - hp) / HP} accent="#ff9f5a" thin /></div>

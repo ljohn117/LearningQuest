@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Shuffle, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
+import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
 import { S } from './styles.jsx';
 import { Visual } from './Visual.jsx';
 import { Question } from './Question.jsx';
@@ -68,7 +68,7 @@ export function ProfileSelect({ profiles, onPick, onCreate, onDemo }) {
 }
 
 /* ---- 8. DASHBOARD ------------------------------------------------------------ */
-export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onReset, onSetName, onSwitch, isDemo }) {
+export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onLadder, onReset, onSetName, onSwitch, isDemo }) {
   const [confirm, setConfirm] = useState(false);
   const [editing, setEditing] = useState(false);
   const [backing, setBacking] = useState(false);
@@ -126,6 +126,17 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
           );
         })}
       </div>
+
+      <div style={S.sectionLabel}>The ladder</div>
+      <button type="button" className="lq-rise lq-tap lq-card" aria-label="The ladder — everything you have learned, arranged by size and by time"
+        style={{ ...S.cardBtn, ...S.subjCard, borderColor: '#7dd3fc55' }} onClick={onLadder}>
+        <div style={{ ...S.subjIcon, background: '#7dd3fc22', border: '1px solid #7dd3fc55' }}><Ruler size={22} color="#7dd3fc" /></div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={S.subjName}>From a nucleus to the universe</div>
+          <div style={S.subjBlurb}>Everything you have learned, laid out by how big it is and how long it lasts.</div>
+        </div>
+        <ChevronRight size={18} color="#5b6275" />
+      </button>
 
       <div style={S.sectionLabel}>Skill Duel</div>
       <button type="button" className="lq-rise lq-tap lq-card" aria-label="Skill Duel — battle a guardian"
@@ -255,7 +266,7 @@ export function LessonView({ subj, day, userName, onBack, onStart, writing, onWr
   return (
     <div>
       <div style={S.quizTop}>
-        <button className="lq-tap" style={S.iconBtn} onClick={onBack}><ArrowLeft size={18} color="#aeb4c4" /></button>
+        <button className="lq-tap" style={S.iconBtn} onClick={onBack} aria-label="Back"><ArrowLeft size={18} color="#aeb4c4" /></button>
         <div style={{ flex: 1, display: 'flex', gap: 6, justifyContent: 'center' }}>
           {Array.from({ length: totalPages }).map((_, i) => (
             <div key={i} style={{ width: i === page ? 22 : 8, height: 8, borderRadius: 99, background: i <= page ? accent : '#2a2f3d', transition: 'all .3s ease' }} />
@@ -374,7 +385,7 @@ export function QuizView({ subj, day, onExit, onDone }) {
   return (
     <div>
       <div style={S.quizTop}>
-        <button className="lq-tap" style={S.iconBtn} onClick={onExit}><ArrowLeft size={18} color="#aeb4c4" /></button>
+        <button className="lq-tap" style={S.iconBtn} onClick={onExit} aria-label="Leave quiz"><ArrowLeft size={18} color="#aeb4c4" /></button>
         <div style={{ flex: 1 }}><Bar pct={i / day.quiz.length} accent={accent} thin /></div>
         <span style={{ ...S.mono, color: '#aeb4c4', fontSize: 13 }}>{i + 1}/{day.quiz.length}</span>
       </div>
@@ -495,7 +506,9 @@ export function Streak({ count }) {
     </div>
   );
 }
-export function BackBar({ onBack }) { return <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack}><ArrowLeft size={18} color="#aeb4c4" /></button>; }
+/* Icon-only, so it needs an accessible name — the accessibility pass added
+   these everywhere else and missed this one. */
+export function BackBar({ onBack, label = 'Back' }) { return <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack} aria-label={label}><ArrowLeft size={18} color="#aeb4c4" /></button>; }
 
 /* ---- CODE LAB: live JavaScript runner -------------------------------------
 

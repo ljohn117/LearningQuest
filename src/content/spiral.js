@@ -149,3 +149,76 @@ export const WRITING = {
     ],
   },
 };
+
+/* Awe numbers for days that already existed.
+ *
+ * The Teardowns lane introduced the `scale` block — one staggering figure,
+ * presented for wonder rather than assessment, labelled "not on the quiz"
+ * and enforced as such by the audit. Confining that to one new lane was the
+ * wrong call: the move belongs everywhere, and the existing lanes are where
+ * he actually spends his time.
+ *
+ * This is Branch Education's other habit, the one that is not animation. He
+ * stops mid-explanation to tell you how absurd the quantity is — 76 billion
+ * transistors, a hundred layers, a nanometre of tolerance — and the number
+ * is never a test. It is there to make the thing feel enormous.
+ *
+ * Two rules held while writing these:
+ *
+ *   1. The figure has to be checkable. Every one of these is a real,
+ *      verifiable order of magnitude, not a rounded flourish. He is the kind
+ *      of kid who will go and look, and finding a made-up number would cost
+ *      more trust than the number ever bought.
+ *   2. It has to be about the thing the day just taught. An unrelated fun
+ *      fact is an interruption. These land on the last page, right after the
+ *      idea they are enormous about.
+ *
+ * Kept here rather than edited into the content files for the same reason as
+ * everything else in this file: the prototype prose stays untouched and the
+ * additions stay reviewable in one place. */
+
+export const SCALE = {
+  /* ---- Mathematics ------------------------------------------------------ */
+  m7: { value: '2⁶³', unit: 'grains on the last square', note: 'The old story about doubling grains of rice on a chessboard ends at about 9 quintillion grains on the final square alone, and roughly 18 quintillion across the whole board — more rice than the world grows in several centuries. That is only 63 doublings. Exponents do not grow fast; they grow unreasonably.' },
+  m8: { value: '10⁻¹⁰ to 10²⁶', unit: 'metres, the range science works in', note: 'From the width of an atom to the edge of the observable universe is about 36 orders of magnitude. Scientific notation exists because writing those numbers out would take a page each, and because nobody can feel the difference between 21 zeros and 22 without it.' },
+
+  /* ---- Computer Science ------------------------------------------------- */
+  c1: { value: '~100 billion', unit: 'transistors in a modern chip', note: 'The largest chips being made now hold over a hundred billion switches, each a few dozen atoms across, all of which must work. Not most of them. All of them.' },
+  c2: { value: '2¹⁰ = 1,024', unit: 'not 1,000', note: 'A kilobyte is 1,024 bytes rather than 1,000, because computers count in twos and 2¹⁰ is the closest power of two to a thousand. Every "missing" gigabyte on a hard drive is that gap, compounding.' },
+  c12: { value: '~3 billion', unit: 'instructions per second, per core', note: 'A 3 GHz processor steps through roughly three billion instructions every second. Your loop of ten iterations is over before any physical thing in the room has moved measurably.' },
+
+  /* ---- Physical Science ------------------------------------------------- */
+  phy2: { value: '1 part in 10¹⁵', unit: 'of an atom is actually matter', note: 'If a nucleus were a marble you could hold, the atom around it would be about a kilometre across, and everything between would be empty. Everything you have ever touched is almost entirely nothing, held apart by forces.' },
+  phy5: { value: '−273.15°C', unit: 'absolute zero', note: 'Temperature is particle motion, so there is a coldest possible temperature — the point where motion stops. There is no matching ceiling. You can always add more energy, but you cannot take away motion that is not there.' },
+  phy6: { value: '299,792,458', unit: 'metres per second', note: 'Light covers that distance every second, and the figure is exact — not measured to that precision but defined, because in 1983 the metre was redefined as the distance light travels in 1/299,792,458 of a second.' },
+
+  /* ---- Logic ------------------------------------------------------------ */
+  lg6: { value: '1', unit: 'counterexample is enough', note: 'A claim about all swans survives a million confirming sightings and dies to one black swan. That asymmetry is not a quirk of logic — it is the reason science can ever settle anything, and it is why one careful objection outweighs a crowd agreeing.' },
+
+  /* ---- Earth & Space ---------------------------------------------------- */
+  es2: { value: '2–5 cm', unit: 'per year — fingernail speed', note: 'Tectonic plates move about as fast as your fingernails grow. Over 200 million years, that unhurried pace is enough to take a single supercontinent apart and scatter it across the planet.' },
+  es6: { value: '1,000 m/s', unit: 'sideways, and still falling', note: 'The Moon is falling toward Earth constantly. It never lands because it is also moving sideways at about a kilometre every second, so the ground curves away underneath it exactly as fast as it falls. An orbit is a permanent near-miss.' },
+
+  /* ---- Biology ---------------------------------------------------------- */
+  bio2: { value: '~30 trillion', unit: 'cells in your body', note: 'Roughly 30 trillion of them, and about 330 billion are replaced every day. Most of the you that existed a year ago has been quietly swapped out, and you did not notice because the pattern held.' },
+  bio4: { value: '2 metres', unit: 'of DNA per cell', note: 'Uncoiled, the DNA in a single cell would stretch about two metres. Multiply by 30 trillion cells and the total inside you would reach the Sun and back, hundreds of times over.' },
+  bio9: { value: '~38 trillion', unit: 'bacteria living on and in you', note: 'You are carrying slightly more bacterial cells than human ones. They are not passengers — you cannot digest properly without them, which makes the question of where you stop and they start harder than it first sounds.' },
+
+  /* ---- Chemistry -------------------------------------------------------- */
+  ch2: { value: '118', unit: 'elements, and that is all there is', note: 'Every substance you will ever encounter — every rock, gas, living thing, and manufactured object — is built from these and nothing else. Ninety-four occur naturally. The rest had to be made.' },
+  ch5: { value: '10²¹', unit: 'water molecules in a single drop', note: 'Roughly a thousand billion billion molecules in one drop of water, each one exactly two hydrogens to one oxygen. Not on average. Every single one.' },
+  ch8: { value: '10,000,000×', unit: 'from stomach acid to soap', note: 'Stomach acid sits near pH 2 and soapy water near pH 9. Seven steps on the scale, and each step is ten times — so one is roughly ten million times more acidic than the other, which is why your stomach needs a lining and your hands do not.' },
+
+  /* ---- English & Writing ------------------------------------------------ */
+  ela7: { value: '~170,000', unit: 'words currently in use in English', note: 'Plus around 47,000 obsolete ones. Most adults actively use somewhere between 20,000 and 30,000 of them — which means that knowing how prefixes and roots assemble is worth more than memorising lists could ever be.' },
+
+  /* ---- Business & Money ------------------------------------------------- */
+  b5: { value: '72 ÷ rate', unit: 'years to double your money', note: 'At 8% interest, money doubles in about nine years. At 2%, thirty-six. That single division is the whole reason a small difference in rate turns into an enormous difference in outcome, given time.' },
+
+  /* ---- Government & Civics ---------------------------------------------- */
+  g4: { value: '27', unit: 'amendments since 1789', note: 'Over eleven thousand amendments have been proposed to the US Constitution. Twenty-seven have passed. A document that is deliberately hard to change is making a trade: stability now, in exchange for being slow when it is wrong.' },
+
+  /* ---- Fossils & Deep Time ---------------------------------------------- */
+  f5: { value: '4,540,000,000', unit: 'years, and you at the very end', note: 'Lay Earth’s history along a 100-metre pitch and every metre is 45 million years. The dinosaurs occupy roughly the last three and a half metres. All of recorded human history is the final tenth of a millimetre — thinner than a fingernail clipping. Most of the pitch is single-celled life, quietly getting on with it.' },
+  f6: { value: '~75%', unit: 'of species gone in the last one', note: 'The extinction that ended the dinosaurs took roughly three quarters of all species with it. Everything alive today — every bird, every mammal, you — descends from the quarter that happened to make it through.' },
+};
