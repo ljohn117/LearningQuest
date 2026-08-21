@@ -49,12 +49,26 @@ export function ParentView({ profile, onBack }) {
     }
     sticking.sort((a, b) => (a.at || '').localeCompare(b.at || ''));
 
+    /* What he has actually written. Stored locally like everything else. */
+    const writing = Object.entries(profile.writing || {})
+      .filter(([, v]) => v && v.text && v.text.trim())
+      .map(([key, v]) => {
+        const [subj, dayId] = key.split(':');
+        const day = CURRICULUM[subj]?.days.find((d) => d.id === dayId);
+        return {
+          key, lane: CURRICULUM[subj]?.name, day: day?.title,
+          text: v.text.trim(), at: v.at,
+          words: v.text.trim().split(/\s+/).length,
+        };
+      })
+      .sort((a, b) => (b.at || '').localeCompare(a.at || ''));
+
     const reviewed = Object.keys(review).length;
     const drills = Object.entries(profile.practice || {});
     const totalDone = Object.keys(completed).length;
     const totalDays = SUBJECT_ORDER.reduce((n, s) => n + (CURRICULUM[s]?.days.length || 0), 0);
 
-    return { lanes, sticking, reviewed, drills, totalDone, totalDays, overall: accuracy(completed) };
+    return { lanes, sticking, writing, reviewed, drills, totalDone, totalDays, overall: accuracy(completed) };
   }, [profile]);
 
   const lvl = levelInfo(profile.xp || 0);
@@ -114,6 +128,24 @@ export function ParentView({ profile, onBack }) {
             ))}
           </div>
         </>
+      )}
+
+      <div style={S.sectionLabel}>Writing</div>
+      {data.writing.length === 0 ? (
+        <div style={{ ...S.muted, fontSize: 14 }}>
+          Nothing written yet. The English lane asks for a paragraph on days 5, 6, 9 and 10.
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {data.writing.map((w) => (
+            <div key={w.key} style={S.pCard}>
+              <div style={{ ...S.mono, fontSize: 11, color: '#8b91a3', marginBottom: 5 }}>
+                {w.lane} · {w.day} · {w.words} words{w.at ? ` · ${w.at}` : ''}
+              </div>
+              <div style={{ fontSize: 14, color: '#e7e9f0', whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>{w.text}</div>
+            </div>
+          ))}
+        </div>
       )}
 
       <div style={S.sectionLabel}>Practice</div>

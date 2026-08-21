@@ -3,6 +3,7 @@ import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, Help
 import { S } from './styles.jsx';
 import { Visual } from './Visual.jsx';
 import { Question } from './Question.jsx';
+import { WriteBlock } from './WriteBlock.jsx';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { KEY as STORE_KEY, SCHEMA_VERSION } from '../store.js';
 import { RANKS, levelInfo, todayStr, yesterday, dayKey, XP_CORRECT, XP_BONUS, PRACTICE_XP } from './progress.js';
@@ -245,7 +246,7 @@ export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onD
 }
 
 /* ---- 10. LESSON VIEW (paged) ------------------------------------------------------ */
-export function LessonView({ subj, day, userName, onBack, onStart }) {
+export function LessonView({ subj, day, userName, onBack, onStart, writing, onWrite }) {
   const accent = CURRICULUM[subj].accent;
   const [page, setPage] = useState(0);
   const totalPages = day.pages.length + 1; // + recap
@@ -272,7 +273,10 @@ export function LessonView({ subj, day, userName, onBack, onStart }) {
           <h1 style={{ ...S.h1, marginTop: 6, fontSize: 26 }}>{page === 0 ? day.title : cur.title}</h1>
           {page === 0 && <div style={{ ...S.muted, marginBottom: 4 }}>{cur.title}</div>}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 14 }}>
-            {cur.blocks.map((b, i) => <Block key={i} b={b} accent={accent} delay={i * .06} />)}
+            {cur.blocks.map((b, i) => (
+              <Block key={i} b={b} accent={accent} delay={i * .06}
+                writeKey={`${subj}:${day.id}:${page}:${i}`} writing={writing} onWrite={onWrite} />
+            ))}
           </div>
         </div>
       ) : (
@@ -313,7 +317,7 @@ export function LessonView({ subj, day, userName, onBack, onStart }) {
     </div>
   );
 }
-export function Block({ b, accent, delay }) {
+export function Block({ b, accent, delay, writeKey, writing, onWrite }) {
   const base = { animationDelay: `${delay}s` };
   if (b.type === 'text') return <p className="lq-rise" style={{ ...S.body, ...base }}>{b.text}</p>;
   if (b.type === 'concept') return (
@@ -335,6 +339,11 @@ export function Block({ b, accent, delay }) {
   );
   if (b.type === 'visual') return <div className="lq-rise" style={base}><Visual v={b} accent={accent} /></div>;
   if (b.type === 'codelab') return <CodeLab b={b} accent={accent} />;
+  if (b.type === 'write') return (
+    <WriteBlock b={b} accent={accent}
+      value={writing?.[writeKey]}
+      onChange={(v) => onWrite && onWrite(writeKey, v)} />
+  );
   return null;
 }
 

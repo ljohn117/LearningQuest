@@ -153,7 +153,7 @@ export default function App() {
       {view.name === 'dash' && (
         <Dashboard lvl={lvl} state={profile} subjStats={subjStats}
           onOpen={(subj) => setView({ name: 'subject', subj })}
-          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, review: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
+          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, review: {}, writing: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
           onSetName={(n) => updateProfile((p) => ({ ...p, name: n }))}
           onPractice={() => setView({ name: 'practice' })}
           onDaily={() => { sessionStart.current = Date.now(); setView({ name: 'daily' }); }}
@@ -196,6 +196,8 @@ export default function App() {
       )}
       {view.name === 'lesson' && (
         <LessonView subj={view.subj} day={view.day} userName={profile.name}
+          writing={profile.writing}
+          onWrite={(key, v) => updateProfile((p) => ({ ...p, writing: { ...(p.writing || {}), [key]: { ...v, at: todayStr() } } }))}
           onBack={() => setView(view.from === 'daily' ? { name: 'dash' } : { name: 'subject', subj: view.subj })}
           onStart={() => setView({ name: 'quiz', subj: view.subj, day: view.day, from: view.from })} />
       )}

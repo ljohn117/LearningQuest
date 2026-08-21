@@ -20,6 +20,10 @@ for (const subj of SUBJECT_ORDER) {
       if (!p.title) fail(`${d.id}: page missing title`);
       for (const b of p.blocks || []) {
         if (!b.type) fail(`${d.id}: block missing type`);
+        if (b.type === 'write') {
+          if (!b.task) fail(`${d.id}: write block has no task`);
+          if (!Array.isArray(b.checklist) || !b.checklist.length) fail(`${d.id}: write block has no checklist`);
+        }
       }
     }
     for (const [i, q] of (d.quiz || []).entries()) {

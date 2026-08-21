@@ -88,3 +88,64 @@ export const SPIRAL = {
   f2: 'Physical Science said a change of state is always an energy transaction, and that particles get rearranged rather than destroyed. Permineralisation is exactly that, run over millions of years: minerals move in, tissue moves out, the shape survives.',
   f4: 'Half-life is repeated halving, which is an exponent from Mathematics — and the same powers of two that Computer Science uses for binary. Three lanes, one idea.',
 };
+
+/* Writing prompts.
+ *
+ * The English lane taught paragraphs, argument, revision and voice and never
+ * once asked for a sentence. These attach a write block to the last page of
+ * the days that teach writing.
+ *
+ * Nothing is graded. Each carries a short checklist he ticks himself after
+ * reading his work back — self-assessment, not a mark. Progress never
+ * depends on writing anything.
+ *
+ * Prompts deliberately reach into lanes he has finished, so he is writing
+ * about something he already knows rather than inventing a subject and a
+ * sentence at the same time. */
+
+export const WRITING = {
+  ela5: {
+    task: 'Write one paragraph explaining something you learned in another lane to someone who has never seen it.',
+    starter: 'Pick anything — half-life, checks and balances, why the moon does not fall. Start with a topic sentence that states the one idea, then support it.',
+    words: 50,
+    checklist: [
+      'My first sentence says what the paragraph is about.',
+      'Everything after it supports that one idea.',
+      'I gave at least one specific example.',
+      'Someone who has not done that lane could follow it.',
+    ],
+  },
+  ela6: {
+    task: 'Pick something you actually believe and argue for it in a short paragraph. Then answer the strongest objection.',
+    starter: 'State your claim plainly. Give two reasons. Then write "Someone might say..." and answer it fairly.',
+    words: 60,
+    checklist: [
+      'My claim is specific enough to disagree with.',
+      'I gave reasons, not just repeated the claim louder.',
+      'I stated the objection fairly instead of a weak version of it.',
+      'I answered the objection rather than ignoring it.',
+    ],
+  },
+  ela9: {
+    task: 'Take the paragraph you wrote on Day 5 and cut it by a quarter without losing anything that matters.',
+    starter: 'Look for sentences that repeat, words that add nothing, and examples that do not earn their space. Cutting is the fastest improvement in most writing.',
+    words: 40,
+    checklist: [
+      'It is noticeably shorter than what I started with.',
+      'I cut at least one whole sentence, not just words.',
+      'The idea is still completely clear.',
+      'I did not add anything new to fill the gap.',
+    ],
+  },
+  ela10: {
+    task: 'Write the same short message twice — once to a friend, once to a teacher.',
+    starter: 'Same information both times. Only the register changes. Two or three sentences each is plenty.',
+    words: 50,
+    checklist: [
+      'Both versions carry the same actual information.',
+      'The friend version sounds like how I really talk.',
+      'The teacher version is more formal without being stiff.',
+      'I can point at the exact words that differ.',
+    ],
+  },
+};
