@@ -1,5 +1,65 @@
 # LearningQuest — Staged Product Roadmap
 
+> ## ⚠️ CORRECTION NOTICE — read before using this document
+>
+> This roadmap and `eval-apps.md` were both written **before** the audience
+> brief in `who-this-is-for.md` existed. They evaluated the code in isolation
+> and got several **value judgments** wrong as a result. The technical bug
+> findings still stand; the recommendations built on top of them do not.
+> Where this document conflicts with `who-this-is-for.md`, **that document wins.**
+>
+> **Corrections:**
+>
+> 1. **Middle-school content is the target, not a defect.** The framing section
+>    below — and `eval` §1/§5.5's headline finding that content is "2–5 grade
+>    levels too advanced" — is **wrong**. Calibration was hard-won by testing on
+>    the actual child: grade-level was too easy, high-school prep was too hard,
+>    middle school is the deliberate stretch band. The Grade 6–8/Algebra I tags
+>    are correct. Do not re-aim content downward to Grade 4/5.
+>
+> 2. **The existing content is the spine, not an enrichment track.** Stage 5's
+>    "activate the existing content as enrichment" is inverted. New content
+>    extends the existing band; it does not replace it.
+>
+> 3. **`ImportPanel` must NOT be deleted.** `eval` §3.7/bug #8 called it a
+>    "skip-the-course button." It is the opposite: it exists to credit back
+>    lanes the child genuinely completed 6/6 (Physical Science, Logic, Earth &
+>    Space) that were later swapped out. Deleting it makes a timid child stare
+>    at zeros for work he earned. Stage 0.2 item 6 is **cancelled.**
+>
+> 4. **The "dangling lane references" are not bugs.** `eval` bugs #9/#10 flagged
+>    prose citing a "Logic lane" and "Earth & Space lane" as broken references.
+>    Those lanes existed and he completed them. They are deliberate spiral
+>    callbacks to real earned work. Do not strip them — restore the lanes or
+>    leave the callbacks intact.
+>
+> 5. **The mastery gate conflicts with a non-negotiable.** Stage 0.2 item 4 and
+>    Stage 3 item 1 propose gating progression on a score threshold (~85–90%).
+>    The design is **consequence-free by explicit intent**: wrong answers cost
+>    nothing, every question has a hint, nothing is ever lost. A score gate
+>    punishes a timid child for trying. **Do not build the gate as specified.**
+>    The real problem `eval` bug #3 identified (biased answer keys make the
+>    quiz signal meaningless) is genuine and should be fixed on the *item*
+>    side — randomize answer positions, improve distractors — not by adding a
+>    consequence.
+>
+> 6. **AASA test prep is not the stated goal.** `curriculum-requirements.md`
+>    optimizes heavily for the spring state test. The actual goal is
+>    "summer-long, expandable coursework that keeps pace with him." Arizona
+>    standards research remains useful as a **coverage checklist**, not as a
+>    prioritization budget. Treat §9's blueprint-weighted rankings as optional.
+>
+> **What still stands from `eval-apps.md`:** the UTC streak bug (#1/#2), silent
+> persistence failure outside Claude (#7) — now *higher* stakes, since his
+> progress is precious — the answer-key position bias (#3), the `for(;;)`
+> tab-hang in CodeLab (#6), the fork duplication (#13), and the crash on a
+> profile missing `completed` (#11).
+>
+> **New hard constraint:** progress is keyed `subjectId:dayId`. **Never
+> renumber or reuse a day id** — it silently erases his history. This is the
+> single most damaging possible mistake, and it makes the fork-merge in Stage
+> 0.2 item 1 a progress-risk operation, not just a refactor.
+
 **Scope:** synthesis only. No code written or changed. Sourced entirely from `docs/eval-apps.md` (technical evaluation of the two prototypes) and `docs/curriculum-requirements.md` (curriculum/design requirements), both read in full and treated as settled research — this document sequences their findings into a build plan, it does not re-open them.
 
 **Citations:** `eval-apps.md §_` and `curriculum-requirements.md §_`, referenced as `eval` / `curric` after first use in a section. Bug numbers refer to `eval` §6's numbered table; the ten build items referenced as `curric §9 item N` refer to §9's ranked list.
