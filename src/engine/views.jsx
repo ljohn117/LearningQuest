@@ -397,26 +397,82 @@ export function Streak({ count }) {
 }
 export function BackBar({ onBack }) { return <button className="lq-tap" style={{ ...S.iconBtn, marginBottom: 14 }} onClick={onBack}><ArrowLeft size={18} color="#aeb4c4" /></button>; }
 
-/* ---- CODE LAB: live JavaScript runner ------------------------------------- */
+/* ---- CODE LAB: live JavaScript runner -------------------------------------
+
+   The prototype blocked `while` and `do{` with a regex and allowed `for`,
+   which meant `for (let i = 1; i >= 1; i++) {}` froze the browser tab. Day
+   c12 teaches that a loop with no step instruction runs forever and then
+   hands him an editable `for` loop, so that was reachable from the lesson
+   itself. The regex also fired on the string "take a while".
+
+   Now every loop body gets an iteration counter injected, so any loop that
+   runs away stops itself and reports what happened. `while` is allowed
+   again — it is guarded like everything else.
+
+   `new Function` is not a sandbox; it closes over the real globals. The
+   risky ones are shadowed by extra parameters left undefined. That is a
+   guard rail against a curious kid, not a security boundary. */
+
+const MAX_STEPS = 200000;
+
+/** Inject a step counter into the body of every braced loop. */
+function instrument(src) {
+  let out = '', i = 0, unbraced = false;
+  while (i < src.length) {
+    const rest = src.slice(i);
+    const m = rest.match(/^\b(for|while)\s*\(/);
+    if (m) {
+      // walk to the matching close paren
+      let depth = 0, j = i + m[0].length - 1;
+      for (; j < src.length; j++) {
+        if (src[j] === '(') depth++;
+        else if (src[j] === ')') { depth--; if (!depth) break; }
+      }
+      const head = src.slice(i, j + 1);
+      let k = j + 1;
+      while (k < src.length && /\s/.test(src[k])) k++;
+      if (src[k] === '{') { out += head + src.slice(j + 1, k + 1) + '__tick();'; i = k + 1; continue; }
+      // the trailing `while (...)` of a do-while needs no body of its own —
+      // the `do {` branch below already injected the counter
+      const isDoTail = m[1] === 'while' && /\}\s*$/.test(out);
+      if (!isDoTail) unbraced = true;        // `for (...) doThing();`
+      out += head; i = j + 1; continue;
+    }
+    const d = rest.match(/^\bdo\s*\{/);
+    if (d) { out += d[0] + '__tick();'; i += d[0].length; continue; }
+    out += src[i]; i++;
+  }
+  return { code: out, unbraced };
+}
+
 export function CodeLab({ b, accent }) {
   const [src, setSrc] = useState(b.starter || '');
   const [out, setOut] = useState(null);
   const [showHint, setShowHint] = useState(false);
+
   function run() {
-    if (/\bwhile\b|\bdo\s*\{/.test(src)) {
-      setOut({ logs: [], error: 'Let’s stick to for loops here — they always finish on their own.', pass: false });
+    const { code, unbraced } = instrument(src);
+    if (unbraced) {
+      setOut({ logs: [], error: 'Put { } around what your loop repeats — that way it is clear where the loop ends.', pass: false });
       return;
     }
     const logs = [];
     let error = null;
     const fake = { log: (...a) => {
-      if (logs.length >= 200) throw new Error('Too much output — is your loop ending?');
+      if (logs.length >= 200) throw new Error('That is a lot of output — is the loop ending?');
       logs.push(a.map((x) => (typeof x === 'object' && x !== null ? JSON.stringify(x) : String(x))).join(' '));
     } };
-    try { new Function('console', src)(fake); } catch (e) { error = e.message; }
+    let steps = 0;
+    const tick = () => { if (++steps > MAX_STEPS) throw new Error('This loop never finishes. Check that the counter actually moves toward the stop condition.'); };
+    try {
+      // extra parameter names shadow the real globals inside the function body
+      new Function('console', '__tick', 'window', 'document', 'fetch', 'localStorage', 'XMLHttpRequest',
+        code)(fake, tick);
+    } catch (e) { error = e.message; }
     const got = logs.join('\n').trim();
     setOut({ logs, error, pass: !error && got === String(b.expect).trim() });
   }
+
   return (
     <div className="lq-rise" style={S.labBox}>
       <div style={S.labTask}><Terminal size={14} color={accent} /><span>{b.task}</span></div>
