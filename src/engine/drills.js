@@ -151,4 +151,103 @@ export const EXTRA_DRILLS = [
       };
     },
   },
+
+  /* ---- Fossils & Deep Time --------------------------------------------- */
+  {
+    id: 'fos4a', subj: 'fossils', day: 'f4', name: 'Half-Life Dating',
+    gen: () => {
+      const half = pickOne([5, 10, 20, 50, 100]);
+      const n = rnd(1, 4);
+      return {
+        prompt: `A material has a half-life of ${half} million years. After ${n} half-li${n > 1 ? 'ves' : 'fe'}, how many million years have passed?`,
+        answer: half * n,
+        hint: `Each half-life is ${half} million years. Multiply by how many have gone by.`,
+      };
+    },
+  },
+  {
+    id: 'fos4b', subj: 'fossils', day: 'f4', name: 'How Much Is Left',
+    gen: () => {
+      const n = rnd(1, 4);
+      return {
+        prompt: `After ${n} half-li${n > 1 ? 'ves' : 'fe'}, a sample is 1 over what fraction of the original? (Type the bottom number.)`,
+        answer: Math.pow(2, n),
+        hint: `Halve it ${n} time${n > 1 ? 's' : ''}: that is 2 to the power of ${n} — the same powers of two as binary.`,
+      };
+    },
+  },
+  {
+    id: 'fos3a', subj: 'fossils', day: 'f3', name: 'Reading Layers',
+    gen: () => {
+      const layers = rnd(4, 8), pos = rnd(2, layers - 1);
+      return {
+        prompt: `A cliff has ${layers} rock layers. Counting the deepest as layer 1, how many layers sit ABOVE layer ${pos}?`,
+        answer: layers - pos,
+        hint: 'Everything above it was laid down later. Subtract its position from the total.',
+      };
+    },
+  },
+
+  /* ---- Government & Civics --------------------------------------------- */
+  {
+    id: 'gov3a', subj: 'gov', day: 'g3', name: 'Veto Override',
+    gen: () => {
+      const size = pickOne([100, 435, 60, 90, 120]);
+      return {
+        prompt: `A chamber has ${size} members. A two-thirds majority is needed to override a veto. How many votes is that? (Round up.)`,
+        answer: Math.ceil((size * 2) / 3),
+        hint: `Two-thirds of ${size}, rounded up — you cannot have part of a vote.`,
+      };
+    },
+  },
+  {
+    id: 'gov6a', subj: 'gov', day: 'g6', name: 'Winning a Vote',
+    gen: () => {
+      const total = pickOne([50, 100, 200, 500, 1000]);
+      return {
+        prompt: `${total} people vote. What is the smallest number needed for a simple majority (more than half)?`,
+        answer: Math.floor(total / 2) + 1,
+        hint: 'More than half — so half, then one more.',
+      };
+    },
+  },
+  {
+    id: 'gov5a', subj: 'gov', day: 'g5', name: 'Counting the Path',
+    gen: () => {
+      const a = rnd(3, 9), b = rnd(2, 7);
+      return {
+        prompt: `A bill needs ${a} committee votes in the House and ${b} in the Senate. How many committee votes in total?`,
+        answer: a + b,
+        hint: 'Both chambers have to pass it, so add them.',
+      };
+    },
+  },
+
+  /* ---- Biology ---------------------------------------------------------- */
+  {
+    id: 'bio4a', subj: 'bio', day: 'bio4', name: 'Punnett Ratios',
+    gen: () => {
+      const total = pickOne([4, 8, 12, 16, 20, 40]);
+      const dom = Math.random() < 0.5;
+      return dom
+        ? { prompt: `A 3:1 cross produces ${total} offspring. How many show the DOMINANT trait?`,
+            answer: (total / 4) * 3,
+            hint: '3 parts out of 4 total — find one part first, then take three.' }
+        : { prompt: `A 3:1 cross produces ${total} offspring. How many show the RECESSIVE trait?`,
+            answer: total / 4,
+            hint: '1 part out of 4 total. Divide by 4.' };
+    },
+  },
+  {
+    id: 'bio6a', subj: 'bio', day: 'bio6', name: 'Energy Pyramid',
+    gen: () => {
+      const start = pickOne([1000, 2000, 5000, 10000]);
+      const levels = rnd(1, 3);
+      return {
+        prompt: `${start} units of energy enter a food web. About 10% passes up at each level. How much reaches ${levels} level${levels > 1 ? 's' : ''} higher?`,
+        answer: start / Math.pow(10, levels),
+        hint: `Take 10% ${levels} time${levels > 1 ? 's' : ''} — divide by 10 each step.`,
+      };
+    },
+  },
 ];
