@@ -53,7 +53,7 @@ export const CONNECTIONS = {
         ],
         quiz: [
           { type: 'numeric', prompt: 'Each binary place is worth how many times the place to its right?', answer: 2, hint: 'Count the places: 1, 2, 4, 8, 16.', explain: 'Two. Every place doubles — that is why binary is powers of two.' },
-          { type: 'mc', prompt: 'Half-life and compound interest are related because both:', choices: ['add a fixed amount each step', 'multiply by a fixed factor each step', 'subtract a fixed amount each step', 'happen only in science'], answer: 1, hint: 'Is the change an amount, or a factor?', explain: 'Both multiply by the same factor repeatedly. Only the factor differs.' },
+          { type: 'mc', prompt: 'Half-life and compound interest are related because both:', choices: ['multiply by a fixed factor each step', 'subtract a fixed amount each step', 'happen only in science', 'add a fixed amount each step'], answer: 0, hint: 'Is the change an amount, or a factor?', explain: 'Both multiply by the same factor repeatedly. Only the factor differs.' },
           { type: 'numeric', prompt: 'A sample halves 3 times. What fraction of the original is left? (Type the bottom number: 1 over what?)', answer: 8, hint: 'Half, then half again, then half again.', explain: '1/2 × 1/2 × 1/2 = 1/8. Three halvings, so 2³ = 8.' },
           { type: 'tf', prompt: 'Repeated multiplication by a fixed factor is what an exponent describes.', answer: true, hint: 'Think about what 2⁵ actually means.', explain: 'Exactly — that is the definition, whichever lane you meet it in.' },
         ],
@@ -86,9 +86,9 @@ export const CONNECTIONS = {
         ],
         quiz: [
           { type: 'mc', prompt: 'A hypothesis that predicts a result which then does not happen is:', choices: ['still true', 'shown false', 'unprovable', 'a converse'], answer: 1, hint: 'Condition met, result absent.', explain: 'That is exactly how a conditional fails — and it is a real result.' },
-          { type: 'mc', prompt: 'An if-statement in code is structurally the same as:', choices: ['a definition', 'a conditional in logic', 'a counterexample', 'a variable'], answer: 1, hint: 'Both check something, then act.', explain: 'Same structure, different uniform.' },
+          { type: 'mc', prompt: 'An if-statement in code is structurally the same as:', choices: ['a variable', 'a definition', 'a conditional in logic', 'a counterexample'], answer: 2, hint: 'Both check something, then act.', explain: 'Same structure, different uniform.' },
           { type: 'tf', prompt: '"The game was cancelled, so it must have rained" confuses a conditional with its converse.', answer: true, hint: 'Could the game be cancelled for another reason?', explain: 'Yes — that is the converse error, and it appears in every one of these four subjects.' },
-          { type: 'mc', prompt: 'A conditional is broken when:', choices: ['the condition is false', 'both parts are true', 'the condition is true but the result is not', 'nobody checks it'], answer: 2, hint: 'There is only one failing case.', explain: 'Condition met, promised result absent. That is the only way.' },
+          { type: 'mc', prompt: 'A conditional is broken when:', choices: ['nobody checks it', 'the condition is false', 'both parts are true', 'the condition is true but the result is not'], answer: 3, hint: 'There is only one failing case.', explain: 'Condition met, promised result absent. That is the only way.' },
         ],
       },
       {
@@ -119,7 +119,7 @@ export const CONNECTIONS = {
         ],
         quiz: [
           { type: 'numeric', prompt: 'A 3:1 ratio means how many parts in total?', answer: 4, hint: 'Add the parts together, do not just take the larger one.', explain: '3 + 1 = 4. This is the trap in every subject ratios appear in.' },
-          { type: 'mc', prompt: 'A unit rate is a ratio where the second quantity is:', choices: ['zero', 'one', 'the same as the first', 'always money'], answer: 1, hint: 'Think about "per ONE item".', explain: 'Per one — that is what makes it a unit rate.' },
+          { type: 'mc', prompt: 'A unit rate is a ratio where the second quantity is:', choices: ['one', 'the same as the first', 'always money', 'zero'], answer: 0, hint: 'Think about "per ONE item".', explain: 'Per one — that is what makes it a unit rate.' },
           { type: 'tf', prompt: 'Ratios only work when both quantities measure the same kind of thing.', answer: false, hint: 'Think about dollars per notebook.', explain: 'Dollars per item compares two different kinds entirely. That is why ratios travel so well.' },
           { type: 'numeric', prompt: 'If about 10% of energy passes to the next level of a food web, how much of 1000 units reaches it?', answer: 100, hint: '10% of 1000.', explain: '100 units. The other 90% is lost as heat — conservation of energy, from Physical Science.' },
         ],
@@ -153,8 +153,8 @@ export const CONNECTIONS = {
         quiz: [
           { type: 'mc', prompt: 'What do fossil layers, text quotes and error messages have in common?', choices: ['they are always reliable', 'they are evidence left behind by something you cannot watch', 'they are opinions', 'they are only used in science'], answer: 1, hint: 'What can none of them let you do directly?', explain: 'None of them let you observe the event — you reconstruct it from traces.' },
           { type: 'tf', prompt: '"I feel like the character is upset" is as strong as quoting what the character did.', answer: false, hint: 'Which one can someone else check?', explain: 'A quote is evidence. A feeling is not — same standard as citing a rock layer.' },
-          { type: 'mc', prompt: 'A lower rock layer is generally:', choices: ['younger', 'older', 'the same age', 'impossible to date'], answer: 1, hint: 'Which went down first?', explain: 'Older — layers pile up over time, so the deepest was laid down first.' },
-          { type: 'mc', prompt: 'The best first move when a program breaks is to:', choices: ['rewrite it', 'guess what went wrong', 'read what the error actually says', 'start over'], answer: 2, hint: 'It already left you evidence.', explain: 'Read the evidence first. Same discipline as every other lane here.' },
+          { type: 'mc', prompt: 'A lower rock layer is generally:', choices: ['impossible to date', 'younger', 'older', 'the same age'], answer: 2, hint: 'Which went down first?', explain: 'Older — layers pile up over time, so the deepest was laid down first.' },
+          { type: 'mc', prompt: 'The best first move when a program breaks is to:', choices: ['start over', 'rewrite it', 'guess what went wrong', 'read what the error actually says'], answer: 3, hint: 'It already left you evidence.', explain: 'Read the evidence first. Same discipline as every other lane here.' },
         ],
       },
       {
@@ -184,10 +184,76 @@ export const CONNECTIONS = {
           'If your total changed, you missed something.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'A rolling ball slows and stops. The kinetic energy:', choices: ['was destroyed', 'became heat', 'was never there', 'turned into mass'], answer: 1, hint: 'What warms up when things rub?', explain: 'Friction converted it to heat. The total is unchanged.' },
+          { type: 'mc', prompt: 'A rolling ball slows and stops. The kinetic energy:', choices: ['became heat', 'was never there', 'turned into mass', 'was destroyed'], answer: 0, hint: 'What warms up when things rub?', explain: 'Friction converted it to heat. The total is unchanged.' },
           { type: 'tf', prompt: 'A conservation law says the total is the same before and after.', answer: true, hint: 'It is the definition.', explain: 'Forms change; the total does not.' },
           { type: 'mc', prompt: 'If your total changed during a calculation, the most useful conclusion is:', choices: ['the law is wrong', 'you missed something', 'the total does not matter', 'start over from scratch'], answer: 1, hint: 'Which conclusion helps you find the error?', explain: 'You missed something — and now you know to look, which is worth more than a wrong answer you trust.' },
           { type: 'tf', prompt: 'Earth needs new water added regularly because water gets used up.', answer: false, hint: 'Think about the water cycle.', explain: 'It cycles. The same water has been here since long before the dinosaurs.' },
+        ],
+      },
+      {
+        id: 'cx6', tag: 'Connection', title: 'Zooming Out',
+        subtitle: 'Atoms · Cells · Organisms · Planets · Deep time',
+        requires: ['physics:phy2', 'bio:bio2'],
+        pages: [
+          { title: 'The same question at every size', blocks: [
+            { type: 'text', text: 'What is this made of, and what holds it together? You have now asked that about atoms, about cells, about ecosystems, about the planet, and about the solar system.' },
+            { type: 'callout', text: 'The answer changes. The question does not.' },
+          ]},
+          { title: 'Each level has parts that do jobs', blocks: [
+            { type: 'text', text: 'An atom has protons and electrons. A cell has a nucleus and membrane. A body has organ systems. An ecosystem has producers and consumers. At every level, specialised parts combine into something the parts alone could not be.' },
+            { type: 'visual', kind: 'atom', protons: 6 },
+          ]},
+          { title: 'And the level above cannot be predicted from the parts', blocks: [
+            { type: 'text', text: 'Knowing everything about hydrogen and oxygen would not tell you water is wet. Knowing everything about one ant tells you almost nothing about a colony. Something genuinely new appears at each level.' },
+            { type: 'example', text: 'This is why biology is not just chemistry and chemistry is not just physics — even though nothing breaks the rules underneath.' },
+          ]},
+          { title: 'What to carry forward', blocks: [
+            { type: 'callout', text: 'When something is too big or too small to picture, ask the same two questions: what are the parts, and what do they do together. It works from quarks to galaxies.' },
+          ]},
+        ],
+        recap: [
+          'Every scale answers the same two questions with different parts.',
+          'Specialised parts combine into something new.',
+          'The higher level cannot be predicted from the parts alone.',
+        ],
+        quiz: [
+          { type: 'mc', prompt: 'Knowing everything about hydrogen and oxygen separately would NOT tell you:', choices: ['their proton counts', 'their atomic numbers', 'that water is wet', 'their masses'], answer: 2, hint: 'Which property belongs to the combination?', explain: 'New properties appear when parts combine.' },
+          { type: 'tf', prompt: 'Biology can be completely reduced to physics with nothing left over.', answer: false, hint: 'Think about what appears at each level.', explain: 'Nothing breaks the rules underneath, but new behaviour appears that the parts alone do not show.' },
+          { type: 'mc', prompt: 'The pattern shared by atoms, cells and ecosystems is:', choices: ['they are all alive', 'they all contain carbon', 'they are all microscopic', 'specialised parts combining into something larger'], answer: 3, hint: 'What is true at every scale?', explain: 'Parts with jobs, combining into a whole.' },
+          { type: 'mc', prompt: 'Faced with something too large to picture, the useful move is to ask:', choices: ['what are the parts and what do they do together', 'who discovered it', 'how far away is it', 'how old is it'], answer: 0, hint: 'The two questions from page one.', explain: 'Parts and their interaction — it works at every scale.' },
+        ],
+      },
+      {
+        id: 'cx7', tag: 'Connection', title: 'Things That Push Back',
+        subtitle: 'Homeostasis · Supply and demand · Checks and balances',
+        requires: ['bio:bio1', 'gov:g3'],
+        pages: [
+          { title: 'Three systems that correct themselves', blocks: [
+            { type: 'text', text: 'Your body holds its temperature near 37°C. A market pushes prices toward a balance point. A government splits power so no branch can run away with it. Three completely different subjects.' },
+            { type: 'callout', text: 'All three are the same mechanism.' },
+          ]},
+          { title: 'Push it, and something pushes back', blocks: [
+            { type: 'text', text: 'Get too hot and you sweat. Price too high and buyers leave until it falls. One branch overreaches and the others can block it. In each case the disturbance itself triggers the correction.' },
+            { type: 'visual', kind: 'supplydemand' },
+          ]},
+          { title: 'Balance is not stillness', blocks: [
+            { type: 'text', text: 'None of these systems sit still. Your temperature wobbles constantly. Prices move daily. Branches argue permanently. Balance means the wobbles stay bounded, not that nothing happens.' },
+            { type: 'example', text: 'A thermostat is never exactly at the set point. It is always slightly over or under, correcting. That is what working looks like.' },
+          ]},
+          { title: 'And what happens when it breaks', blocks: [
+            { type: 'callout', text: 'Remove the feedback and the system runs away. A body that cannot sweat overheats. A market with one seller stops correcting. A government with no checks stops being checked. The correction was the whole design.' },
+          ]},
+        ],
+        recap: [
+          'Homeostasis, market prices and checks and balances are one mechanism.',
+          'The disturbance itself triggers the correction.',
+          'Balance means bounded wobbling, not stillness.',
+        ],
+        quiz: [
+          { type: 'mc', prompt: 'What do homeostasis, supply and demand, and checks and balances share?', choices: ['they are all biological', 'a disturbance triggers its own correction', 'they never change', 'they require people'], answer: 1, hint: 'What happens when each is pushed?', explain: 'Each pushes back against being pushed. Same mechanism, three subjects.' },
+          { type: 'tf', prompt: 'A balanced system is one where nothing is changing.', answer: false, hint: 'Think about a thermostat.', explain: 'It wobbles constantly and corrects. Bounded, not still.' },
+          { type: 'mc', prompt: 'A market with only one seller tends to stop correcting because:', choices: ['costs fall', 'prices are fixed by law', 'the feedback from competition is removed', 'buyers disappear'], answer: 2, hint: 'What normally pushes a price back down?', explain: 'Remove the feedback and the system stops self-correcting.' },
+          { type: 'mc', prompt: 'Splitting government power across branches is most like:', choices: ['a fossil record', 'an exponent', 'a food chain', 'a body regulating its own temperature'], answer: 3, hint: 'Which one corrects its own drift?', explain: 'Both are feedback systems that resist runaway change.' },
         ],
       },
     ],
