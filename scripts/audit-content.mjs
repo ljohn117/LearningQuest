@@ -69,7 +69,9 @@ for (const subj of SUBJECT_ORDER) {
     const mentionsOtherLane = laneNames.some((n) =>
       n !== lane.name && text.includes(n.split(' ')[0]));
     const hasCallbackPage = day.pages.some((p) => /where you have seen|seen this before|connect/i.test(p.title));
-    if (!mentionsOtherLane && !hasCallbackPage) {
+    // a day declaring cross-lane prerequisites IS a connection by construction
+    const isConnector = (day.requires || []).some((k) => !k.startsWith(subj + ':'));
+    if (!mentionsOtherLane && !hasCallbackPage && !isConnector) {
       noCallback++;
       if (verbose) flag(`${day.id} "${day.title}": no cross-lane callback`);
     }

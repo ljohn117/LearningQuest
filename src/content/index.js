@@ -5,6 +5,7 @@ import { CONNECTIONS } from './connections.js';
 import { ELA_EXTRA, BIO_EXTRA } from './depth.js';
 import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
 import { CHECKPOINTS } from './checkpoints.js';
+import { SPIRAL } from './spiral.js';
 
 /* Merged curriculum. Subject keys are distinct across all sources and every
    day id is unique, so the merge cannot collide.
@@ -22,6 +23,21 @@ append('bio', BIO_EXTRA);
 append('gov', GOV_EXTRA);
 append('fossils', FOSSILS_EXTRA);
 for (const [subj, days] of Object.entries(CHECKPOINTS)) append(subj, days);
+
+/* Append spiral callbacks to the days that had none. Kept out of the content
+   files so the additions stay reviewable in one place and the prototype prose
+   is left exactly as written. */
+for (const lane of Object.values(merged)) {
+  lane.days = lane.days.map((day) => {
+    const note = SPIRAL[day.id];
+    if (!note) return day;
+    const pages = day.pages.map((p, i) =>
+      i === day.pages.length - 1
+        ? { ...p, blocks: [...p.blocks, { type: 'callout', text: note }] }
+        : p);
+    return { ...day, pages };
+  });
+}
 
 export const CURRICULUM = merged;
 
