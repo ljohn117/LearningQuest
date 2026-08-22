@@ -110,10 +110,11 @@ export function SoundToggle() {
   );
 }
 
-export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onLadder, onReset, onSetName, onSwitch, isDemo }) {
+export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onLadder, onReset, onRestore, onSetName, onSwitch, isDemo }) {
   const [confirm, setConfirm] = useState(false);
   const [editing, setEditing] = useState(false);
   const [backing, setBacking] = useState(false);
+  const [restoring, setRestoring] = useState(false);
   const [nameVal, setNameVal] = useState(state.name);
   const totalDone = SUBJECT_ORDER.reduce((n, s) => n + subjStats(s).done, 0);
   const totalDays = SUBJECT_ORDER.reduce((n, s) => n + subjStats(s).total, 0);
@@ -204,7 +205,8 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
             {!isDemo && <button className="lq-tap" style={S.ghostBtn} onClick={() => setEditing(true)}>Change name</button>}
             <SoundToggle />
             <button className="lq-tap" style={S.ghostBtn} onClick={onParent}>For parents</button>
-            <button className="lq-tap" style={S.ghostBtn} onClick={() => setBacking(true)}>Back up</button>
+            <button className="lq-tap" style={S.ghostBtn} onClick={() => { setBacking(true); setRestoring(false); }}>Back up</button>
+            <button className="lq-tap" style={S.ghostBtn} onClick={() => { setRestoring(true); setBacking(false); }}>Restore</button>
             <button className="lq-tap" style={S.ghostBtn} onClick={() => setConfirm(true)}><RotateCcw size={13} /> Reset progress</button>
           </div>
         ) : (
@@ -216,6 +218,7 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
         )}
       </div>
       {backing && <BackupPanel onClose={() => setBacking(false)} />}
+      {restoring && <RestorePanel onRestore={onRestore} onClose={() => setRestoring(false)} />}
     </div>
   );
 }
@@ -223,6 +226,72 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
 /* ---- BACKUP BRIDGE: window.storage is origin-scoped; a Vite build won't
    inherit it. Copy this payload out before porting. Downloads are blocked
    in artifacts, so this is copy-to-clipboard by design. -------------------- */
+/* The other half of Back up.
+ *
+ * Backup shipped without this, which made it a write-only feature: it handed
+ * you a payload and nothing in the app could put it back. That only becomes
+ * urgent once you realise localStorage is scoped per ORIGIN — a file:// copy,
+ * a hosted page and a localhost server are three separate stores that cannot
+ * see each other. Moving him to a better URL therefore stranded his history,
+ * and stranding his history is the exact failure this project treats as the
+ * most damaging thing that can happen.
+ *
+ * Deliberately guarded: it says what it found BEFORE it writes anything, and
+ * restoring replaces what is there, so it names the cost out loud first. */
+export function RestorePanel({ onRestore, onClose }) {
+  const [txt, setTxt] = useState('');
+  const [err, setErr] = useState(null);
+
+  let found = null;
+  if (txt.trim()) {
+    try {
+      const parsed = JSON.parse(txt);
+      const blob = parsed && parsed.lqBackup ? parsed.data : parsed;
+      const profiles = Array.isArray(blob?.profiles) ? blob.profiles : [];
+      if (profiles.length) {
+        found = {
+          people: profiles.map((p) => p.name || 'unnamed'),
+          days: profiles.reduce((n, p) => n + Object.keys(p.completed || {}).length, 0),
+          xp: profiles.reduce((n, p) => n + (p.xp || 0), 0),
+        };
+      }
+    } catch { /* still typing, or not a backup — handled below */ }
+  }
+
+  return (
+    <div style={S.backupBox}>
+      <div style={S.muted}>
+        Paste a backup here. Use this to move his progress to a different browser,
+        a different device, or a new address for the app.
+      </div>
+      <textarea value={txt} placeholder="Paste the backup text"
+        aria-label="Paste a backup"
+        onChange={(e) => { setTxt(e.target.value); setErr(null); }}
+        style={S.backupTa} />
+      {txt.trim() && !found && (
+        <div style={{ ...S.muted, fontSize: 13, color: '#f6b73c' }}>
+          That does not look like a Learning Quest backup yet.
+        </div>
+      )}
+      {found && (
+        <div style={{ ...S.muted, fontSize: 13.5, lineHeight: 1.55 }}>
+          Found <strong style={{ color: '#e7e9f0' }}>{found.people.join(', ')}</strong> — {found.days} finished
+          day{found.days === 1 ? '' : 's'}, {found.xp} XP. Restoring replaces whatever is saved here now.
+        </div>
+      )}
+      {err && <div style={{ ...S.muted, fontSize: 13, color: '#ff6b6b' }}>{err}</div>}
+      <div style={S.confirmRow}>
+        <button className="lq-tap" style={{ ...S.ghostBtn, opacity: found ? 1 : .45 }}
+          disabled={!found}
+          onClick={() => { try { onRestore(txt); } catch (e) { setErr(e.message); } }}>
+          Restore
+        </button>
+        <button className="lq-tap" style={S.ghostBtn} onClick={onClose}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
 export function BackupPanel({ onClose }) {
   const [txt, setTxt] = useState('Reading...');
   const ta = useRef(null);

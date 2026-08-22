@@ -170,6 +170,14 @@ export default function App() {
           onDaily={() => { sessionStart.current = Date.now(); setView({ name: 'daily' }); }}
           onParent={() => setView({ name: 'parent' })}
           onLadder={() => setView({ name: 'ladder' })}
+          onRestore={(text) => {
+            /* Throws on a bad payload; RestorePanel catches and shows it. */
+            const next = Store.importBackup(text);
+            setDb(next);
+            setActiveId(next.lastActive);
+            setSaveFailed(false);
+            setView({ name: 'dash' });
+          }}
           onSwitch={exitToProfiles} isDemo={!!demo} />
       )}
       {view.name === 'ladder' && (
