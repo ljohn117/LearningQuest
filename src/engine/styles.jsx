@@ -82,6 +82,7 @@ export const S = {
   pRow: { display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', background: '#12151f', border: '1px solid #1e2331', borderRadius: 10, fontSize: 14.5 },
   pCard: { background: '#12151f', border: '1px solid #262c3d', borderRadius: 11, padding: '10px 12px' },
   stopNote: { marginTop: 22, background: '#12151f', border: '1px solid #262c3d', borderRadius: 13, padding: '12px 15px', fontSize: 14, color: '#aeb4c4', lineHeight: 1.55, maxWidth: 340, marginLeft: 'auto', marginRight: 'auto' },
+  allyLine: { display: 'flex', alignItems: 'center', marginTop: 9, fontSize: 13.5, color: '#aeb4c4', fontStyle: 'italic', lineHeight: 1.5, maxWidth: 320, marginLeft: 'auto', marginRight: 'auto', textAlign: 'center' },
   skipChip: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, marginLeft: 10, paddingLeft: 10, borderLeft: '1px solid #262c3d' },
   teaser: { display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'center', textAlign: 'center', background: '#12151f', border: '1px solid #232936', borderRadius: 14, padding: '15px 17px', maxWidth: 360, margin: '22px auto 0' },
   teaserLbl: { fontFamily: 'JetBrains Mono, monospace', fontSize: 9.5, letterSpacing: '1.1px', color: '#5b6275' },

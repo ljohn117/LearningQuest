@@ -35,7 +35,16 @@ export function DuelIntro({ profile, onBack, onStart }) {
     () => ALL_DRILLS.filter((d) => isUnlocked(profile, d)),
     [profile]
   );
-  const companions = earnedCompanions(profile, CURRICULUM, SUBJECT_ORDER);
+  const companions = earnedCompanions(profile, CURRICULUM, SUBJECT_ORDER)
+    .filter((c) => COMPANIONS[c]);
+  const [ally, setAlly] = useState(null);
+
+  /* A companion that only sat there being decorative was a collection with
+     no verbs. Bringing one now does two things: it fights alongside you and
+     says so in its own lane's voice, and where its lane has drills of its
+     own it brings those instead of the mixed pool. Earning it is what
+     unlocks the ability to aim your practice. */
+  const allyDrills = (c) => unlocked.filter((d) => d.subj === c);
 
   return (
     <div>
@@ -54,18 +63,37 @@ export function DuelIntro({ profile, onBack, onStart }) {
       </div>
 
       {companions.length > 0 && (
-        <div className="lq-rise" style={{ ...S.companionRow, animationDelay: '.04s' }}>
-          {companions.filter((c) => COMPANIONS[c]).map((c) => (
-            <div key={c} style={S.companionChip} title={`${COMPANIONS[c].name} — ${COMPANIONS[c].title}`}>
-              <span style={{ fontSize: 19 }}>{COMPANIONS[c].glyph}</span>
-              <span style={{ fontSize: 12.5, color: '#aeb4c4' }}>{COMPANIONS[c].name}</span>
-            </div>
-          ))}
-        </div>
+        <>
+          <div style={S.sectionLabel}>Who comes with you</div>
+          <div className="lq-rise" style={{ ...S.companionRow, animationDelay: '.04s' }}>
+            {companions.map((c) => {
+              const on = ally === c, comp = COMPANIONS[c], mine = allyDrills(c).length;
+              return (
+                <button key={c} type="button" className="lq-tap"
+                  aria-pressed={on}
+                  aria-label={`${comp.name}, ${comp.title}${mine ? ` — brings ${mine} of its own drills` : ''}`}
+                  onClick={() => setAlly(on ? null : c)}
+                  style={{ ...S.cardBtn, ...S.companionChip, cursor: 'pointer',
+                    borderColor: on ? (CURRICULUM[c]?.accent || '#5aa9ff') : '#262c3d',
+                    background: on ? (CURRICULUM[c]?.accent || '#5aa9ff') + '18' : 'transparent' }}>
+                  <span style={{ fontSize: 19 }}>{comp.glyph}</span>
+                  <span style={{ fontSize: 12.5, color: on ? '#e7e9f0' : '#aeb4c4' }}>{comp.name}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div style={{ ...S.muted, fontSize: 13, marginTop: 8, lineHeight: 1.55 }}>
+            {!ally
+              ? 'Tap one to bring it along. Optional — a duel works fine without.'
+              : allyDrills(ally).length
+                ? `${COMPANIONS[ally].name} brings ${allyDrills(ally).length} drill${allyDrills(ally).length > 1 ? 's' : ''} of its own. Start a mixed duel and you will get those.`
+                : `${COMPANIONS[ally].name} has no drills of its own yet, but it will fight alongside you.`}
+          </div>
+        </>
       )}
 
       {unlocked.length > 0 && (
-        <button className="lq-tap lq-card" style={{ ...S.duelCard, marginTop: 18 }} onClick={() => onStart(null)}>
+        <button className="lq-tap lq-card" style={{ ...S.duelCard, marginTop: 18 }} onClick={() => onStart(null, ally)}>
           <div style={{ fontSize: 26 }}>🌀</div>
           <div style={{ flex: 1, textAlign: 'left' }}>
             <div style={S.planTitle}>Mixed Duel</div>
@@ -76,7 +104,7 @@ export function DuelIntro({ profile, onBack, onStart }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
         {unlocked.map((d) => (
-          <button key={d.id} className="lq-tap" style={S.duelRow} onClick={() => onStart(d.id)}>
+          <button key={d.id} className="lq-tap" style={S.duelRow} onClick={() => onStart(d.id, ally)}>
             <span style={{ width: 8, height: 8, borderRadius: 4, background: CURRICULUM[d.subj]?.accent || '#5aa9ff', flexShrink: 0 }} />
             <span style={{ flex: 1, textAlign: 'left' }}>{d.name}</span>
             <span style={{ ...S.muted, fontSize: 12 }}>{CURRICULUM[d.subj]?.name}</span>
@@ -88,18 +116,28 @@ export function DuelIntro({ profile, onBack, onStart }) {
   );
 }
 
-export function DuelSession({ drillId, profile, onExit, onDone }) {
+export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
   const pool = useMemo(() => {
     const unlocked = ALL_DRILLS.filter((d) => isUnlocked(profile, d));
-    const p = drillId ? ALL_DRILLS.filter((d) => d.id === drillId) : unlocked;
-    return p.length ? p : [ALL_DRILLS[0]];
-  }, [drillId, profile]);
+    if (drillId) {
+      const one = ALL_DRILLS.filter((d) => d.id === drillId);
+      if (one.length) return one;
+    }
+    /* A chosen companion narrows the mixed pool to its own lane, when it has
+       one. Falls through to everything unlocked when it does not. */
+    const mine = allyKey ? unlocked.filter((d) => d.subj === allyKey) : [];
+    if (mine.length) return mine;
+    return unlocked.length ? unlocked : [ALL_DRILLS[0]];
+  }, [drillId, allyKey, profile]);
 
   const guardian = useMemo(() => GUARDIANS[rnd(0, GUARDIANS.length - 1)], []);
   const ally = useMemo(() => {
+    if (allyKey && COMPANIONS[allyKey]) return COMPANIONS[allyKey];
     const earned = earnedCompanions(profile, CURRICULUM, SUBJECT_ORDER);
     return COMPANIONS[earned.find((c) => COMPANIONS[c])] || COMPANIONS.math;
-  }, [profile]);
+  }, [allyKey, profile]);
+
+  const [say, setSay] = useState(() => ally.lines?.open || null);
 
   const [hp, setHp] = useState(HP);
   const [q, setQ] = useState(() => ({ ...pickOne(pool).gen(), type: 'numeric' }));
@@ -118,6 +156,7 @@ export function DuelSession({ drillId, profile, onExit, onDone }) {
     if (!ok) {
       setStreak(0);
       setFlash('fizzle');
+      setSay(pickOne(ally.lines?.miss || ['Go again.']));
       setQ({ ...pickOne(pool).gen(), type: 'numeric' });
       return;
     }
@@ -131,9 +170,12 @@ export function DuelSession({ drillId, profile, onExit, onDone }) {
     setStreak(nextStreak);
     setHp(nextHp);
     setFlash(dmg === 2 ? 'charged' : 'hit');
+    setSay(nextStreak === CHARGE_AT && ally.lines?.charge
+      ? ally.lines.charge
+      : pickOne(ally.lines?.hit || ['Hit.']));
 
     if (nextHp <= 0) {
-      onDone({ right: right + 1, asked: nextAsked, bestStreak: bestStreak.current, guardian });
+      onDone({ right: right + 1, asked: nextAsked, bestStreak: bestStreak.current, guardian, ally });
       return;
     }
     setQ({ ...pickOne(pool).gen(), type: 'numeric' });
@@ -163,6 +205,10 @@ export function DuelSession({ drillId, profile, onExit, onDone }) {
             <span style={S.chargeTag}><Sparkles size={11} /> Charged</span>
           )}
         </div>
+
+        {say && (
+          <div key={'s' + asked} className="lq-rise" style={S.allyLine}>“{say}”</div>
+        )}
 
         {flash && (
           <div key={'f' + asked} className="lq-rise" style={{
@@ -200,6 +246,12 @@ export function DuelWon({ result, earned, onContinue }) {
         {result.right} of {result.asked} · best run {result.bestStreak} · +{earned} XP
       </div>
       <div className="lq-rise" style={{ ...S.muted, marginTop: 10, fontSize: 14 }}>{note}</div>
+      {result.ally?.lines?.win && (
+        <div className="lq-rise" style={{ ...S.allyLine, marginTop: 14, justifyContent: 'center' }}>
+          <span style={{ fontSize: 16, marginRight: 7 }}>{result.ally.glyph}</span>
+          “{result.ally.lines.win}”
+        </div>
+      )}
       <button className="lq-tap" style={{ ...S.primaryBtn, background: '#ff9f5a', color: '#0c0e16', marginTop: 26 }}
         onClick={onContinue}>
         Again

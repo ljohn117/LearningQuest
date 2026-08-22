@@ -202,10 +202,10 @@ export default function App() {
       )}
       {view.name === 'practice' && (
         <DuelIntro profile={profile} onBack={() => setView({ name: 'dash' })}
-          onStart={(drillId) => setView({ name: 'duel', drillId })} />
+          onStart={(drillId, allyKey) => setView({ name: 'duel', drillId, allyKey })} />
       )}
       {view.name === 'duel' && (
-        <DuelSession drillId={view.drillId} profile={profile}
+        <DuelSession drillId={view.drillId} allyKey={view.allyKey} profile={profile}
           onExit={() => setView({ name: 'practice' })}
           onDone={(result) => { const earned = finishPractice(view.drillId, result.right, result.bestStreak); setView({ name: 'duelwon', result, earned }); }} />
       )}
