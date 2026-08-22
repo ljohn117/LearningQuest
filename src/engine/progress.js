@@ -30,6 +30,53 @@ const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0
 export const todayStr = () => fmt(new Date());
 export function yesterday() { const d = new Date(); d.setDate(d.getDate() - 1); return fmt(d); }
 
+/* Whole calendar days between two YYYY-MM-DD strings. Parsed as local noon so
+   a daylight-saving shift cannot round the difference to the wrong integer. */
+export function daysBetween(fromStr, toStr) {
+  if (!fromStr || !toStr) return Infinity;
+  const at = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d, 12); };
+  return Math.round((at(toStr) - at(fromStr)) / 86400000);
+}
+
+/* Skip days.
+ *
+ * A streak is a good motivator and a bad master. For a kid who already
+ * assumes he is going to fail at things, a broken streak is not a small
+ * disappointment — it is a reason to stop entirely, because starting again
+ * from 1 feels like proof he was right. He abandons rather than restarts.
+ *
+ * So the streak has a safety net he is told about IN ADVANCE. One skip day
+ * is banked every five days he completes, up to two. A gap that his banked
+ * skips can cover is bridged automatically and the streak carries on.
+ *
+ * Called "skip", never "miss" or "freeze". He chose to skip; nothing failed.
+ */
+export const SKIP_EVERY = 5, MAX_SKIPS = 2;
+
+/* Pure. Returns the streak after studying today, plus how many skips it
+   spent to get there — so the UI can say so rather than silently absorbing
+   a gap he would otherwise think he had got away with. */
+export function advanceStreak(streak, skips = 0, today = todayStr()) {
+  const cur = streak && typeof streak === 'object' ? streak : { count: 0, last: null };
+  if (cur.last === today) return { streak: cur, skips, spent: 0 };
+  if (!cur.last) return { streak: { count: 1, last: today }, skips, spent: 0 };
+
+  const gap = daysBetween(cur.last, today);
+  if (gap <= 1) return { streak: { count: (cur.count || 0) + 1, last: today }, skips, spent: 0 };
+
+  const missed = gap - 1;
+  if (missed > 0 && skips >= missed) {
+    return { streak: { count: (cur.count || 0) + 1, last: today }, skips: skips - missed, spent: missed };
+  }
+  return { streak: { count: 1, last: today }, skips, spent: 0 };
+}
+
+/* One skip banked every SKIP_EVERY completed days, capped. Awarded on the
+   day the count lands on a multiple, so it accrues from real work. */
+export const skipsAfter = (completedCount, skips = 0) =>
+  completedCount > 0 && completedCount % SKIP_EVERY === 0
+    ? Math.min(MAX_SKIPS, skips + 1) : skips;
+
 export const dayKey = (subj, d) => `${subj}:${d}`;
 export const XP_CORRECT = 10, XP_BONUS = 20, PRACTICE_XP = 5;
-export const DEFAULT_STATE = { name: '', xp: 0, completed: {}, practice: {}, streak: { count: 0, last: null } };
+export const DEFAULT_STATE = { name: '', xp: 0, completed: {}, practice: {}, streak: { count: 0, last: null }, skips: 0 };

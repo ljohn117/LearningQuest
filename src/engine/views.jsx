@@ -98,7 +98,7 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
             <div style={S.rankRow}><Trophy size={15} color="#f6b73c" /><span style={S.rankName}>{lvl.rank}</span></div>
             <div style={S.lvlBig}>Level {lvl.level}</div>
           </div>
-          <Streak count={state.streak.count} />
+          <Streak count={state.streak.count} skips={state.skips || 0} />
         </div>
         <Bar pct={lvl.pct} accent="#f6b73c" />
         <div style={S.barLabel}>
@@ -455,7 +455,7 @@ export function Calibration({ accent, value, onRate }) {
   );
 }
 
-export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue, sessionMinutes, rating, onRate }) {
+export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue, sessionMinutes, rating, onRate, skipSpent = 0, next }) {
   const accent = CURRICULUM[subj].accent;
   const total = day.quiz.length, perfect = correct === total;
   const msg = perfect ? 'Flawless!' : correct >= total - 1 ? 'So close to perfect!' : 'Day complete!';
@@ -472,7 +472,27 @@ export function ResultsView({ subj, day, correct, earned, leveledTo, userName, o
       </p>
       <div className="lq-rise" style={{ ...S.xpBadge, animationDelay: '.2s' }}><Zap size={18} color="#f6b73c" /> <span style={{ ...S.mono, fontSize: 20 }}>+{earned} XP</span></div>
       {leveledTo && <div className="lq-rise" style={{ ...S.levelUp, animationDelay: '.28s' }}><Sparkles size={16} color="#f6b73c" /> Level up! You reached Level {leveledTo}</div>}
+      {skipSpent > 0 && (
+        <div className="lq-rise" style={{ ...S.stopNote, animationDelay: '.3s', borderColor: '#7dd3fc44' }}>
+          You skipped {skipSpent === 1 ? 'a day' : `${skipSpent} days`} — that is what the banked skip days are for,
+          so the streak carried straight on. Nothing was lost.
+        </div>
+      )}
+
       {onRate && <Calibration accent={accent} value={rating} onRate={onRate} />}
+
+      {/* One line about what is next. An unfinished thing is easier to come
+          back to than a finished one, and this costs a sentence. */}
+      {next && (
+        <div className="lq-rise" style={{ ...S.teaser, animationDelay: '.44s' }}>
+          <span style={S.teaserLbl}>NEXT TIME</span>
+          <span style={{ color: '#e7e9f0', fontSize: 14.5 }}>{next.day.title}</span>
+          {next.hook && <span style={{ ...S.muted, fontSize: 13.5, lineHeight: 1.5 }}>{next.hook}</span>}
+          <span style={{ ...S.mono, fontSize: 10.5, color: CURRICULUM[next.subj].accent, letterSpacing: '.7px' }}>
+            {CURRICULUM[next.subj].name.toUpperCase()}
+          </span>
+        </div>
+      )}
       {/* Research puts a productive session for this age at 10-15 minutes,
           and a nine-year-old should not be the one deciding when to stop.
           Suggested at a clean boundary, never mid-question, and framed as
@@ -498,11 +518,23 @@ export function Bar({ pct, accent, thin, label }) {
     </div>
   );
 }
-export function Streak({ count }) {
+/* The banked skip days are shown next to the streak whether or not he has
+   any, because a safety net nobody mentioned is not a safety net. He needs
+   to know it is there on the day he is deciding whether to bother. */
+export function Streak({ count, skips = 0 }) {
   return (
     <div style={S.streak}>
       <Flame size={20} color={count > 0 ? '#ff8a3d' : '#4a505f'} style={count > 0 ? { animation: 'flicker 1.4s ease-in-out infinite' } : {}} />
-      <div><div style={{ ...S.mono, fontSize: 18, lineHeight: 1, color: count > 0 ? '#ffb37a' : '#6b7281' }}>{count}</div><div style={S.streakLbl}>day streak</div></div>
+      <div>
+        <div style={{ ...S.mono, fontSize: 18, lineHeight: 1, color: count > 0 ? '#ffb37a' : '#6b7281' }}>{count}</div>
+        <div style={S.streakLbl}>day streak</div>
+      </div>
+      {skips > 0 && (
+        <div style={S.skipChip} title={`${skips} skip day${skips > 1 ? 's' : ''} banked — miss a day and one covers it automatically`}>
+          <span style={{ ...S.mono, fontSize: 13, color: '#7dd3fc' }}>{skips}</span>
+          <span style={{ fontSize: 10.5, color: '#8b91a3', letterSpacing: '.4px' }}>skip{skips > 1 ? 's' : ''}</span>
+        </div>
+      )}
     </div>
   );
 }

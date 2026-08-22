@@ -3,7 +3,7 @@ import { Store } from './store.js';
 import { S, Shell, FontAndStyle } from './engine/styles.jsx';
 import { CURRICULUM } from './content/index.js';
 import {
-  levelInfo, todayStr, yesterday, dayKey,
+  levelInfo, todayStr, dayKey, advanceStreak, skipsAfter,
   XP_CORRECT, XP_BONUS, PRACTICE_XP, DEFAULT_STATE,
 } from './engine/progress.js';
 import {
@@ -79,15 +79,17 @@ export default function App() {
     const earned = correctCount * XP_CORRECT + XP_BONUS;
     updateProfile((p) => {
       const beforeLvl = levelInfo(p.xp).level;
-      const t = todayStr();
-      let count = p.streak.count;
-      if (p.streak.last === t) {} else if (p.streak.last === yesterday()) count += 1; else count = 1;
       const xp = p.xp + earned;
       const key = dayKey(subj, day.id);
       const prevBest = p.completed[key]?.best ?? 0;
+      const completed = { ...p.completed, [key]: { best: Math.max(prevBest, correctCount), total: day.quiz.length } };
+      /* Spend banked skip days to bridge a gap before banking any new one,
+         so finishing after a break cannot pay for the break retroactively. */
+      const { streak, skips, spent } = advanceStreak(p.streak, p.skips || 0);
       return {
-        ...p, xp, streak: { count, last: t },
-        completed: { ...p.completed, [key]: { best: Math.max(prevBest, correctCount), total: day.quiz.length } },
+        ...p, xp, streak, completed,
+        skips: skipsAfter(Object.keys(completed).length, skips),
+        _skipSpent: spent,
         _leveledTo: levelInfo(xp).level > beforeLvl ? levelInfo(xp).level : null,
       };
     });
@@ -110,12 +112,11 @@ export default function App() {
     const earned = results.filter((r) => r.correct).length * REVIEW_XP;
     updateProfile((p) => {
       const beforeLvl = levelInfo(p.xp).level;
-      const t = todayStr();
-      let count = p.streak.count;
-      if (p.streak.last === t) {} else if (p.streak.last === yesterday()) count += 1; else count = 1;
       const xp = p.xp + earned;
+      const { streak, skips, spent } = advanceStreak(p.streak, p.skips || 0);
       return {
-        ...p, xp, streak: { count, last: t }, review: recordReview(p, results),
+        ...p, xp, streak, skips, review: recordReview(p, results),
+        _skipSpent: spent,
         _leveledTo: levelInfo(xp).level > beforeLvl ? levelInfo(xp).level : null,
       };
     });
@@ -166,7 +167,7 @@ export default function App() {
       {view.name === 'dash' && (
         <Dashboard lvl={lvl} state={profile} subjStats={subjStats}
           onOpen={(subj) => setView({ name: 'subject', subj })}
-          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, review: {}, writing: {}, calibration: {}, streak: { count: 0, last: null }, _leveledTo: null }))}
+          onReset={() => updateProfile((p) => ({ ...p, xp: 0, completed: {}, practice: {}, review: {}, writing: {}, calibration: {}, streak: { count: 0, last: null }, skips: 0, _leveledTo: null }))}
           onSetName={(n) => updateProfile((p) => ({ ...p, name: n }))}
           onPractice={() => setView({ name: 'practice' })}
           onDaily={() => { sessionStart.current = Date.now(); setView({ name: 'daily' }); }}
@@ -232,6 +233,15 @@ export default function App() {
         <ResultsView subj={view.subj} day={view.day} correct={view.correct} earned={view.earned} userName={profile.name}
           leveledTo={profile._leveledTo}
           sessionMinutes={view.from === 'daily' && sessionStart.current ? (Date.now() - sessionStart.current) / 60000 : 0}
+          skipSpent={profile._skipSpent || 0}
+          next={(() => {
+            /* profile is already updated at this point, so pickLesson returns
+               what actually comes next rather than the day he just did. */
+            const l = pickLesson(profile);
+            if (!l || (l.subj === view.subj && l.day.id === view.day.id)) return null;
+            const hook = (l.day.subtitle || '').split('·').slice(1).join('·').trim();
+            return { subj: l.subj, day: l.day, hook };
+          })()}
           rating={profile.calibration?.[dayKey(view.subj, view.day.id)]?.level || null}
           onRate={(level) => recordCalibration(view.subj, view.day.id, level)}
           onContinue={() => { if (view.from === 'daily') sessionStart.current = null; setView(view.from === 'daily' ? { name: 'dash' } : view.from === 'ladder' ? { name: 'ladder' } : { name: 'subject', subj: view.subj }); }} />
