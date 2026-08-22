@@ -34,6 +34,30 @@ function normalize(p) {
   };
 }
 
+/* Can this browser actually keep anything?
+ *
+ * Reading is not proof. An empty store reads fine and then fails on write —
+ * which is what happens with site data blocked, in some private windows, and
+ * (notably for a household on Macs) in Safari opening a file:// page, where
+ * localStorage throws SecurityError outright.
+ *
+ * So this does a real round trip: write a sentinel, read it back, delete it.
+ * Anything less would let him finish a whole session before finding out. */
+export function probeStorage() {
+  const k = '__lq_probe__';
+  try {
+    localStorage.setItem(k, '1');
+    const ok = localStorage.getItem(k) === '1';
+    localStorage.removeItem(k);
+    if (!ok) lastError = new Error('storage accepted a write but did not keep it');
+    return ok;
+  } catch (e) {
+    console.error('[LearningQuest] storage is not writable — progress cannot be saved:', e);
+    lastError = e;
+    return false;
+  }
+}
+
 function readKey(k) {
   try {
     const raw = localStorage.getItem(k);

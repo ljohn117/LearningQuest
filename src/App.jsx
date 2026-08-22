@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Store } from './store.js';
+import { Store, probeStorage } from './store.js';
 import { S, Shell, FontAndStyle } from './engine/styles.jsx';
 import { CURRICULUM } from './content/index.js';
 import {
@@ -7,7 +7,7 @@ import {
   XP_CORRECT, XP_BONUS, PRACTICE_XP, DEFAULT_STATE,
 } from './engine/progress.js';
 import {
-  ProfileSelect, Dashboard, SubjectView, LessonView, QuizView, ResultsView,
+  ProfileSelect, Dashboard, SubjectView, LessonView, QuizView, ResultsView, StorageWarning,
 } from './engine/views.jsx';
 import { DailyPlan, WarmupSession, WarmupDone } from './engine/DailyQuest.jsx';
 import { DuelIntro, DuelSession, DuelWon } from './engine/Duel.jsx';
@@ -20,7 +20,7 @@ export default function App() {
   const [activeId, setActiveId] = useState(null);
   const [demo, setDemo] = useState(null);      // ephemeral profile — never saved
   const [view, setView] = useState({ name: 'dash' });
-  const [saveFailed, setSaveFailed] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(() => !probeStorage());
   const firstSave = useRef(true);
   const sessionStart = useRef(null);   // set when a daily session begins
 
@@ -146,6 +146,7 @@ export default function App() {
   if (!db) return <Shell><FontAndStyle /><div style={S.loading}>Loading your quest…</div></Shell>;
   if (!profile) return (
     <Shell><FontAndStyle />
+      {saveFailed && <StorageWarning />}
       <ProfileSelect profiles={db.profiles} onPick={pickProfile} onCreate={createProfile} onDemo={startDemo} />
     </Shell>
   );
@@ -153,11 +154,7 @@ export default function App() {
   return (
     <Shell>
       <FontAndStyle />
-      {saveFailed && (
-        <div style={S.demoBar}>
-          <span>Progress could not be saved. Check that this browser allows site data.</span>
-        </div>
-      )}
+      {saveFailed && <StorageWarning />}
       {demo && (
         <div style={S.demoBar}>
           <span>Demo mode — progress will not be saved</span>

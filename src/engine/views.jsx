@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, Volume2, VolumeX, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
+import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, AlertTriangle, Volume2, VolumeX, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
 import { S } from './styles.jsx';
 import { play, soundOn, setSound } from './sound.js';
 import { Visual } from './Visual.jsx';
@@ -72,6 +72,32 @@ export function ProfileSelect({ profiles, onPick, onCreate, onDemo }) {
 /* Sound is off until asked for, so the control has to say which state it is
    in rather than what it would do — "Sound off" reads as a fact, and tapping
    it plays a note so the change is confirmed by the thing itself. */
+/* Shown whenever this browser will not keep anything.
+ *
+ * The app used to log that to the console and carry on looking normal, which
+ * meant a whole session could be finished and lost with nothing on screen to
+ * say so. The console is not a place a nine-year-old looks.
+ *
+ * Copy rules: it is a fact about the browser, never about him — nothing here
+ * suggests he did anything wrong — and it says what to do, because the person
+ * who can fix it is the parent reading over his shoulder. */
+export function StorageWarning() {
+  return (
+    <div style={S.warnBar} role="status">
+      <AlertTriangle size={15} color="#f6b73c" style={{ flexShrink: 0, marginTop: 1 }} />
+      <div>
+        <strong style={{ color: '#f6b73c' }}>This browser is not letting the app save.</strong>{' '}
+        Everything will work, but progress will be gone when the tab closes.
+        <div style={{ ...S.muted, fontSize: 12.5, marginTop: 4, lineHeight: 1.5 }}>
+          Usually this means the page was opened straight from a file. Serving the folder
+          (<span style={S.mono}>npx serve</span>) or using the hosted link fixes it. Safari blocks
+          storage on file:// pages entirely; Chrome and Firefox do not.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function SoundToggle() {
   const [on, setOn] = useState(soundOn());
   return (
