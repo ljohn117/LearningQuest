@@ -1,0 +1,80 @@
+# Deploys the app to GitHub Pages.
+#
+# It publishes the SINGLE-FILE build rather than the normal Vite output, and
+# that is the important decision here. `dist/learning-quest.html` inlines the
+# whole bundle and stylesheet, so the page has no relative asset references at
+# all — which sidesteps the usual Pages-with-Vite trap where the site is served
+# from /LearningQuest/ but index.html asks for /assets/… and everything 404s.
+# No `base` config to keep in sync, and one fewer thing to break silently.
+#
+# The result is served at the site root as index.html, so the bookmark is just
+# the project URL. A copy stays at learning-quest.html so a direct link to the
+# file keeps working too.
+#
+# Note for whoever reads this later: his saved progress lives in localStorage,
+# which is scoped per origin. This URL is a DIFFERENT origin from a local file
+# or a localhost server, so moving him here does not bring his history with
+# him — use Back up on the old address and Restore on this one.
+
+name: Deploy to Pages
+
+on:
+  push:
+    branches:
+      - main
+      - claude/learningquest-eval-curriculum-1bgzlm
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; let a newer push supersede one already running.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Structural check on the curriculum. Cheap, needs no browser, and stops
+      # a malformed day or a duplicate id from ever reaching him.
+      - name: Validate content
+        run: npm run validate
+
+      - name: Build
+        run: |
+          npm run build
+          node scripts/build-singlefile.mjs
+
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp dist/learning-quest.html _site/index.html
+          cp dist/learning-quest.html _site/learning-quest.html
+          ls -la _site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
