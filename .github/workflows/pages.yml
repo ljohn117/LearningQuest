@@ -76,5 +76,46 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
+      # Pages has to be switched on by a human in repository settings, and on
+      # a free plan that also means the repo has to be public. Until then
+      # deploy-pages fails with a 404, which would leave a red run on every
+      # single push for a reason that is not a failure — the fastest way to
+      # teach someone to stop reading their own CI.
+      #
+      # So: check first. Not enabled is a clean skip with instructions in the
+      # run summary. Enabled and broken is still a real, red failure.
+      - id: check
+        name: Is Pages enabled?
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" || echo 000)
+          echo "Pages API returned $code"
+          if [ "$code" = "200" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Site built, but not deployed"
+              echo
+              echo "GitHub Pages is not enabled for this repository yet, so there is nowhere to publish to."
+              echo "The site itself built fine — it is attached to this run as the \`github-pages\` artifact."
+              echo
+              echo "To turn it on:"
+              echo "1. Free Pages requires a **public** repository. This one is private."
+              echo "   (A paid GitHub plan allows Pages on private repos instead.)"
+              echo "2. Settings → Pages → **Source: GitHub Actions** (not \"Deploy from a branch\")."
+              echo "3. Re-run this workflow."
+              echo
+              echo "Note: his saved progress lives in localStorage, which is scoped per origin."
+              echo "The Pages URL is a **different origin** from a local file, so use **Back up** on"
+              echo "the old address and **Restore** on the new one, or he starts from zero."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - id: deploy
+        if: steps.check.outputs.enabled == 'true'
         uses: actions/deploy-pages@v4
