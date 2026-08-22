@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { ArrowLeft, Zap, Sparkles } from 'lucide-react';
 import { S } from './styles.jsx';
 import { Question } from './Question.jsx';
@@ -7,6 +7,7 @@ import { EXTRA_DRILLS, rnd, pickOne } from './drills.js';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { COMPANIONS, GUARDIANS, earnedCompanions } from '../content/companions.js';
 import { dayKey, PRACTICE_XP } from './progress.js';
+import { play } from './sound.js';
 
 /* Math drills predate the others and carry no subject field. */
 const ALL_DRILLS = [
@@ -170,6 +171,7 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
     setStreak(nextStreak);
     setHp(nextHp);
     setFlash(dmg === 2 ? 'charged' : 'hit');
+    play(dmg === 2 ? 'charged' : 'hit');
     setSay(nextStreak === CHARGE_AT && ally.lines?.charge
       ? ally.lines.charge
       : pickOne(ally.lines?.hit || ['Hit.']));
@@ -229,6 +231,7 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
 }
 
 export function DuelWon({ result, earned, onContinue }) {
+  useEffect(() => { play('win'); }, []);
   const acc = result.asked ? result.right / result.asked : 1;
   const rank = acc === 1 ? 'Flawless' : acc >= 0.8 ? 'Clean' : acc >= 0.6 ? 'Hard-won' : 'Stubborn';
   const note = acc === 1

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
+import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, Volume2, VolumeX, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
 import { S } from './styles.jsx';
+import { play, soundOn, setSound } from './sound.js';
 import { Visual } from './Visual.jsx';
 import { Question } from './Question.jsx';
 import { WriteBlock } from './WriteBlock.jsx';
@@ -68,6 +69,21 @@ export function ProfileSelect({ profiles, onPick, onCreate, onDemo }) {
 }
 
 /* ---- 8. DASHBOARD ------------------------------------------------------------ */
+/* Sound is off until asked for, so the control has to say which state it is
+   in rather than what it would do — "Sound off" reads as a fact, and tapping
+   it plays a note so the change is confirmed by the thing itself. */
+export function SoundToggle() {
+  const [on, setOn] = useState(soundOn());
+  return (
+    <button className="lq-tap" style={S.ghostBtn}
+      aria-pressed={on}
+      aria-label={on ? 'Sound on — tap to turn off' : 'Sound off — tap to turn on'}
+      onClick={() => setOn(setSound(!on))}>
+      {on ? <Volume2 size={13} /> : <VolumeX size={13} />} Sound {on ? 'on' : 'off'}
+    </button>
+  );
+}
+
 export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onLadder, onReset, onSetName, onSwitch, isDemo }) {
   const [confirm, setConfirm] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -160,6 +176,7 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
           <div style={S.confirmRow}>
             <button className="lq-tap" style={S.ghostBtn} onClick={onSwitch}><Users size={13} /> Switch explorer</button>
             {!isDemo && <button className="lq-tap" style={S.ghostBtn} onClick={() => setEditing(true)}>Change name</button>}
+            <SoundToggle />
             <button className="lq-tap" style={S.ghostBtn} onClick={onParent}>For parents</button>
             <button className="lq-tap" style={S.ghostBtn} onClick={() => setBacking(true)}>Back up</button>
             <button className="lq-tap" style={S.ghostBtn} onClick={() => setConfirm(true)}><RotateCcw size={13} /> Reset progress</button>
@@ -456,6 +473,7 @@ export function Calibration({ accent, value, onRate }) {
 }
 
 export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue, sessionMinutes, rating, onRate, skipSpent = 0, next }) {
+  useEffect(() => { if (leveledTo) play('level'); }, [leveledTo]);
   const accent = CURRICULUM[subj].accent;
   const total = day.quiz.length, perfect = correct === total;
   const msg = perfect ? 'Flawless!' : correct >= total - 1 ? 'So close to perfect!' : 'Day complete!';

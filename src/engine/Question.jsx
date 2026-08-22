@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Check, HelpCircle } from 'lucide-react';
 import { S } from './styles.jsx';
+import { play } from './sound.js';
 import { XP_CORRECT } from './progress.js';
 
 /* One question, self-contained: pick/type → check → explanation → next.
@@ -22,6 +23,10 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
     if (q.type === 'numeric' && num.trim() === '') return;
     if (q.type !== 'numeric' && picked === null) return;
     setRevealed(true);
+    /* 'miss' is a soft low note, not a failure tone. See sound.js — a buzzer
+       here would undo the consequence-free design faster than any text can
+       repair, because sound lands before you have finished reading. */
+    play(isCorrect() ? 'correct' : 'miss');
   }
   const ok = revealed && isCorrect();
 
