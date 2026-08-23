@@ -53,6 +53,13 @@ jobs:
       - name: Validate content
         run: npm run validate
 
+      # Regression suite. Guards the three rules that a later change could
+      # soften without anything visibly breaking: no scolding after a wrong
+      # answer, no failure tone, and nothing paying him for his own
+      # difficulty rating.
+      - name: Test
+        run: npm test
+
       - name: Build
         run: |
           npm run build

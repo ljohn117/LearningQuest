@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "smoke": "node scripts/smoke.mjs",
     "validate": "node scripts/validate-content.mjs",
-    "audit": "node scripts/audit-content.mjs"
+    "audit": "node scripts/audit-content.mjs",
+    "test": "node scripts/test.mjs",
+    "check": "npm run validate && npm run test && npm run audit"
   },
   "dependencies": {
     "lucide-react": "^0.460.0",
