@@ -102,6 +102,47 @@ for (const forbidden of ['xp', 'completed', 'streak', 'skips', 'practice']) {
   ok(`calibration does not touch ${forbidden}`, !new RegExp(`\\b${forbidden}\\b`).test(calBody));
 }
 
+/* ---- 1b. progress must never be orphaned -------------------------------- */
+section('Existing day ids are frozen');
+
+/* Progress is stored per day as `subject:dayId`. Renaming, renumbering or
+ * removing a day id does not fail loudly — it silently orphans whatever he
+ * had already finished under the old key, and he sees a lane reset to zero
+ * with no explanation. It is the single most damaging thing that can be done
+ * to this app, and until now nothing stopped it.
+ *
+ * So the ids that exist are frozen here. Adding days is fine and expected;
+ * this list only grows. If a test in this block fails, the correct fix is
+ * almost never to edit the list — it is to put the id back.
+ */
+const FROZEN = {
+  math: ['m1','m2','m3','m4','m5','m6','m7','mr1','m8','m9','m10','m11','m12','m13','m14','mr2'],
+  cs: ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12'],
+  physics: ['phy1','phy2','phy3','phy4','phy5','phy6','phyr1'],
+  logic: ['lg1','lg2','lg3','lg4','lg5','lg6','lgr1'],
+  earth: ['es1','es2','es3','es4','es5','es6','esr1'],
+  bio: ['bio1','bio2','bio3','bio4','bio5','bio6','bio7','bio8','bio9','bio10'],
+  chem: ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','chr1'],
+  ela: ['ela1','ela2','ela3','ela4','ela5','ela6','ela7','ela8','ela9','ela10'],
+  biz: ['b1','b2','b3','b4','b5','b6','b7','b8','b9','b10','b11','b12'],
+  gov: ['g1','g2','g3','g4','g5','g6','g7','g8','g9','g10'],
+  fossils: ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10'],
+  connect: ['cx1','cx2','cx3','cx4','cx5','cx6','cx7'],
+  teardown: ['td1','td2','td3','td4','td5','td6'],
+};
+for (const [subj, ids] of Object.entries(FROZEN)) {
+  for (const id of ids) {
+    ok(`${subj}:${id} still exists`, dayExists(subj, id), 'removing or renaming this orphans real progress');
+  }
+}
+/* Order matters too: a day that moves earlier in its lane changes what the
+   sequential unlock opens, so appended days must stay appended. */
+for (const [subj, ids] of Object.entries(FROZEN)) {
+  const actual = (CURRICULUM[subj]?.days || []).map((d) => d.id).slice(0, ids.length);
+  ok(`${subj}: the original days are still in their original order`,
+    actual.join(',') === ids.join(','), `now ${actual.join(',')}`);
+}
+
 /* ---- 2. streaks and skip days ------------------------------------------ */
 section('Streaks and skip days');
 const T = '2026-08-22';

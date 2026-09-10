@@ -4,6 +4,7 @@ import { RESTORED } from './restored.js';
 import { CONNECTIONS } from './connections.js';
 import { CHEMISTRY } from './chemistry.js';
 import { TEARDOWNS } from './teardowns.js';
+import { MATH_EXTRA } from './math-extra.js';
 import { ELA_EXTRA, BIO_EXTRA } from './depth.js';
 import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
 import { CHECKPOINTS } from './checkpoints.js';
@@ -20,6 +21,7 @@ const append = (subj, days) => {
   if (!merged[subj]) return;
   merged[subj] = { ...merged[subj], days: [...merged[subj].days, ...days] };
 };
+append('math', MATH_EXTRA);
 append('ela', ELA_EXTRA);
 append('bio', BIO_EXTRA);
 append('gov', GOV_EXTRA);
