@@ -1,5 +1,8 @@
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
-import { todayStr } from './progress.js';
+import { todayStr, dayKey } from './progress.js';
+import { EXTRA_DRILLS, MATH_DRILLS, clampLevel, MAX_LEVEL } from './drills.js';
+
+const ALL_DRILLS = [...MATH_DRILLS, ...EXTRA_DRILLS];
 
 /* Composes one post-homework session.
  *
@@ -145,17 +148,90 @@ export function pickReview(profile, n = WARMUP_SIZE) {
   return head.slice(0, n);
 }
 
+/* ---- generated practice, on the same spaced schedule --------------------
+ *
+ * Until now the warm-up drew only from the 572 fixed quiz questions, and the
+ * procedurally generated drills appeared solely if he chose to open a duel.
+ * That had it exactly backwards: the memorisable half was spaced daily, and
+ * the unmemorisable half only happened on request.
+ *
+ * A generated question cannot be "spaced" as an item, because it is different
+ * every time. The CONCEPT can be, so each drill carries its own last-seen
+ * date and the ones he has not met recently come round first.
+ *
+ * It also carries its own difficulty, which moves the way the duel's does:
+ * up when he gets it, down when he misses. That makes the warm-up genuinely
+ * adaptive per concept rather than per session — a drill he has been landing
+ * for a week arrives harder, one he stumbled on last time arrives easier.
+ */
+const drillKey = (id) => `drill:${id}`;
+export const drillUnlocked = (profile, d) => !!profile.completed?.[dayKey(d.subj, d.day)];
+
+/** The level a given drill should arrive at next, from his history with it. */
+export function drillLevel(profile, id) {
+  const rec = (profile.review || {})[drillKey(id)];
+  return clampLevel(rec && Number.isFinite(rec.level) ? rec.level : 1);
+}
+
+/** Generated warm-up items, oldest-unseen concepts first. */
+export function pickDrillReview(profile, n) {
+  if (n <= 0) return [];
+  const seen = profile.review || {};
+  const pool = ALL_DRILLS.filter((d) => drillUnlocked(profile, d)).map((d) => {
+    const rec = seen[drillKey(d.id)];
+    return { d, score: daysSince(rec?.at) + (rec?.missed ? 6 : 0) };
+  });
+  if (!pool.length) return [];
+  pool.sort((a, b) => b.score - a.score);
+  const head = pool.slice(0, Math.max(n * 3, n));
+  for (let i = head.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [head[i], head[j]] = [head[j], head[i]];
+  }
+  return head.slice(0, n).map(({ d }) => {
+    const level = drillLevel(profile, d.id);
+    return { drillId: d.id, subj: d.subj, level, name: d.name,
+      q: { ...d.gen(level), type: 'numeric' } };
+  });
+}
+
 /** Record what was shown, so spacing advances. Pure — returns a new map. */
 export function recordReview(profile, results) {
   const next = { ...(profile.review || {}) };
   const at = todayStr();
-  for (const r of results) next[reviewKey(r.subj, r.dayId, r.qi)] = { at, missed: !r.correct };
+  for (const r of results) {
+    if (r.drillId) {
+      /* Difficulty follows the same rule as the duel: it rises when he lands
+         one and falls when he does not. Falling is the point — a concept he
+         stumbled on comes back gentler, never harder. */
+      const was = clampLevel(r.level || 1);
+      next[drillKey(r.drillId)] = { at, missed: !r.correct,
+        level: clampLevel(r.correct ? Math.min(MAX_LEVEL, was + 1) : was - 1) };
+    } else {
+      next[reviewKey(r.subj, r.dayId, r.qi)] = { at, missed: !r.correct };
+    }
+  }
   return next;
 }
 
 /** Everything the daily screen needs to describe today before starting it. */
 export function buildSession(profile) {
-  const review = pickReview(profile);
+  /* Half generated where possible. Generated questions cannot be memorised,
+     so they carry more of the load — but recalling a specific fact he was
+     taught is its own skill, so the fixed questions keep their place. If one
+     side is short, the other fills in rather than leaving a gap. */
+  const wantGenerated = Math.floor(WARMUP_SIZE / 2);
+  const generated = pickDrillReview(profile, wantGenerated);
+  const recalled = pickReview(profile, WARMUP_SIZE - generated.length);
+  const topUp = recalled.length < WARMUP_SIZE - generated.length
+    ? pickDrillReview(profile, WARMUP_SIZE - generated.length - recalled.length)
+      .filter((g) => !generated.some((x) => x.drillId === g.drillId))
+    : [];
+  const review = [...recalled, ...generated, ...topUp];
+  for (let i = review.length - 1; i > 0; i--) {          // interleave the two kinds
+    const j = Math.floor(Math.random() * (i + 1));
+    [review[i], review[j]] = [review[j], review[i]];
+  }
   const lesson = pickLesson(profile);
   const totalDays = SUBJECT_ORDER.reduce((n, s) => n + (CURRICULUM[s]?.days.length || 0), 0);
   const doneDays = Object.keys(profile.completed || {}).length;

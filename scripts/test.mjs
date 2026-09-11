@@ -27,8 +27,9 @@ const { COMPANIONS } = await import('../src/content/companions.js');
 const { SPIRAL, WRITING, SCALE } = await import('../src/content/spiral.js');
 const { LADDERS, rungEarned } = await import('../src/content/ladder.js');
 const { advanceStreak, skipsAfter, daysBetween } = await import('../src/engine/progress.js');
-const { pickLesson, pickReview } = await import('../src/engine/daily.js');
-const { EXTRA_DRILLS, MAX_LEVEL, clampLevel } = await import('../src/engine/drills.js');
+const { pickLesson, pickReview, recordReview } = await import('../src/engine/daily.js');
+const { EXTRA_DRILLS, MATH_DRILLS, MAX_LEVEL, clampLevel } = await import('../src/engine/drills.js');
+const ALL_DRILLS = [...MATH_DRILLS, ...EXTRA_DRILLS];
 
 const dayExists = (subj, id) => !!CURRICULUM[subj]?.days.some((d) => d.id === id);
 const allDayIds = new Set(SUBJECT_ORDER.flatMap((s) => (CURRICULUM[s]?.days || []).map((d) => d.id)));
@@ -150,6 +151,7 @@ for (const [subj, ids] of Object.entries(FROZEN)) {
  * add difficulty levels was precisely the kind of edit that could have
  * dropped one without anything failing, so these are frozen too. */
 const FROZEN_DRILLS = [
+  'dr1','dr2','dr3','dr4','dr5','dr6','dr7','dr8','dr9','dr10','dr11','dr12','dr13','dr14',
   'cs2a','cs2b','cs2c','cs4a','cs5a',
   'biz3a','biz3b','biz5a','biz5b','biz10a','biz10b',
   'fos4a','fos4b','fos3a',
@@ -157,12 +159,12 @@ const FROZEN_DRILLS = [
   'bio4a','bio6a',
   'chem5a','chem5b','chem8a','chem9a',
 ];
-const drillIds = new Set(EXTRA_DRILLS.map((d) => d.id));
+const drillIds = new Set(ALL_DRILLS.map((d) => d.id));
 for (const id of FROZEN_DRILLS) {
   ok(`drill "${id}" still exists`, drillIds.has(id), 'renaming it orphans his duel stats');
 }
-ok('drill ids are unique', drillIds.size === EXTRA_DRILLS.length,
-  `${EXTRA_DRILLS.length} drills, ${drillIds.size} distinct ids`);
+ok('drill ids are unique', drillIds.size === ALL_DRILLS.length,
+  `${ALL_DRILLS.length} drills, ${drillIds.size} distinct ids`);
 
 /* ---- 1d. a full profile survives a round trip --------------------------- */
 section('A populated profile loses nothing on load');
@@ -244,6 +246,43 @@ for (let L = 1; L <= MAX_LEVEL; L++) {
   ok(`a miss at level ${L} does not raise the level`, clampLevel(L - 1) <= L);
 }
 
+/* ---- 3c. the daily warm-up mixes generated with recalled ---------------- */
+section('Warm-up composition');
+const { buildSession, pickDrillReview, drillLevel } = await import('../src/engine/daily.js');
+const chainOf = (subj, ids) => Object.fromEntries(ids.map((i) => [`${subj}:${i}`, { best: 4, total: 4 }]));
+
+const warm = { completed: { ...chainOf('math', ['m1', 'm2', 'm3', 'm4']), ...chainOf('physics', ['phy1', 'phy2', 'phy3']) },
+  review: {}, calibration: {} };
+const sess = buildSession(warm);
+eq('a warm-up is the full size', sess.review.length, 4);
+ok('it contains generated questions', sess.review.some((r) => r.drillId),
+  'procedural practice was only reachable through a duel before this');
+ok('it still contains recalled questions', sess.review.some((r) => !r.drillId),
+  'recalling a specific taught fact is its own skill');
+ok('every item carries a usable question', sess.review.every((r) => r.q && r.q.prompt));
+
+/* A generated concept must rise when landed and fall when missed, and must
+   never fall below the easiest level. */
+let prog = { ...warm };
+const one = pickDrillReview(prog, 1)[0];
+ok('a drill is offered at all', !!one);
+if (one) {
+  const id = one.drillId;
+  for (const correct of [true, true, true]) {
+    prog = { ...prog, review: recordReview(prog, [{ drillId: id, level: drillLevel(prog, id), correct }]) };
+  }
+  eq('three correct answers reach the top level', drillLevel(prog, id), MAX_LEVEL);
+  prog = { ...prog, review: recordReview(prog, [{ drillId: id, level: drillLevel(prog, id), correct: false }]) };
+  ok('a miss lowers it', drillLevel(prog, id) < MAX_LEVEL);
+  for (let i = 0; i < 5; i++) {
+    prog = { ...prog, review: recordReview(prog, [{ drillId: id, level: drillLevel(prog, id), correct: false }]) };
+  }
+  eq('repeated misses never go below level 1', drillLevel(prog, id), 1);
+}
+/* A profile with nothing finished must not crash or invent practice. */
+const fresh = buildSession({ completed: {}, review: {}, calibration: {} });
+eq('a brand new profile gets no warm-up', fresh.review.length, 0);
+
 /* ---- 4. content wiring ------------------------------------------------- */
 section('Content wiring');
 /* SPIRAL, WRITING and SCALE are keyed by day id and injected at merge time.
@@ -268,7 +307,7 @@ ok('an unearned rung never lights', !rungEarned(LADDERS[0].rungs.find((r) => r.s
 
 /* ---- 5. drill generators ----------------------------------------------- */
 section('Drill generators');
-for (const d of EXTRA_DRILLS) {
+for (const d of ALL_DRILLS) {
   ok(`${d.id}: has a lane and a gating day`, !!d.subj && !!d.day && dayExists(d.subj, d.day), `${d.subj}:${d.day}`);
   for (let L = 1; L <= MAX_LEVEL; L++) {
     let bad = 0;

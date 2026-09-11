@@ -3,6 +3,9 @@ import { ArrowLeft } from 'lucide-react';
 import { S } from './styles.jsx';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { levelInfo } from './progress.js';
+import { EXTRA_DRILLS, MATH_DRILLS } from './drills.js';
+
+const ALL_DRILLS = [...MATH_DRILLS, ...EXTRA_DRILLS];
 
 /* A read-only view of what he has actually done.
  *
@@ -42,6 +45,16 @@ export function ParentView({ profile, onBack }) {
     const sticking = [];
     for (const [key, rec] of Object.entries(review)) {
       if (!rec || typeof rec !== 'object' || !rec.missed) continue;
+      /* Generated practice is recorded under `drill:<id>` rather than
+         subject:day:question. Those entries were being silently skipped here
+         — the split produced a subject that does not exist, so the lookup
+         failed quietly and a concept he keeps missing never showed up. */
+      if (key.startsWith('drill:')) {
+        const d = ALL_DRILLS.find((x) => x.id === key.slice(6));
+        if (d) sticking.push({ subj: d.subj, lane: CURRICULUM[d.subj]?.name,
+          day: d.name, prompt: 'Generated practice — currently at level ' + (rec.level || 1), at: rec.at });
+        continue;
+      }
       const [subj, dayId, qi] = key.split(':');
       const day = CURRICULUM[subj]?.days.find((d) => d.id === dayId);
       const q = day?.quiz?.[Number(qi)];

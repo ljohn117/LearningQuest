@@ -2,18 +2,14 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { ArrowLeft, Zap, Sparkles } from 'lucide-react';
 import { S } from './styles.jsx';
 import { Question } from './Question.jsx';
-import { DRILLS as MATH_DRILLS, Bar } from './views.jsx';
-import { EXTRA_DRILLS, rnd, pickOne, clampLevel, MAX_LEVEL } from './drills.js';
+import { Bar } from './views.jsx';
+import { EXTRA_DRILLS, MATH_DRILLS, rnd, pickOne, clampLevel, MAX_LEVEL } from './drills.js';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { COMPANIONS, GUARDIANS, earnedCompanions } from '../content/companions.js';
 import { dayKey, PRACTICE_XP } from './progress.js';
 import { play } from './sound.js';
 
-/* Math drills predate the others and carry no subject field. */
-const ALL_DRILLS = [
-  ...MATH_DRILLS.map((d) => ({ ...d, subj: 'math' })),
-  ...EXTRA_DRILLS,
-];
+const ALL_DRILLS = [...MATH_DRILLS, ...EXTRA_DRILLS];
 const isUnlocked = (profile, d) => !!profile.completed?.[dayKey(d.subj, d.day)];
 
 /* Skill Duel — a battle wrapper around the procedural drill generators.

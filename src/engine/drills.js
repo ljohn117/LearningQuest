@@ -570,3 +570,149 @@ export const EXTRA_DRILLS = [
     },
   },
 ];
+
+/* ---- Mathematics, days 1-14 --------------------------------------------
+ *
+ * These fourteen are the oldest drills in the app and by far the most used —
+ * they cover the ratios-to-quadratics spine he meets first. They lived in
+ * views.jsx, which is why the difficulty pass missed them entirely: they were
+ * in a view file rather than with the other generators, so neither the
+ * rewrite nor the test that checks for levels ever saw them. They sat on
+ * gen() with no arguments, one shape at one difficulty, while every less-used
+ * lane got three.
+ *
+ * Moved here and levelled. The ids dr1-dr14 are unchanged and must stay that
+ * way: duel statistics are stored under them, so renaming one silently
+ * orphans his practice history. Level 1 reproduces the old behaviour exactly.
+ */
+export const MATH_DRILLS = [
+  { id: 'dr1', subj: 'math', day: 'm1', name: 'Unit Rates',
+    gen: (level = 1) => { const L = clampLevel(level); const per = rnd(2, 9), n = pickOne([3, 4, 5, 6, 8]);
+      if (L === 2) return { prompt: `One notebook costs $${per}. What do ${n} cost, in dollars?`,
+        answer: per * n, hint: 'A unit rate times how many you want.' };
+      if (L === 3) { const m = pickOne([2, 3, 4]);
+        return { prompt: `${n} notebooks cost $${n * per}. At that rate, what do ${n * m} cost, in dollars?`,
+          answer: n * m * per, hint: 'Find the cost of ONE first, then scale up.' }; }
+      return { prompt: `${n} notebooks cost $${n * per}. What does ONE notebook cost, in dollars?`,
+        answer: per, hint: 'Divide the total cost by how many there are.' }; } },
+  { id: 'dr2', subj: 'math', day: 'm2', name: 'Percents',
+    gen: (level = 1) => { const L = clampLevel(level); const p = pickOne([10, 20, 25, 50, 75]), n = pickOne([40, 60, 80, 100, 200]);
+      if (L === 2) return { prompt: `${(p / 100) * n} is what percent of ${n}?`, answer: p,
+        hint: 'Divide the part by the whole, then times 100.' };
+      if (L === 3) return { prompt: `${p}% of a number is ${(p / 100) * n}. What is the number?`,
+        answer: n, hint: 'Work backwards — divide the part by the percent written as a decimal.' };
+      return { prompt: `What is ${p}% of ${n}?`, answer: (p / 100) * n, hint: `Turn ${p}% into a decimal, then multiply.` }; } },
+  { id: 'dr3', subj: 'math', day: 'm3', name: 'Two-Step Equations',
+    gen: (level = 1) => { const L = clampLevel(level); const a = rnd(2, 6), x = rnd(2, 9), b = rnd(1, 15);
+      if (L === 2) return { prompt: `Solve ${a}x − ${b} = ${a * x - b}. What is x?`, answer: x,
+        hint: `Add ${b} to both sides first, then divide by ${a}.` };
+      /* Built from the answer outwards so the division is always exact —
+         an equation that only works out to 3.67 tests a calculator. */
+      if (L === 3) { const q = rnd(2, 8), sol = a * q - b;
+        return { prompt: `Solve (x + ${b}) ÷ ${a} = ${q}. What is x?`, answer: sol,
+          hint: `Multiply both sides by ${a} first, then subtract ${b}.` }; }
+      return { prompt: `Solve ${a}x + ${b} = ${a * x + b}. What is x?`, answer: x,
+        hint: `Subtract ${b} from both sides first, then divide by ${a}.` }; } },
+  { id: 'dr4', subj: 'math', day: 'm4', name: 'Simplify & Evaluate',
+    gen: (level = 1) => { const L = clampLevel(level); const a = rnd(2, 6), b = rnd(2, 6), x = rnd(2, 8);
+      if (L === 2) return { prompt: `Simplify ${a}x + ${b}x − ${b}x, then evaluate it when x = ${x}.`,
+        answer: a * x, hint: 'Two of the terms cancel before you substitute anything.' };
+      if (L === 3) { const c = rnd(2, 5);
+        return { prompt: `Simplify ${a}x + ${b}x + ${c}, then evaluate it when x = ${x}.`,
+          answer: (a + b) * x + c, hint: `Only the x terms combine — the ${c} stays on its own.` }; }
+      return { prompt: `Simplify ${a}x + ${b}x, then evaluate it when x = ${x}.`, answer: (a + b) * x,
+        hint: `Combine like terms into ${a + b}x, then multiply by ${x}.` }; } },
+  { id: 'dr5', subj: 'math', day: 'm5', name: 'Variables Both Sides',
+    gen: (level = 1) => { const L = clampLevel(level);
+      const x = rnd(2, 9), c = rnd(1, 4), a = c + rnd(1, 4), d = rnd(1, 12);
+      const cs = c === 1 ? 'x' : c + 'x';
+      if (L === 2) return { prompt: `Solve ${a}x = ${cs} + ${(a - c) * x}. What is x?`, answer: x,
+        hint: `Gather the x terms: ${a}x minus ${cs} leaves ${a - c}x.` };
+      if (L === 3) { const e = rnd(1, 9);
+        return { prompt: `Solve ${a}x + ${d} = ${cs} + ${(a - c) * x + d + e} − ${e}. What is x?`, answer: x,
+          hint: 'Tidy the right-hand side first, then gather the x terms.' }; }
+      return { prompt: `Solve ${a}x + ${d} = ${cs} + ${(a - c) * x + d}. What is x?`, answer: x,
+        hint: `Subtract ${cs} from both sides to gather the x terms.` }; } },
+  { id: 'dr6', subj: 'math', day: 'm6', name: 'Lines & Slope',
+    gen: (level = 1) => { const L = clampLevel(level); const m = rnd(2, 6), b = rnd(1, 9), x = rnd(2, 8);
+      if (L === 2) return { prompt: `A line is y = ${m}x + ${b}. What is y when x = 0?`, answer: b,
+        hint: 'At x = 0 the slope contributes nothing — only the starting value is left.' };
+      if (L === 3) return { prompt: `A line passes through (0, ${b}) and (${x}, ${m * x + b}). What is its slope?`,
+        answer: m, hint: 'Slope is the rise divided by the run between the two points.' };
+      return { prompt: `For y = ${m}x + ${b}, what is y when x = ${x}?`, answer: m * x + b,
+        hint: 'Multiply first, then add the starting value.' }; } },
+  { id: 'dr7', subj: 'math', day: 'm7', name: 'Exponents',
+    gen: (level = 1) => { const L = clampLevel(level);
+      if (L === 2) { const a = rnd(2, 5), b = rnd(2, 5);
+        return { prompt: `x^${a} · x^${b} = x^? — what is the exponent?`, answer: a + b,
+          hint: 'Same base means you add the exponents.' }; }
+      if (L === 3) { const a = rnd(5, 9), b = rnd(2, 4);
+        return { prompt: `x^${a} ÷ x^${b} = x^? — what is the exponent?`, answer: a - b,
+          hint: 'Dividing the same base subtracts the exponents.' }; }
+      const a = rnd(2, 5), b = rnd(2, 4);
+      return { prompt: `What is ${a}^${b}?`, answer: Math.pow(a, b), hint: `Multiply ${a} by itself ${b} times.` }; } },
+  { id: 'dr8', subj: 'math', day: 'm8', name: 'Scientific Notation',
+    gen: (level = 1) => { const L = clampLevel(level); const k = rnd(3, 9), lead = rnd(1, 9);
+      if (L === 2) return { prompt: `${lead} × 10^${k} written out in full has how many digits altogether?`,
+        answer: k + 1, hint: 'The leading digit, then one zero for each power of ten.' };
+      if (L === 3) { const j = rnd(2, 5);
+        return { prompt: `(${lead} × 10^${k}) ÷ (1 × 10^${j}) = ${lead} × 10^? — what is the exponent?`,
+          answer: k - j, hint: 'Dividing powers of ten subtracts the exponents.' }; }
+      return { prompt: `${lead}${'0'.repeat(k)} written as ${lead} × 10^? — what is the exponent?`,
+        answer: k, hint: 'Count how many places the decimal point moves.' }; } },
+  { id: 'dr9', subj: 'math', day: 'm9', name: 'Square Roots',
+    gen: (level = 1) => { const L = clampLevel(level); const n = rnd(2, 15);
+      if (L === 2) return { prompt: `√${n * n} + ${n} = ?`, answer: n * 2,
+        hint: 'Take the root first, then add.' };
+      if (L === 3) { const lo = rnd(2, 12), val = lo * lo + rnd(1, 2 * lo);
+        return { prompt: `√${val} falls between which two whole numbers? Type the SMALLER one.`,
+          answer: lo, hint: 'Find the perfect square just below it.' }; }
+      return { prompt: `What is √${n * n}?`, answer: n, hint: 'What number times itself gives that value?' }; } },
+  { id: 'dr10', subj: 'math', day: 'm10', name: 'Pythagorean Theorem',
+    gen: (level = 1) => { const L = clampLevel(level);
+      const t = pickOne([[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17], [7, 24, 25]]);
+      if (L === 2) return { prompt: `A right triangle has hypotenuse ${t[2]} and one leg ${t[0]}. What is the other leg?`,
+        answer: t[1], hint: 'Square the hypotenuse, subtract the known leg squared, then take the root.' };
+      if (L === 3) return { prompt: `A right triangle has legs ${t[0]} and ${t[1]}. What is its PERIMETER?`,
+        answer: t[0] + t[1] + t[2], hint: 'Find the hypotenuse first, then add all three sides.' };
+      return { prompt: `A right triangle has legs ${t[0]} and ${t[1]}. What is the hypotenuse?`,
+        answer: t[2], hint: 'Square both legs, add them, then take the square root.' }; } },
+  { id: 'dr11', subj: 'math', day: 'm11', name: 'Systems of Equations',
+    gen: (level = 1) => { const L = clampLevel(level); const x = rnd(3, 12), y = rnd(1, x - 1);
+      if (L === 2) return { prompt: `x + y = ${x + y} and x − y = ${x - y}. What is y?`, answer: y,
+        hint: 'Subtract the second equation from the first so the x terms cancel, then halve.' };
+      if (L === 3) return { prompt: `2x + y = ${2 * x + y} and x + y = ${x + y}. What is x?`, answer: x,
+        hint: 'Subtract the second from the first — the y terms cancel and x is left alone.' };
+      return { prompt: `x + y = ${x + y} and x − y = ${x - y}. What is x?`, answer: x,
+        hint: 'Add the two equations so the y terms cancel, then halve.' }; } },
+  { id: 'dr12', subj: 'math', day: 'm12', name: 'Inequalities',
+    gen: (level = 1) => { const L = clampLevel(level); const b = rnd(2, 9), x = rnd(3, 15);
+      if (L === 2) return { prompt: `Solve x − ${b} > ${x - b}. The answer is x greater than what number?`,
+        answer: x, hint: `Add ${b} to both sides.` };
+      if (L === 3) { const a = rnd(2, 5);
+        return { prompt: `Solve ${a}x < ${a * x}. The answer is x less than what number?`, answer: x,
+          hint: `Divide both sides by ${a}. Dividing by a POSITIVE number leaves the sign alone.` }; }
+      return { prompt: `Solve x + ${b} > ${x + b}. The answer is x greater than what number?`,
+        answer: x, hint: `Subtract ${b} from both sides.` }; } },
+  { id: 'dr13', subj: 'math', day: 'm13', name: 'Function Notation',
+    gen: (level = 1) => { const L = clampLevel(level); const a = rnd(2, 6), b = rnd(1, 9), k = rnd(2, 8);
+      if (L === 2) return { prompt: `If f(x) = ${a}x + ${b} and f(x) = ${a * k + b}, what is x?`, answer: k,
+        hint: 'Work backwards — undo the adding, then the multiplying.' };
+      if (L === 3) return { prompt: `If f(x) = ${a}x + ${b}, what is f(${k}) − f(0)?`, answer: a * k,
+        hint: 'f(0) is just the starting value, so the difference is whatever the slope contributed.' };
+      return { prompt: `If f(x) = ${a}x + ${b}, what is f(${k})?`, answer: a * k + b,
+        hint: `Replace every x with ${k}, then compute.` }; } },
+  { id: 'dr14', subj: 'math', day: 'm14', name: 'Quadratics',
+    gen: (level = 1) => { const L = clampLevel(level);
+      const c = rnd(0, 6), k = pickOne([-4, -3, -2, 2, 3, 4, 5]);
+      /* Was level 1 with the sign of x flipped, which the squaring erases —
+         the same question wearing a minus sign. This asks for the lowest
+         point instead, which is where the constant actually shows itself. */
+      if (L === 2) return { prompt: `For y = x²${c ? ' + ' + c : ''}, what is the SMALLEST value y can ever be?`,
+        answer: c, hint: 'x² is never negative, so the smallest it contributes is zero.' };
+      if (L === 3) { const n = Math.abs(k);
+        return { prompt: `For y = x², two different x values give y = ${n * n}. What is the POSITIVE one?`,
+          answer: n, hint: 'Both a number and its negative square to the same thing.' }; }
+      return { prompt: `For y = x²${c ? ' + ' + c : ''}, what is y when x = ${k}?`, answer: k * k + c,
+        hint: 'Square the input first — a negative squared turns positive.' }; } },
+];

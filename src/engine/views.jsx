@@ -801,22 +801,6 @@ export function CodeLab({ b, accent }) {
 export const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 export const pickOne = (a) => a[Math.floor(Math.random() * a.length)];
 
-export const DRILLS = [
-  { id: 'dr1', day: 'm1', name: 'Unit Rates', gen: () => { const per = rnd(2, 9), n = pickOne([3, 4, 5, 6, 8]); return { prompt: `${n} notebooks cost $${n * per}. What does ONE notebook cost, in dollars?`, answer: per, hint: 'Divide the total cost by how many there are.' }; } },
-  { id: 'dr2', day: 'm2', name: 'Percents', gen: () => { const p = pickOne([10, 20, 25, 50, 75]), n = pickOne([40, 60, 80, 100, 200]); return { prompt: `What is ${p}% of ${n}?`, answer: (p / 100) * n, hint: `Turn ${p}% into a decimal, then multiply.` }; } },
-  { id: 'dr3', day: 'm3', name: 'Two-Step Equations', gen: () => { const a = rnd(2, 6), x = rnd(2, 9), b = rnd(1, 15); return { prompt: `Solve ${a}x + ${b} = ${a * x + b}. What is x?`, answer: x, hint: `Subtract ${b} from both sides first, then divide by ${a}.` }; } },
-  { id: 'dr4', day: 'm4', name: 'Simplify & Evaluate', gen: () => { const a = rnd(2, 6), b = rnd(2, 6), x = rnd(2, 8); return { prompt: `Simplify ${a}x + ${b}x, then evaluate it when x = ${x}.`, answer: (a + b) * x, hint: `Combine like terms into ${a + b}x, then multiply by ${x}.` }; } },
-  { id: 'dr5', day: 'm5', name: 'Variables Both Sides', gen: () => { const x = rnd(2, 9), c = rnd(1, 4), a = c + rnd(1, 4), d = rnd(1, 12); const cs = c === 1 ? 'x' : c + 'x'; return { prompt: `Solve ${a}x + ${d} = ${cs} + ${(a - c) * x + d}. What is x?`, answer: x, hint: `Subtract ${cs} from both sides to gather the x terms.` }; } },
-  { id: 'dr6', day: 'm6', name: 'Lines & Slope', gen: () => { const m = rnd(2, 6), b = rnd(1, 9), x = rnd(2, 8); return { prompt: `For y = ${m}x + ${b}, what is y when x = ${x}?`, answer: m * x + b, hint: 'Multiply first, then add the starting value.' }; } },
-  { id: 'dr7', day: 'm7', name: 'Exponents', gen: () => (Math.random() < 0.5 ? (() => { const a = rnd(2, 5), b = rnd(2, 4); return { prompt: `What is ${a}^${b}?`, answer: Math.pow(a, b), hint: `Multiply ${a} by itself ${b} times.` }; })() : (() => { const a = rnd(2, 5), b = rnd(2, 5); return { prompt: `x^${a} · x^${b} = x^? — what is the exponent?`, answer: a + b, hint: 'Same base means you add the exponents.' }; })()) },
-  { id: 'dr8', day: 'm8', name: 'Scientific Notation', gen: () => { const k = rnd(3, 9), lead = rnd(1, 9); return { prompt: `${lead}${'0'.repeat(k)} written as ${lead} × 10^? — what is the exponent?`, answer: k, hint: 'Count how many places the decimal point moves.' }; } },
-  { id: 'dr9', day: 'm9', name: 'Square Roots', gen: () => { const n = rnd(2, 15); return { prompt: `What is √${n * n}?`, answer: n, hint: 'What number times itself gives that value?' }; } },
-  { id: 'dr10', day: 'm10', name: 'Pythagorean Theorem', gen: () => { const t = pickOne([[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17], [7, 24, 25]]); return { prompt: `A right triangle has legs ${t[0]} and ${t[1]}. What is the hypotenuse?`, answer: t[2], hint: 'Square both legs, add them, then take the square root.' }; } },
-  { id: 'dr11', day: 'm11', name: 'Systems of Equations', gen: () => { const x = rnd(3, 12), y = rnd(1, x - 1); return { prompt: `x + y = ${x + y} and x − y = ${x - y}. What is x?`, answer: x, hint: 'Add the two equations so the y terms cancel, then halve.' }; } },
-  { id: 'dr12', day: 'm12', name: 'Inequalities', gen: () => { const b = rnd(2, 9), x = rnd(3, 15); return { prompt: `Solve x + ${b} > ${x + b}. The answer is x greater than what number?`, answer: x, hint: `Subtract ${b} from both sides.` }; } },
-  { id: 'dr13', day: 'm13', name: 'Function Notation', gen: () => { const a = rnd(2, 6), b = rnd(1, 9), k = rnd(2, 8); return { prompt: `If f(x) = ${a}x + ${b}, what is f(${k})?`, answer: a * k + b, hint: `Replace every x with ${k}, then compute.` }; } },
-  { id: 'dr14', day: 'm14', name: 'Quadratics', gen: () => { const c = rnd(0, 6), k = pickOne([-4, -3, -2, 2, 3, 4, 5]); return { prompt: `For y = x²${c ? ' + ' + c : ''}, what is y when x = ${k}?`, answer: k * k + c, hint: 'Square the input first — a negative squared turns positive.' }; } },
-];
 
 export const IMPORTABLE = [
   { subj: 'gov', label: 'Government & Civics', note: 'all 6 days' },
