@@ -58,6 +58,11 @@ export function probeStorage() {
   }
 }
 
+/* Exported for the regression suite only. normalize() decides whether a
+   saved profile survives a load intact, which makes it worth asserting on
+   directly rather than through the UI. */
+export const __testNormalize = normalize;
+
 function readKey(k) {
   try {
     const raw = localStorage.getItem(k);

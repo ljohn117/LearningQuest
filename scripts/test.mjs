@@ -116,7 +116,8 @@ section('Existing day ids are frozen');
  * almost never to edit the list — it is to put the id back.
  */
 const FROZEN = {
-  math: ['m1','m2','m3','m4','m5','m6','m7','mr1','m8','m9','m10','m11','m12','m13','m14','mr2'],
+  math: ['m1','m2','m3','m4','m5','m6','m7','mr1','m8','m9','m10','m11','m12','m13','m14','mr2',
+         'm15','m16','m17','m18','m19','mr3'],
   cs: ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12'],
   physics: ['phy1','phy2','phy3','phy4','phy5','phy6','phyr1'],
   logic: ['lg1','lg2','lg3','lg4','lg5','lg6','lgr1'],
@@ -141,6 +142,57 @@ for (const [subj, ids] of Object.entries(FROZEN)) {
   const actual = (CURRICULUM[subj]?.days || []).map((d) => d.id).slice(0, ids.length);
   ok(`${subj}: the original days are still in their original order`,
     actual.join(',') === ids.join(','), `now ${actual.join(',')}`);
+}
+
+/* Duel statistics are stored under the DRILL id, exactly as day progress is
+ * stored under the day id, so renaming a generator silently orphans his
+ * practice history in the same way. Rewriting all twenty-three generators to
+ * add difficulty levels was precisely the kind of edit that could have
+ * dropped one without anything failing, so these are frozen too. */
+const FROZEN_DRILLS = [
+  'cs2a','cs2b','cs2c','cs4a','cs5a',
+  'biz3a','biz3b','biz5a','biz5b','biz10a','biz10b',
+  'fos4a','fos4b','fos3a',
+  'gov3a','gov6a','gov5a',
+  'bio4a','bio6a',
+  'chem5a','chem5b','chem8a','chem9a',
+];
+const drillIds = new Set(EXTRA_DRILLS.map((d) => d.id));
+for (const id of FROZEN_DRILLS) {
+  ok(`drill "${id}" still exists`, drillIds.has(id), 'renaming it orphans his duel stats');
+}
+ok('drill ids are unique', drillIds.size === EXTRA_DRILLS.length,
+  `${EXTRA_DRILLS.length} drills, ${drillIds.size} distinct ids`);
+
+/* ---- 1d. a full profile survives a round trip --------------------------- */
+section('A populated profile loses nothing on load');
+
+/* normalize() runs over every profile on every load. It fills in fields added
+ * after a save was written, and the one thing it must never do is drop a
+ * field it does not recognise — a future key, or one from a newer build he
+ * used on another device. */
+const { __testNormalize } = await import('../src/store.js');
+if (typeof __testNormalize === 'function') {
+  const rich = {
+    id: 'p1', name: 'Leo', xp: 1234,
+    completed: { 'math:m1': { best: 5, total: 5 }, 'chem:ch4': { best: 3, total: 4 } },
+    practice: { cs2a: { runs: 7, bestStreak: 5 } },
+    review: { 'math:m1:0': { at: '2026-09-01', missed: true } },
+    writing: { 'ela:ela5': { text: 'half-life is repeated halving', checked: [0, 1], at: '2026-09-01' } },
+    calibration: { 'math:m1': { level: 'right', at: '2026-09-01' } },
+    streak: { count: 14, last: '2026-09-10' }, skips: 2,
+    somethingFromAFutureBuild: { keep: 'me' },
+  };
+  const out = __testNormalize(rich);
+  for (const k of Object.keys(rich)) {
+    ok(`normalize keeps "${k}"`, JSON.stringify(out[k]) === JSON.stringify(rich[k]),
+      `was ${JSON.stringify(rich[k])}, became ${JSON.stringify(out[k])}`);
+  }
+  const empty = __testNormalize({ id: 'p2' });
+  for (const k of ['completed', 'practice', 'review', 'writing', 'calibration']) {
+    ok(`normalize gives a bare profile an empty ${k}`, empty[k] && typeof empty[k] === 'object');
+  }
+  eq('normalize defaults skips to 0', empty.skips, 0);
 }
 
 /* ---- 2. streaks and skip days ------------------------------------------ */

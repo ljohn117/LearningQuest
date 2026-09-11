@@ -128,14 +128,18 @@ export default function App() {
     const key = drillId || 'mixed';
     updateProfile((p) => {
       const beforeLvl = levelInfo(p.xp).level;
-      const t = todayStr();
-      let count = p.streak.count;
-      if (p.streak.last === t) {} else if (p.streak.last === yesterday()) count += 1; else count = 1;
       const xp = p.xp + earned;
+      /* The same shared helper the other two use. This was the one call site
+         left on the old inline copy when the streak logic was centralised,
+         and it still referenced a `yesterday` import that had gone with it —
+         so finishing any duel threw and white-screened the app. Nothing was
+         lost, because the throw landed before the write, but the XP from
+         that duel never got recorded. */
+      const { streak, skips } = advanceStreak(p.streak, p.skips || 0);
       const pr = p.practice || {};
       const prev = pr[key] || { runs: 0, bestStreak: 0 };
       return {
-        ...p, xp, streak: { count, last: t },
+        ...p, xp, streak, skips,
         practice: { ...pr, [key]: { runs: prev.runs + 1, bestStreak: Math.max(prev.bestStreak, bestStreak) } },
         _leveledTo: levelInfo(xp).level > beforeLvl ? levelInfo(xp).level : null,
       };
