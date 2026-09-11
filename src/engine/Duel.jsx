@@ -3,7 +3,7 @@ import { ArrowLeft, Zap, Sparkles } from 'lucide-react';
 import { S } from './styles.jsx';
 import { Question } from './Question.jsx';
 import { DRILLS as MATH_DRILLS, Bar } from './views.jsx';
-import { EXTRA_DRILLS, rnd, pickOne } from './drills.js';
+import { EXTRA_DRILLS, rnd, pickOne, clampLevel, MAX_LEVEL } from './drills.js';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { COMPANIONS, GUARDIANS, earnedCompanions } from '../content/companions.js';
 import { dayKey, PRACTICE_XP } from './progress.js';
@@ -30,6 +30,19 @@ const isUnlocked = (profile, d) => !!profile.completed?.[dayKey(d.subj, d.day)];
 
 const HP = 8;            // correct answers needed
 const CHARGE_AT = 5;     // in a row before a charged hit
+
+/* Difficulty follows him rather than the clock.
+ *
+ * Two right in a row raises the level, a miss drops it. The rise is what
+ * makes this practice rather than repetition — the same idea keeps arriving
+ * in a harder form for as long as he keeps handling it, so he cannot settle
+ * into recognising one shape.
+ *
+ * The fall is the half that had to be right. Getting something wrong makes
+ * the next question EASIER, which is the only version of adaptive difficulty
+ * that belongs in this app: it reads as the app steadying him, never as a
+ * penalty, and it makes a bad run impossible to spiral. */
+const levelFor = (streak) => clampLevel(Math.floor(streak / 2) + 1);
 
 export function DuelIntro({ profile, onBack, onStart }) {
   const unlocked = useMemo(
@@ -141,7 +154,8 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
   const [say, setSay] = useState(() => ally.lines?.open || null);
 
   const [hp, setHp] = useState(HP);
-  const [q, setQ] = useState(() => ({ ...pickOne(pool).gen(), type: 'numeric' }));
+  const [level, setLevel] = useState(1);
+  const [q, setQ] = useState(() => ({ ...pickOne(pool).gen(1), type: 'numeric' }));
   const [asked, setAsked] = useState(0);
   const [right, setRight] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -158,7 +172,9 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
       setStreak(0);
       setFlash('fizzle');
       setSay(pickOne(ally.lines?.miss || ['Go again.']));
-      setQ({ ...pickOne(pool).gen(), type: 'numeric' });
+      const eased = clampLevel(level - 1);
+      setLevel(eased);
+      setQ({ ...pickOne(pool).gen(eased), type: 'numeric' });
       return;
     }
 
@@ -180,7 +196,9 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
       onDone({ right: right + 1, asked: nextAsked, bestStreak: bestStreak.current, guardian, ally });
       return;
     }
-    setQ({ ...pickOne(pool).gen(), type: 'numeric' });
+    const next = levelFor(nextStreak);
+    setLevel(next);
+    setQ({ ...pickOne(pool).gen(next), type: 'numeric' });
   }
 
   return (
@@ -191,6 +209,10 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
         </button>
         <div style={{ flex: 1 }}><Bar pct={(HP - hp) / HP} accent="#ff9f5a" thin /></div>
         <span style={{ ...S.mono, color: '#aeb4c4', fontSize: 13 }}>{hp} left</span>
+        <span style={{ ...S.mono, fontSize: 11, color: level > 1 ? '#ffd76a' : '#5b6275', letterSpacing: '.5px' }}
+          title={`Questions get harder as you keep them coming, and easier if one slips. Level ${level} of ${MAX_LEVEL}.`}>
+          LV{level}
+        </span>
       </div>
 
       <div style={S.duelStage}>

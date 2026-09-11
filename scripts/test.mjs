@@ -28,7 +28,7 @@ const { SPIRAL, WRITING, SCALE } = await import('../src/content/spiral.js');
 const { LADDERS, rungEarned } = await import('../src/content/ladder.js');
 const { advanceStreak, skipsAfter, daysBetween } = await import('../src/engine/progress.js');
 const { pickLesson, pickReview } = await import('../src/engine/daily.js');
-const { EXTRA_DRILLS } = await import('../src/engine/drills.js');
+const { EXTRA_DRILLS, MAX_LEVEL, clampLevel } = await import('../src/engine/drills.js');
 
 const dayExists = (subj, id) => !!CURRICULUM[subj]?.days.some((d) => d.id === id);
 const allDayIds = new Set(SUBJECT_ORDER.flatMap((s) => (CURRICULUM[s]?.days || []).map((d) => d.id)));
@@ -176,6 +176,22 @@ ok('every lane rated rough still serves a lesson',
   !!pickLesson({ ...base, calibration: { 'math:m1': { level: 'hard', at: iso(0) }, 'bio:bio1': { level: 'hard', at: iso(0) } } }));
 ok('review still returns questions with a rough lane', pickReview({ ...base, calibration: { 'math:m1': { level: 'hard', at: iso(0) } } }, 4).length > 0);
 
+/* ---- 3b. adaptive difficulty ------------------------------------------- */
+section('Adaptive difficulty');
+const levelFor = (streak) => clampLevel(Math.floor(streak / 2) + 1);
+eq('a fresh duel starts easy', levelFor(0), 1);
+eq('two right in a row raises it', levelFor(2), 2);
+eq('a long run reaches the top', levelFor(8), 3);
+eq('it never exceeds the top level', levelFor(40), MAX_LEVEL);
+eq('clampLevel floors at 1', clampLevel(0), 1);
+eq('clampLevel floors below zero too', clampLevel(-5), 1);
+eq('clampLevel caps at the maximum', clampLevel(99), MAX_LEVEL);
+/* A miss must always make the NEXT question easier or equal, never harder —
+   this is the rule that keeps adaptive difficulty from reading as a penalty. */
+for (let L = 1; L <= MAX_LEVEL; L++) {
+  ok(`a miss at level ${L} does not raise the level`, clampLevel(L - 1) <= L);
+}
+
 /* ---- 4. content wiring ------------------------------------------------- */
 section('Content wiring');
 /* SPIRAL, WRITING and SCALE are keyed by day id and injected at merge time.
@@ -202,12 +218,30 @@ ok('an unearned rung never lights', !rungEarned(LADDERS[0].rungs.find((r) => r.s
 section('Drill generators');
 for (const d of EXTRA_DRILLS) {
   ok(`${d.id}: has a lane and a gating day`, !!d.subj && !!d.day && dayExists(d.subj, d.day), `${d.subj}:${d.day}`);
-  let bad = 0;
-  for (let i = 0; i < 200; i++) {
-    const q = d.gen();
-    if (!q || typeof q.prompt !== 'string' || !q.prompt || !Number.isFinite(q.answer) || !q.hint) bad++;
+  for (let L = 1; L <= MAX_LEVEL; L++) {
+    let bad = 0;
+    const answers = new Set(), prompts = new Set();
+    let ugly = null;
+    for (let i = 0; i < 300; i++) {
+      const q = d.gen(L);
+      if (!q || typeof q.prompt !== 'string' || !q.prompt || !Number.isFinite(q.answer) || !q.hint) { bad++; continue; }
+      answers.add(q.answer); prompts.add(q.prompt);
+      /* A repeating decimal tests typing, not understanding. */
+      if (!Number.isInteger(q.answer) && Math.abs(q.answer * 100 - Math.round(q.answer * 100)) > 1e-9) ugly = q.answer;
+    }
+    eq(`${d.id} L${L}: 300 generated questions are well formed`, bad, 0);
+    /* A level whose answer never changes is not practice — it is a password.
+       This caught three real generators that always answered 1. */
+    ok(`${d.id} L${L}: the answer actually varies`, answers.size > 1, 'always ' + [...answers][0]);
+    ok(`${d.id} L${L}: the wording actually varies`, prompts.size > 1, 'single fixed prompt');
+    ok(`${d.id} L${L}: answers are clean numbers`, ugly === null, `e.g. ${ugly}`);
   }
-  eq(`${d.id}: 200 generated questions are all well formed`, bad, 0);
+  /* Levels must differ from each other, or the ramp is decoration. */
+  const shape = (L) => new Set(Array.from({ length: 60 }, () => d.gen(L).prompt.replace(/\d+/g, '#'))); 
+  const [a, b, c] = [shape(1), shape(2), shape(3)];
+  const same = (x, y) => [...x].every((v) => y.has(v)) && [...y].every((v) => x.has(v));
+  ok(`${d.id}: level 1 and 3 ask different things`, !same(a, c), 'identical question shapes');
+  ok(`${d.id}: level 2 differs from level 1`, !same(a, b), 'identical question shapes');
 }
 
 /* ---- report ------------------------------------------------------------ */
