@@ -18,6 +18,31 @@ function validProfile(p) {
   return p && typeof p === 'object' && typeof p.id === 'string';
 }
 
+/* Writing used to be filed by position: subject:day:page:blockIndex. It is
+   now filed by the prompt's own id, so a prompt can move on the page without
+   losing what he wrote. These four are the only prompts that existed under
+   the old scheme, captured from the live curriculum before the change.
+   
+   The migration is additive and one-way: it copies an old key to the new one
+   only when the new one is empty, and never deletes the original. A restored
+   backup from before the change therefore still works, and running it twice
+   cannot overwrite anything he has written since. */
+const WRITE_KEY_MIGRATION = {
+  'ela:ela5:3:2': 'w:w-ela5',
+  'ela:ela6:3:3': 'w:w-ela6',
+  'ela:ela9:3:1': 'w:w-ela9',
+  'ela:ela10:3:1': 'w:w-ela10',
+};
+
+export function migrateWriting(writing) {
+  if (!writing || typeof writing !== 'object') return {};
+  const out = { ...writing };
+  for (const [from, to] of Object.entries(WRITE_KEY_MIGRATION)) {
+    if (out[from] && !out[to]) out[to] = out[from];
+  }
+  return out;
+}
+
 /* Fill in fields added after a profile was first written, so a save from an
    older schema can't crash a newer read path. */
 function normalize(p) {
@@ -27,7 +52,7 @@ function normalize(p) {
     completed: p.completed && typeof p.completed === 'object' ? p.completed : {},
     practice: p.practice && typeof p.practice === 'object' ? p.practice : {},
     review: p.review && typeof p.review === 'object' ? p.review : {},
-    writing: p.writing && typeof p.writing === 'object' ? p.writing : {},
+    writing: migrateWriting(p.writing),
     calibration: p.calibration && typeof p.calibration === 'object' ? p.calibration : {},
     streak: p.streak && typeof p.streak === 'object' ? p.streak : { count: 0, last: null },
     skips: Number.isFinite(p.skips) ? Math.max(0, Math.min(2, p.skips)) : 0,

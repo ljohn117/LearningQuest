@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, AlertTriangle, Volume2, VolumeX, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
 import { S } from './styles.jsx';
+import { writeKeyFor } from './writekey.js';
 import { play, soundOn, setSound } from './sound.js';
 import { Visual } from './Visual.jsx';
 import { Question } from './Question.jsx';
@@ -398,7 +399,7 @@ export function LessonView({ subj, day, userName, onBack, onStart, writing, onWr
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 14 }}>
             {cur.blocks.map((b, i) => (
               <Block key={i} b={b} accent={accent} delay={i * .06}
-                writeKey={`${subj}:${day.id}:${page}:${i}`} writing={writing} onWrite={onWrite} />
+                writeKey={writeKeyFor(b, subj, day.id, page, i)} writing={writing} onWrite={onWrite} />
             ))}
           </div>
         </div>

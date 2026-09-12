@@ -99,3 +99,59 @@ Implications:
 This retires the "content is too advanced" concern from `eval-apps.md`
 entirely. It was wrong on grade-band grounds, and it is now wrong on
 measured-reading-level grounds too.
+
+---
+
+## Explaining became a first-class surface (update 2026-09-12)
+
+**The gap.** Four days out of 131 asked him to produce a sentence — all four
+in the English lane. Every other day was read, recognise, answer. Picking C
+from four choices proves he can eliminate three wrong things; it does not
+prove he could rebuild the idea in front of someone who does not have it.
+
+That also wasted the only behavioural signal we have about this learner: he
+explains, out loud, unprompted. The app had nowhere for it to go.
+
+**What changed.** 69 new prompts in `src/content/explain.js`, taking writing
+from 4 days to 73 of 131 and covering all thirteen lanes. Deliberately six
+different shapes, not one:
+
+| shape | asks for |
+|---|---|
+| `mechanism` | the causal chain, in order |
+| `teach` | explain it to someone who has never seen it |
+| `predict` | commit to an answer, then check |
+| `flaw` | here is a confident wrong explanation; find the break |
+| `compare` | two things that get confused, and what the confusion costs |
+| `connect` | the same mechanism in a lane already finished |
+
+**`flaw` is load-bearing for this kid specifically.** Producing an
+explanation from nothing is exposing. Saying why someone *else* is wrong is
+not, and it runs on identical machinery. It is the low-stakes door into the
+same room, and it is used early and often on purpose. 15 of the 69 are this
+shape.
+
+**Word targets are 30–45 on purpose.** Short and often beats long and rare.
+A 200-word box is how you teach a child to dread a feature.
+
+**Still not graded, still not required.** No score, no XP, no gate. There is
+no honest way to machine-grade a child's prose offline, and a wrong verdict
+aimed at a kid who already assumes he is bad at this would cost more than the
+feature is worth. He writes, reads it back against three short questions, and
+judges it himself. `scripts/test.mjs` asserts that nothing in a day's
+completion path consults `writing`.
+
+**Write ids are progress keys.** Writing used to be filed positionally —
+`subject:day:page:blockIndex` — so inserting any block above a write box
+would have silently moved what he wrote to a key nothing reads. It never bit,
+because write blocks are appended last, but it was one careless edit from
+doing so. Prompts now carry an explicit id and are filed under `w:<id>`.
+`store.js` migrates the four original keys additively and one-way: it copies
+old to new only when new is empty and never deletes the original, so an old
+backup still restores and running it twice cannot clobber newer work.
+
+**The parent view resolves keys by index, not by `split(':')`.** The drill-key
+bug hid an entire category of his practice by getting exactly this wrong.
+It now also shows the *prompt* next to the answer — reading what he wrote
+without knowing what was asked makes a vague answer indistinguishable from a
+good one, and asking him about it later is the whole point of the section.

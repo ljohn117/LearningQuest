@@ -26,6 +26,25 @@ function accuracy(completed) {
   return { best, total, pct: total ? Math.round((best / total) * 100) : null };
 }
 
+/* Every write prompt in the curriculum, indexed by the key its answer is
+   filed under — under BOTH the current id-based key and the legacy
+   positional one, so writing restored from an old backup resolves here too
+   instead of rendering as "undefined · undefined". Built once at load. */
+const WRITE_INDEX = (() => {
+  const m = new Map();
+  for (const [subj, lane] of Object.entries(CURRICULUM)) {
+    for (const day of lane.days) {
+      day.pages.forEach((pg, pi) => pg.blocks.forEach((b, i) => {
+        if (b.type !== 'write') return;
+        const entry = { lane: lane.name, day: day.title, task: b.task, kind: b.kind };
+        m.set(`${subj}:${day.id}:${pi}:${i}`, entry);
+        if (b.id) m.set(`w:${b.id}`, entry);
+      }));
+    }
+  }
+  return m;
+})();
+
 export function ParentView({ profile, onBack }) {
   const data = useMemo(() => {
     const completed = profile.completed || {};
@@ -62,14 +81,21 @@ export function ParentView({ profile, onBack }) {
     }
     sticking.sort((a, b) => (a.at || '').localeCompare(b.at || ''));
 
-    /* What he has actually written. Stored locally like everything else. */
+    /* What he has actually written. Stored locally like everything else.
+     *
+     * Resolving the key is done by index rather than by splitting it. Keys
+     * come in two shapes now — `w:<promptId>` for everything current, and the
+     * old positional `subj:day:page:i` for anything restored from a backup
+     * written before ids existed — and a split() that assumes one shape
+     * silently produces a lane of `undefined` for the other. That exact bug
+     * hid a whole category of his practice from this page once already. */
     const writing = Object.entries(profile.writing || {})
       .filter(([, v]) => v && v.text && v.text.trim())
       .map(([key, v]) => {
-        const [subj, dayId] = key.split(':');
-        const day = CURRICULUM[subj]?.days.find((d) => d.id === dayId);
+        const found = WRITE_INDEX.get(key);
         return {
-          key, lane: CURRICULUM[subj]?.name, day: day?.title,
+          key, lane: found?.lane, day: found?.day,
+          task: found?.task, kind: found?.kind,
           text: v.text.trim(), at: v.at,
           words: v.text.trim().split(/\s+/).length,
         };
@@ -216,15 +242,26 @@ export function ParentView({ profile, onBack }) {
       <div style={S.sectionLabel}>Writing</div>
       {data.writing.length === 0 ? (
         <div style={{ ...S.muted, fontSize: 14 }}>
-          Nothing written yet. The English lane asks for a paragraph on days 5, 6, 9 and 10.
+          Nothing written yet. Most days now end with a short prompt asking him to
+          explain something in his own words — it is optional and never marked, so
+          an empty section here means he skipped them, not that he failed anything.
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {data.writing.map((w) => (
             <div key={w.key} style={S.pCard}>
               <div style={{ ...S.mono, fontSize: 11, color: '#8b91a3', marginBottom: 5 }}>
-                {w.lane} · {w.day} · {w.words} words{w.at ? ` · ${w.at}` : ''}
+                {[w.lane, w.day].filter(Boolean).join(' · ') || 'Earlier prompt'} · {w.words} words{w.at ? ` · ${w.at}` : ''}
               </div>
+              {/* The prompt, not just the answer. Reading what he wrote without
+                  knowing what was asked makes it almost impossible to tell a
+                  good answer from a vague one — and asking him about it over
+                  dinner is the entire point of this section. */}
+              {w.task && (
+                <div style={{ fontSize: 13, color: '#aeb4c4', fontStyle: 'italic', marginBottom: 7, lineHeight: 1.5 }}>
+                  {w.task}
+                </div>
+              )}
               <div style={{ fontSize: 14, color: '#e7e9f0', whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>{w.text}</div>
             </div>
           ))}

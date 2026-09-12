@@ -25,6 +25,9 @@ const section = (s) => console.log('\n' + s);
 const { CURRICULUM, SUBJECT_ORDER } = await import('../src/content/index.js');
 const { COMPANIONS } = await import('../src/content/companions.js');
 const { SPIRAL, WRITING, SCALE } = await import('../src/content/spiral.js');
+const { EXPLAIN } = await import('../src/content/explain.js');
+const { migrateWriting } = await import('../src/store.js');
+const { writeKeyFor } = await import('../src/engine/writekey.js');
 const { LADDERS, rungEarned } = await import('../src/content/ladder.js');
 const { advanceStreak, skipsAfter, daysBetween } = await import('../src/engine/progress.js');
 const { pickLesson, pickReview, recordReview } = await import('../src/engine/daily.js');
@@ -334,6 +337,103 @@ for (const d of ALL_DRILLS) {
   ok(`${d.id}: level 1 and 3 ask different things`, !same(a, c), 'identical question shapes');
   ok(`${d.id}: level 2 differs from level 1`, !same(a, b), 'identical question shapes');
 }
+
+/* ---- writing prompts --------------------------------------------------- */
+section('Writing prompts are addressable and stay addressable');
+
+/* A write prompt's id is a progress key: what he wrote is filed under
+   `w:<id>`. Renaming one orphans his writing exactly as surely as renumbering
+   a day id does, and just as silently — the box simply comes back empty one
+   morning. So every id that exists is frozen here. */
+const FROZEN_WRITE_IDS = [
+  'w-ela5', 'w-ela6', 'w-ela9', 'w-ela10',
+  'x-m2', 'x-m5', 'x-m7', 'x-m10', 'x-m13', 'x-mr2', 'x-m15', 'x-m16', 'x-m18', 'x-m19', 'x-mr3',
+  'x-c2', 'x-c4', 'x-c6', 'x-c10', 'x-c12',
+  'x-phy3', 'x-phy4', 'x-phy5', 'x-phyr1',
+  'x-lg3', 'x-lg4', 'x-lg5', 'x-lg6', 'x-lgr1',
+  'x-es2', 'x-es4', 'x-es6', 'x-esr1',
+  'x-bio3', 'x-bio4', 'x-bio7', 'x-bio9', 'x-bio10',
+  'x-ch1', 'x-ch3', 'x-ch6', 'x-ch7', 'x-ch10', 'x-chr1',
+  'x-ela2', 'x-ela3', 'x-ela4', 'x-ela7', 'x-ela8',
+  'x-b2', 'x-b3', 'x-b5', 'x-b8', 'x-b10', 'x-b12',
+  'x-g3', 'x-g5', 'x-g7', 'x-g9', 'x-g10',
+  'x-f3', 'x-f4', 'x-f7', 'x-f8', 'x-f10',
+  'x-cx1', 'x-cx2', 'x-cx5', 'x-cx7',
+  'x-td1', 'x-td2', 'x-td4', 'x-td6',
+];
+
+const liveWrites = [];
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  for (const day of lane.days) {
+    day.pages.forEach((pg, pi) => pg.blocks.forEach((b, i) => {
+      if (b.type === 'write') liveWrites.push({ subj, day: day.id, page: pi, i, b });
+    }));
+  }
+}
+const liveWriteIds = new Set(liveWrites.map((w) => w.b.id).filter(Boolean));
+for (const id of FROZEN_WRITE_IDS) {
+  ok(`write prompt ${id} still exists`, liveWriteIds.has(id), 'renaming it orphans what he wrote there');
+}
+eq('every write prompt carries an id', liveWrites.filter((w) => !w.b.id).length, 0);
+eq('write prompt ids are unique', liveWriteIds.size, liveWrites.length);
+
+/* A day takes its prompt from WRITING or EXPLAIN, never both. */
+const overlap = Object.keys(EXPLAIN).filter((d) => WRITING[d]);
+eq('no day is claimed by both WRITING and EXPLAIN', overlap.length, 0);
+
+/* Every prompt has to be answerable and self-checkable. A task with no
+   checklist gives him nothing to judge his own answer against, which is the
+   only feedback this feature has. */
+for (const { b } of liveWrites) {
+  const id = b.id || '(no id)';
+  ok(`${id}: has a task`, typeof b.task === 'string' && b.task.length > 15);
+  ok(`${id}: has a checklist`, Array.isArray(b.checklist) && b.checklist.length >= 3, 'nothing to self-check against');
+  ok(`${id}: word target is small`, !b.words || b.words <= 60, `${b.words} words is a wall, not a prompt`);
+  if (b.kind === 'flaw') ok(`${id}: a flaw prompt supplies the claim`, typeof b.claim === 'string' && b.claim.length > 10);
+  if (b.claim) ok(`${id}: only flaw prompts carry a claim`, b.kind === 'flaw');
+}
+
+/* The prompts must not all be the same job wearing different words. */
+const kinds = new Set(liveWrites.map((w) => w.b.kind).filter(Boolean));
+ok('prompts use several different shapes', kinds.size >= 5, `only ${kinds.size} kinds`);
+
+/* Writing must never be a requirement. Nothing in a day's completion path
+   may consult it — a timid kid who skips the box still finishes the day. */
+const appForWriting = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8');
+const finishBlock = appForWriting.slice(appForWriting.indexOf('const finishDay'), appForWriting.indexOf('const finishDay') + 900);
+ok('finishing a day never consults his writing', !/writing/.test(finishBlock), 'writing became load-bearing for progress');
+
+/* ---- write keys resolve ------------------------------------------------ */
+section('Writing survives the move to id-based keys');
+
+eq('a prompt with an id is filed under it', writeKeyFor({ id: 'x-m2' }, 'math', 'm2', 3, 1), 'w:x-m2');
+eq('a prompt without one falls back to position', writeKeyFor({}, 'math', 'm2', 3, 1), 'math:m2:3:1');
+
+/* The four prompts that predate ids must carry their old contents forward. */
+const legacy = {
+  'ela:ela5:3:2': { text: 'half-life is like halving a pile', checked: [0] },
+  'ela:ela6:3:3': { text: 'I think school should start later', checked: [] },
+  'ela:ela9:3:1': { text: 'shorter version', checked: [] },
+  'ela:ela10:3:1': { text: 'two voices', checked: [] },
+};
+const migrated = migrateWriting(legacy);
+for (const [oldKey, v] of Object.entries(legacy)) {
+  const id = 'w:w-' + oldKey.split(':')[1];
+  eq(`${oldKey} is readable at ${id}`, migrated[id]?.text, v.text);
+  ok(`${oldKey} is not deleted by the migration`, !!migrated[oldKey], 'a restored old backup would lose it');
+}
+/* Migrating twice must not clobber anything he wrote after the first pass. */
+const after = migrateWriting({ ...legacy, 'w:w-ela5': { text: 'a better version I wrote later' } });
+eq('migration never overwrites newer writing', after['w:w-ela5'].text, 'a better version I wrote later');
+eq('migration of an empty store is empty', Object.keys(migrateWriting({})).length, 0);
+eq('migration survives junk input', Object.keys(migrateWriting(null)).length, 0);
+
+/* Every key the parent view could meet must resolve to a real lane. The
+   drill-key bug hid a whole category of his practice by failing this. */
+const parentSrc = readFileSync(new URL('../src/engine/ParentView.jsx', import.meta.url), 'utf8');
+ok('the parent view resolves write keys by index, not by splitting them',
+  /WRITE_INDEX\.get\(key\)/.test(parentSrc), 'split() silently yields an undefined lane for w: keys');
+ok('the parent view shows him the prompt, not just the answer', /w\.task/.test(parentSrc));
 
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);

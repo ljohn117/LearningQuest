@@ -105,6 +105,7 @@ export const SPIRAL = {
 
 export const WRITING = {
   ela5: {
+    id: 'w-ela5',
     task: 'Write one paragraph explaining something you learned in another lane to someone who has never seen it.',
     starter: 'Pick anything — half-life, checks and balances, why the moon does not fall. Start with a topic sentence that states the one idea, then support it.',
     words: 50,
@@ -116,6 +117,7 @@ export const WRITING = {
     ],
   },
   ela6: {
+    id: 'w-ela6',
     task: 'Pick something you actually believe and argue for it in a short paragraph. Then answer the strongest objection.',
     starter: 'State your claim plainly. Give two reasons. Then write "Someone might say..." and answer it fairly.',
     words: 60,
@@ -127,6 +129,7 @@ export const WRITING = {
     ],
   },
   ela9: {
+    id: 'w-ela9',
     task: 'Take the paragraph you wrote on Day 5 and cut it by a quarter without losing anything that matters.',
     starter: 'Look for sentences that repeat, words that add nothing, and examples that do not earn their space. Cutting is the fastest improvement in most writing.',
     words: 40,
@@ -138,6 +141,7 @@ export const WRITING = {
     ],
   },
   ela10: {
+    id: 'w-ela10',
     task: 'Write the same short message twice — once to a friend, once to a teacher.',
     starter: 'Same information both times. Only the register changes. Two or three sentences each is plenty.',
     words: 50,

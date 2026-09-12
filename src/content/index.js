@@ -9,6 +9,7 @@ import { ELA_EXTRA, BIO_EXTRA } from './depth.js';
 import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
 import { CHECKPOINTS } from './checkpoints.js';
 import { SPIRAL, WRITING, SCALE } from './spiral.js';
+import { EXPLAIN } from './explain.js';
 
 /* Merged curriculum. Subject keys are distinct across all sources and every
    day id is unique, so the merge cannot collide.
@@ -34,7 +35,12 @@ for (const [subj, days] of Object.entries(CHECKPOINTS)) append(subj, days);
 for (const lane of Object.values(merged)) {
   lane.days = lane.days.map((day) => {
     const note = SPIRAL[day.id];
-    const write = WRITING[day.id];
+    /* A day takes its writing prompt from exactly one source. WRITING holds
+       the four original English-lane prompts; EXPLAIN holds the rest. They
+       must never both claim a day — two write blocks on one page is fine
+       structurally but muddies what he is being asked, and scripts/test.mjs
+       fails the build if the key sets ever overlap. */
+    const write = WRITING[day.id] || EXPLAIN[day.id];
     const awe = SCALE[day.id];
     if (!note && !write && !awe) return day;
     const extra = [

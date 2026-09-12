@@ -99,6 +99,71 @@ console.log('completed days preserved:',
   Object.keys(afterDuel.completed).length === Object.keys(beforeDuel.completed).length);
 console.log('practice recorded:', Object.keys(afterDuel.practice).length > 0);
 
+/* ---- writing ------------------------------------------------------------
+ * The write box renders, files what he types under the prompt's id, and is
+ * never required to finish a day. Checked in a real browser because all
+ * three are things the unit tests cannot see: the unit suite can prove the
+ * data is shaped right and still miss a block that silently renders nothing.
+ * Uses math day 2, whose last page carries a `flaw` prompt. */
+/* Re-seed rather than reuse: earlier sections switch profiles and spend
+   progress, and a day-2 card that is still locked makes this section fail
+   for a reason that has nothing to do with writing. */
+await p.evaluate(() => {
+  localStorage.setItem('lq_v3', JSON.stringify({
+    version: 3,
+    profiles: [{
+      id: 'p1', name: 'Seeded', xp: 70,
+      completed: { 'math:m1': { best: 5, total: 5 } },
+      practice: {}, review: {}, writing: {},
+      streak: { count: 3, last: '2026-08-20' },
+    }],
+    lastActive: 'p1',
+  }));
+});
+await p.reload({ waitUntil: 'domcontentloaded' }); await p.waitForTimeout(600);
+await p.getByText('Mathematics').first().click(); await p.waitForTimeout(400);
+await p.locator('button[aria-label^="Day 2,"]').first().click(); await p.waitForTimeout(500);
+for (let i = 0; i < 6; i++) {
+  const t = await p.evaluate(() => document.body.innerText);
+  if (/15% of 100 is 15/.test(t)) break;           // the claim under critique
+  const next = p.getByRole('button', { name: /let.s go|next/i }).first();
+  if (!(await next.count()) || !(await next.isVisible())) break;
+  await next.click(); await p.waitForTimeout(320);
+}
+const writeBody = await p.evaluate(() => document.body.innerText);
+const writeRendered = /15% of 100 is 15/.test(writeBody)
+  && /someone says/i.test(writeBody)
+  && /find the mistake/i.test(writeBody)
+  && (await p.locator('textarea').count()) > 0;
+console.log('write block renders:', writeRendered);
+
+let writeFiled = false, noStrayKey = true;
+if (writeRendered) {
+  await p.locator('textarea').first().fill('It takes 15% of 100 instead of 15% of 60.');
+  await p.waitForTimeout(1100);
+  const w = await p.evaluate(() => JSON.parse(localStorage.getItem('lq_v3')).profiles[0].writing);
+  writeFiled = !!w['w:x-m2'];
+  noStrayKey = !Object.keys(w).some((k) => k.startsWith('math:m2:'));
+  console.log('writing filed by prompt id:', writeFiled, '| no positional key:', noStrayKey);
+}
+
+/* Old backups are keyed by position. They must still resolve to a real lane
+   in the parent view rather than rendering as "undefined · undefined". */
+await p.evaluate(() => {
+  const s = JSON.parse(localStorage.getItem('lq_v3'));
+  s.profiles[0].writing = {
+    'w:x-m2': { text: 'new-key answer', checked: [], at: '2026-09-12' },
+    'ela:ela5:3:2': { text: 'legacy-key answer', checked: [], at: '2026-08-01' },
+  };
+  localStorage.setItem('lq_v3', JSON.stringify(s));
+});
+await p.reload({ waitUntil: 'domcontentloaded' }); await p.waitForTimeout(600);
+const parentBtn = p.getByText(/for parents/i).first();
+if (await parentBtn.count()) { await parentBtn.click(); await p.waitForTimeout(700); }
+const pv = await p.evaluate(() => document.body.innerText);
+const parentOK = /new-key answer/.test(pv) && /legacy-key answer/.test(pv) && !/undefined/.test(pv);
+console.log('parent view resolves both key shapes:', parentOK);
+
 console.log('pageerrors:', errs.length ? errs : 'none');
 
 /* Fail loudly. Printing 'BLANK/CRASH' and exiting 0 made this test unable to
@@ -116,6 +181,10 @@ if (Object.keys(afterDuel.completed).length !== Object.keys(beforeDuel.completed
 if (rows.length >= 3 && (rows[0].disabled || rows[1].disabled || !rows[2].disabled)) {
   failures.push('unlock cascade wrong: ' + JSON.stringify(rows.slice(0, 3)));
 }
+if (!writeRendered) failures.push('the write prompt did not render');
+if (writeRendered && !writeFiled) failures.push('writing was not filed under the prompt id');
+if (!noStrayKey) failures.push('writing was filed under a positional key');
+if (!parentOK) failures.push('the parent view could not resolve a write key');
 if (failures.length) { console.error('\nFAILED: ' + failures.join('; ')); process.exit(1); }
 console.log('\nsmoke passed');
 await b.close();

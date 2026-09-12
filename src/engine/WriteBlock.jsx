@@ -19,6 +19,18 @@ import { S } from './styles.jsx';
  *
  * Progress never depends on writing anything. He can page straight past. */
 
+/* What each shape of prompt is actually asking for. Shown on the box so the
+   task is legible at a glance and so six different jobs do not blur into one
+   undifferentiated "write something" chore. */
+const KIND_LABEL = {
+  mechanism: 'Explain why',
+  teach: 'Teach it',
+  predict: 'Predict first',
+  flaw: 'Find the mistake',
+  compare: 'Tell them apart',
+  connect: 'Same idea, elsewhere',
+};
+
 export function WriteBlock({ b, accent, value, onChange }) {
   const [text, setText] = useState(value?.text || '');
   const [checked, setChecked] = useState(value?.checked || []);
@@ -45,10 +57,27 @@ export function WriteBlock({ b, accent, value, onChange }) {
 
   return (
     <div className="lq-rise" style={{ ...S.writeBox, borderColor: accent + '55' }}>
+      {KIND_LABEL[b.kind] && (
+        <div style={{ ...S.writeKind, color: accent, borderColor: accent + '55' }}>
+          {KIND_LABEL[b.kind]}
+        </div>
+      )}
+
       <div style={S.writeTask}>
         <Feather size={15} color={accent} style={{ flexShrink: 0, marginTop: 1 }} />
         <span>{b.task}</span>
       </div>
+
+      {/* The thing he is being asked to take apart. Deliberately styled as
+          somebody else's confident words rather than as app copy — the whole
+          value of this shape is that the wrongness is out there, attributable
+          to a stranger, and not a trap he is being caught in. */}
+      {b.claim && (
+        <div style={S.writeClaim}>
+          <div style={S.writeClaimTag}>Someone says</div>
+          {b.claim}
+        </div>
+      )}
 
       {b.starter && <div style={S.writeStarter}>{b.starter}</div>}
 
