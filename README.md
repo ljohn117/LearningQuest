@@ -40,7 +40,7 @@ finished work through spaced retrieval is what carries it across a year,
 and it is better practice than re-reading anyway.
 
 After about twelve minutes the results screen suggests stopping. It never
-blocks anything — a nine-year-old should not be the one deciding when to
+blocks anything — a child should not be the one deciding when to
 stop, but being cut off reads as punishment and this app does not punish.
 
 **Skill Duels** wrap the procedural drill generators in a battle. Questions

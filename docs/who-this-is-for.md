@@ -1,6 +1,6 @@
 # Who this is for — audience &amp; design brief
 
-Pasted verbatim from the parent. This is the controlling design intent for
+Paraphrased from the parent brief; personal detail removed (see PRIVACY.md). This is the controlling design intent for
 the project — where it conflicts with `eval-apps.md` or `roadmap.md`
 (both written before this brief existed), **this document wins**. Those
 two evaluated the code in isolation and got some value judgments wrong as
@@ -12,14 +12,14 @@ chat log around 2026-08-21 for the specifics.
 WHO THIS IS FOR — read before touching any content.
 
 THE LEARNER
-- Bright ~4th grader. Reads about 2 grades ahead.
+- Upper-primary age. Reads comfortably above grade level.
 - Solid on: negatives, decimals. Has now worked through 16 days of math
   (ratios → quadratics), 12 days of CS (through writing real JavaScript),
   and 6-day lanes in Government, Business, Fossils.
-- The defining trait: ACADEMICALLY TIMID. He is more capable than he
-  believes. The bottleneck is confidence, not ability. Everything in this
+- The defining trait: ACADEMICALLY TIMID. The learner is more capable
+  than they believe. The bottleneck is confidence, not ability. Everything in this
   project is built around that single fact.
-- He asked for MORE explanation, not less — that's why lessons run 4-5
+- The learner asked for MORE explanation, not less — that's why lessons run 4-5
   pages instead of 3.
 
 WHAT THAT MEANS IN PRACTICE
@@ -27,22 +27,22 @@ WHAT THAT MEANS IN PRACTICE
   too hard. MIDDLE SCHOOL is the stretch target. Slightly above comfort,
   always reachable. Don't drift up or down.
 - ONE new idea per page. Never two. A page that introduces two concepts
-  will lose him.
+  will lose them.
 - Consequence-free by design: wrong answers cost nothing, nothing is lost,
-  every single question has a hint. He must never feel punished for trying.
-  This is non-negotiable — it's the whole reason he engages.
+  every single question has a hint. They must never feel punished for trying.
+  This is non-negotiable — it is the whole reason they engage.
 - The SPIRAL is the confidence engine, not a nice-to-have. Lanes
-  deliberately call back to each other so he hits "wait, I already know
+  deliberately call back to each other so they hit "wait, I already know
   this" over and over: binary is powers of two he learned in math; profit
   is an algebra expression; half-life is exponents in reverse; Punnett
   squares are ratios; a bill becoming law is an algorithm. That jolt of
-  recognition is what makes a timid kid feel smart. Every new lane MUST
-  plant callbacks to what he's already done.
+  recognition is what makes a timid learner feel capable. Every new lane MUST
+  plant callbacks to what came before.
 - Recap/checkpoint days don't re-teach — they CONNECT. The math checkpoints
   reveal that ratio → unit rate → proportion → slope were one idea in four
   costumes. That reframe is worth more than new material.
-- Tone: treat him as capable. Vivid, patient, a little ambitious. Never
-  condescending, never babyish. Every lesson should end with him thinking
+- Tone: treat the learner as capable. Vivid, patient, a little ambitious. Never
+  condescending, never babyish. Every lesson should end with them thinking
   "I'm smarter than I thought."
 
 HIS PROGRESS (protect it)

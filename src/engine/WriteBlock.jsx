@@ -8,7 +8,7 @@ import { S } from './styles.jsx';
  * ever asking him to produce a sentence. This closes that.
  *
  * Nothing here is graded, scored, or checked for correctness. That is not
- * squeamishness — there is no reliable way to grade a nine-year-old's prose
+ * squeamishness — there is no reliable way to grade a child's prose
  * offline, and a wrong judgement from a machine would do real damage to a
  * kid who already assumes he is bad at this. Instead he writes, then reads
  * his own work against a short checklist and decides for himself. Ticking a

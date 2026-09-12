@@ -9,7 +9,7 @@ before that was possible.
 
 ---
 
-PROJECT: "Learning Quest" — gamified learning app for a bright ~4th grader
+PROJECT: "Learning Quest" — gamified learning app for a bright upper-primary learner
 (reads 2 grades ahead, academically timid). Built as React artifacts in
 Claude; now porting to Vite + React because both files hit the ~160k
 artifact ceiling.

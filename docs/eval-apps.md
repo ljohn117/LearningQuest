@@ -2,13 +2,13 @@
 
 **Scope:** `/home/user/LearningQuest/prototypes/LearningQuest.jsx` (2055 lines) and `/home/user/LearningQuest/prototypes/LearningQuestExplore.jsx` (2064 lines). Both read in full. Repo contains nothing else but a 15-byte `README.md` and a `.gitignore` — no `package.json`, no build config, no tests, no lint config, single commit `e8fed07`.
 
-**Target stated for the eventual product:** one 4th grader, age 9–10, curriculum-aligned.
+**Target stated for the eventual product:** one upper-primary learner, curriculum-aligned.
 
 ---
 
 ## Executive summary
 
-- **The content is aimed 2–5 grade levels above a 4th grader, and it says so in its own data.** `LearningQuest.jsx` tags its 16 math days `Grade 6–7` ×2, `Grade 7` ×2, `Grade 7–8` ×2, `Grade 8` ×3, `Algebra I` ×5. Day 10 is the Pythagorean theorem; Day 14 is graphing parabolas. Explore's concept glossary runs `Homeostasis`, `Permineralization`, `Taxonomy`, `Counterargument`, `Value-based pricing`. Flesch–Kincaid on Explore prose is grade 5.7–7.3. This is a solid middle-school course. Re-aiming it at age 9–10 is a **content rewrite, not a content edit** — and content is 52–65% of the bytes in these files.
+- **The content is aimed 2–5 grade levels above a 4th grader, and it says so in its own data.** `LearningQuest.jsx` tags its 16 math days `Grade 6–7` ×2, `Grade 7` ×2, `Grade 7–8` ×2, `Grade 8` ×3, `Algebra I` ×5. Day 10 is the Pythagorean theorem; Day 14 is graphing parabolas. Explore's concept glossary runs `Homeostasis`, `Permineralization`, `Taxonomy`, `Counterargument`, `Value-based pricing`. Flesch–Kincaid on Explore prose is grade 5.7–7.3. This is a solid middle-school course. Re-aiming it at upper-primary age is a **content rewrite, not a content edit** — and content is 52–65% of the bytes in these files.
 
 - **The assessment engine is trivially defeatable and there is no pass threshold.** In Explore, 101 of 109 multiple-choice questions have the correct answer at index 0, and 28 of 32 true/false answers are `true`. A child who always taps the first option and always taps True scores **129/155 (83%)** without reading a word. In `LearningQuest.jsx` the same strategy scores 42%, but *either way they complete 100% of the course*, because `finishDay` (LearningQuest.jsx:1055) marks the day done and unlocks the next one at **any** score, including 0/5, and still pays the 20 XP `XP_BONUS`.
 

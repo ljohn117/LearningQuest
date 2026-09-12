@@ -76,7 +76,7 @@ export function ProfileSelect({ profiles, onPick, onCreate, onDemo }) {
  *
  * The app used to log that to the console and carry on looking normal, which
  * meant a whole session could be finished and lost with nothing on screen to
- * say so. The console is not a place a nine-year-old looks.
+ * say so. The console is not a place a child looks.
  *
  * Copy rules: it is a fact about the browser, never about him — nothing here
  * suggests he did anything wrong — and it says what to do, because the person
@@ -607,7 +607,7 @@ export function ResultsView({ subj, day, correct, earned, leveledTo, userName, o
         </div>
       )}
       {/* Research puts a productive session for this age at 10-15 minutes,
-          and a nine-year-old should not be the one deciding when to stop.
+          and a child should not be the one deciding when to stop.
           Suggested at a clean boundary, never mid-question, and framed as
           finishing rather than being cut off. */}
       {sessionMinutes >= 12 && (
