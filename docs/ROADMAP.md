@@ -410,8 +410,13 @@ could not reach:
   false but somewhere along a range: the electromagnetic spectrum, formality
   of tone, how protected a kind of speech is.
 
-Block mix moved from 5% visual / 36% plain text to roughly 15% / 30%, and
-both thresholds are now asserted.
+Block mix moved from **5% visual / 36% plain text to 11% / 34%** — 150
+visuals across 1,355 blocks. Both thresholds are asserted so it cannot drift
+back, but note the honest reading: doubling the visuals moved plain text by
+only two points, because the diagrams were *added* rather than replacing
+prose. If the goal is a genuinely less text-heavy app, that is a separate
+piece of work — cutting and tightening the prose itself, not adding more
+blocks beside it.
 
 **Two things caught by looking, not by testing.** `codeshape` right-anchored
 its annotations on the same row as the code, so a normal-length line ran
