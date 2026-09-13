@@ -11,7 +11,8 @@
     "validate": "node scripts/validate-content.mjs",
     "audit": "node scripts/audit-content.mjs",
     "test": "node scripts/test.mjs",
-    "check": "npm run validate && npm run test && npm run audit"
+    "check": "npm run validate && npm run test && npm run audit",
+    "restore-check": "node scripts/restore-check.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.460.0",
