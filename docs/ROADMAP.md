@@ -1,6 +1,8 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1 and 2 done. Phase 2b is next — it was discovered by Phase 2 and is bigger than the problem Phase 2 fixed.**
+> **Status: Phases 1 and 2 done. Phase 2b is PARTIAL — three of its four
+> targets met, one not. Finish 2b, or move to Phase 3; both are defensible.
+> See the outcome section under Phase 2b before choosing.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -167,6 +169,47 @@ slot above 30%, and the caps in `scripts/test.mjs` are tightened to match.
 **Guardrails.** Same as Phase 2, and one more: permuting a question's choices
 must move `answer` with them. A test asserts every answer index still points
 at the option the `explain` text describes.
+
+### Outcome — partial
+
+**The plan above was wrong about the cause, and that matters.** It assumed
+correct answers were too long because they carried an explanatory tail that
+belonged in `explain`. Measuring found the opposite: only 12 of the 149 worst
+had such a tail. The real problem was **lazy distractors** — "a loop", "a kind
+of tax", "song lyrics", "secret codes", "animals get bored". Those are not
+misconceptions, they are jokes, and a child eliminates them without knowing
+anything. The correct answer looked long because the wrong answers were
+throwaway.
+
+So the fix was not trimming correct answers. It was rewriting roughly 130 sets
+of distractors into plausible near-misses — judicial review now offers
+"rewrite a law it finds unconstitutional" and "block a bill before it reaches
+the President", both of which a half-informed reader would seriously consider.
+That is a real improvement to the questions, not a cosmetic balancing of
+character counts.
+
+| target | before | after | met |
+|---|---|---|---|
+| longest by 10+ characters | 149 (32%) | **0** | ✓ |
+| worst single margin | 44 chars | **9 chars** | ✓ |
+| worst answer slot | 37% | **25%** | ✓ |
+| correct is strictly longest | 60% | **49%** | ✗ (target 35%) |
+
+**What is left.** 228 questions where the correct option is longest by between
+one and nine characters. No child can *see* a three-character difference, so
+the tell is no longer visible — but "always pick the longest" still scores 49%
+against 25% by chance, so it is still countable. Closing it means nudging one
+distractor in each of ~70 more questions, which is a session of authoring on
+its own and was not worth doing badly to claim a tick.
+
+Answer slots are now permuted deterministically across all 461 questions.
+Because a permutation that moved `choices` without moving `answer` would leave
+every other test passing and every question silently wrong, ten answers are
+now pinned to their **content** rather than their position.
+
+Also fixed: `b1` asked "Scarcity means:" twice, because the Phase 2 conversion
+produced a near-duplicate of a question already on that day. The second is
+rewritten in place to test opportunity cost instead.
 
 ---
 

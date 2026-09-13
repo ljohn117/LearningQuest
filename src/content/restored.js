@@ -50,10 +50,10 @@ export const RESTORED = {
           'Changing state means adding or removing energy.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'Ice, water and steam differ mainly in:', choices: ['the type of particle', 'how the particles are arranged', 'their chemical formula', 'their number of atoms'], answer: 1, hint: 'All three are still H2O.', explain: 'Same particles throughout — only the spacing and motion change.' },
-          { type: 'mc', prompt: 'Ice melting into water is:', choices: ['a chemical change — a new substance forms', 'a physical change — the same substance, rearranged', 'neither a physical nor a chemical change', 'a chemical change because it looks different'], answer: 1, hint: 'Check the chemical formula before and after.', explain: 'H₂O before, H₂O after. Only the arrangement changed, which is exactly what makes it physical.' },
-          { type: 'mc', prompt: 'To freeze a liquid you must:', choices: ['add energy', 'add mass', 'remove energy', 'remove volume'], answer: 2, hint: 'Freezing is the opposite of melting.', explain: 'Energy leaves, particles slow, and they lock into place.' },
-          { type: 'mc', prompt: 'Which of these is NOT matter?', choices: ['light', 'air', 'steam', 'ice'], answer: 0, hint: 'One of these has no mass.', explain: 'Light is energy, not matter.' },
+          { type: 'mc', prompt: 'Ice, water and steam differ mainly in:', choices: ['the type of particle', 'their number of atoms', 'their chemical formula', 'how the particles are arranged'], answer: 3, hint: 'All three are still H2O.', explain: 'Same particles throughout — only the spacing and motion change.' },
+          { type: 'mc', prompt: 'Ice melting into water is:', choices: ['a physical change — the same substance, rearranged', 'a chemical change — a new substance forms', 'neither a physical nor a chemical change', 'a chemical change because it looks different'], answer: 0, hint: 'Check the chemical formula before and after.', explain: 'H₂O before, H₂O after. Only the arrangement changed, which is exactly what makes it physical.' },
+          { type: 'mc', prompt: 'To freeze a liquid you must:', choices: ['add energy', 'remove energy', 'add mass', 'remove volume'], answer: 1, hint: 'Freezing is the opposite of melting.', explain: 'Energy leaves, particles slow, and they lock into place.' },
+          { type: 'mc', prompt: 'Which of these is NOT matter?', choices: ['steam', 'air', 'light', 'ice'], answer: 2, hint: 'One of these has no mass.', explain: 'Light is energy, not matter.' },
         ],
       },
       {
@@ -83,7 +83,7 @@ export const RESTORED = {
         ],
         quiz: [
           { type: 'mc', prompt: 'What decides which element an atom is?', choices: ['its total mass', 'its number of electrons', 'its number of neutrons', 'its number of protons'], answer: 3, hint: 'One count is the element’s identity.', explain: 'The atomic number — the proton count — names the element.' },
-          { type: 'mc', prompt: 'Nearly all of an atom’s mass is in the:', choices: ['empty space', 'nucleus', 'electron cloud', 'outer shell'], answer: 1, hint: 'Protons and neutrons are the heavy parts.', explain: 'The nucleus holds the protons and neutrons, so it holds the mass.' },
+          { type: 'mc', prompt: 'Nearly all of an atom’s mass is in the:', choices: ['nucleus', 'empty space', 'electron cloud', 'outer shell'], answer: 0, hint: 'Protons and neutrons are the heavy parts.', explain: 'The nucleus holds the protons and neutrons, so it holds the mass.' },
           { type: 'mc', prompt: 'Compared with the whole atom, the nucleus is:', choices: ['about half the atom', 'tiny — the atom is mostly empty space', 'the same size as the electron cloud', 'slightly larger than the electron cloud'], answer: 1, hint: 'Picture a marble in a sports stadium.', explain: 'The nucleus holds nearly all the mass in a fantastically small space. Almost everything solid is mostly nothing.' },
           { type: 'numeric', prompt: 'An atom has 8 protons. What is its atomic number?', answer: 8, hint: 'Atomic number is defined as the proton count.', explain: 'Atomic number 8 — that is oxygen.' },
         ],
@@ -118,7 +118,7 @@ export const RESTORED = {
           { type: 'numeric', prompt: 'A 4 kg object accelerates at 3 m/s². What force acts on it, in newtons?', answer: 12, hint: 'F = m × a.', explain: '4 × 3 = 12 N.' },
           { type: 'numeric', prompt: 'A 20 N force acts on a 5 kg object. What is its acceleration, in m/s²?', answer: 4, hint: 'Rearrange F = m × a to a = F ÷ m.', explain: '20 ÷ 5 = 4 m/s².' },
           { type: 'mc', prompt: 'An object with no force acting on it will:', choices: ['slow down and stop', 'speed up steadily', 'keep moving as it was', 'turn gradually'], answer: 2, hint: 'Think of the puck on ice with friction removed.', explain: 'Motion only changes when a force acts.' },
-          { type: 'mc', prompt: 'Push a shopping trolley and a car with exactly the same force. The car:', choices: ['accelerates more', 'accelerates less', 'accelerates the same', 'does not move at all'], answer: 1, hint: 'Look at a = F ÷ m and make m bigger.', explain: 'Same force, more mass, less acceleration. Mass is the bottom of the fraction.' },
+          { type: 'mc', prompt: 'Push a shopping trolley and a car with exactly the same force. The car:', choices: ['accelerates more', 'does not move at all', 'accelerates the same', 'accelerates less'], answer: 3, hint: 'Look at a = F ÷ m and make m bigger.', explain: 'Same force, more mass, less acceleration. Mass is the bottom of the fraction.' },
         ],
       },
       {
@@ -150,8 +150,8 @@ export const RESTORED = {
         quiz: [
           { type: 'mc', prompt: 'A ball at the top of a ramp, not yet moving, mostly has:', choices: ['potential energy', 'no energy', 'heat energy', 'kinetic energy'], answer: 0, hint: 'It is not moving yet, but it could.', explain: 'Its height gives it stored — potential — energy.' },
           { type: 'mc', prompt: 'A sliding box grinds to a halt. Its kinetic energy has:', choices: ['been destroyed by friction', 'turned into heat and sound', 'disappeared into the floor', 'been converted into mass'], answer: 1, hint: 'Where does the energy go when something rubs?', explain: 'Friction does not destroy energy, it converts it — mostly to heat, some to sound. Run your hand over a carpet and feel it.' },
-          { type: 'mc', prompt: 'As a ball falls, its potential energy:', choices: ['disappears', 'stays the same', 'increases', 'becomes kinetic energy'], answer: 3, hint: 'It is speeding up as it drops.', explain: 'Height converts into motion — potential becomes kinetic.' },
-          { type: 'mc', prompt: 'Which best describes energy conservation?', choices: ['energy is always heat', 'energy is used up', 'the total stays constant', 'energy only moves downhill'], answer: 2, hint: 'Add the forms together before and after.', explain: 'The forms change; the total does not.' },
+          { type: 'mc', prompt: 'As a ball falls, its potential energy:', choices: ['disappears', 'stays the same', 'becomes kinetic energy', 'increases'], answer: 2, hint: 'It is speeding up as it drops.', explain: 'Height converts into motion — potential becomes kinetic.' },
+          { type: 'mc', prompt: 'Which best describes energy conservation?', choices: ['energy is always heat', 'energy is used up', 'energy only moves downhill', 'the total stays constant'], answer: 3, hint: 'Add the forms together before and after.', explain: 'The forms change; the total does not.' },
         ],
       },
       {
@@ -180,10 +180,10 @@ export const RESTORED = {
           'Heat travels by conduction, convection and radiation.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'Sunlight reaching Earth through space travels by:', choices: ['evaporation', 'conduction', 'convection', 'radiation'], answer: 3, hint: 'Space is nearly empty — which method needs no material?', explain: 'Radiation carries energy as waves and needs no medium.' },
+          { type: 'mc', prompt: 'Sunlight reaching Earth through space travels by:', choices: ['radiation', 'conduction', 'convection', 'evaporation'], answer: 0, hint: 'Space is nearly empty — which method needs no material?', explain: 'Radiation carries energy as waves and needs no medium.' },
           { type: 'mc', prompt: 'A spark is far hotter than a warm bath. Which holds more heat energy in total?', choices: ['the spark, because it is hotter', 'the bath, because there is far more of it', 'they hold the same', 'heat and temperature are the same thing'], answer: 1, hint: 'Separate how hot something is from how much of it there is.', explain: 'Temperature is how fast particles move; heat is the total energy of all of them. A spark is hot and tiny; the bath is cooler and enormous.' },
-          { type: 'mc', prompt: 'Temperature is a measure of:', choices: ['total energy', 'average particle motion', 'mass', 'volume'], answer: 1, hint: 'It is an average, not a total.', explain: 'Average kinetic energy of the particles.' },
-          { type: 'mc', prompt: 'Heat always flows:', choices: ['from warmer to cooler', 'only downward', 'from cooler to warmer', 'in both directions equally'], answer: 0, hint: 'Think about a hot drink left on a table.', explain: 'Energy flows warm to cool until they even out.' },
+          { type: 'mc', prompt: 'Temperature is a measure of:', choices: ['the mass of the object', 'the total energy present', 'average particle motion', 'the volume it occupies'], answer: 2, hint: 'It is an average, not a total.', explain: 'Average kinetic energy of the particles.' },
+          { type: 'mc', prompt: 'Heat always flows:', choices: ['in both directions equally', 'only downward', 'from cooler to warmer', 'from warmer to cooler'], answer: 3, hint: 'Think about a hot drink left on a table.', explain: 'Energy flows warm to cool until they even out.' },
         ],
       },
       {
@@ -214,7 +214,7 @@ export const RESTORED = {
         ],
         quiz: [
           { type: 'mc', prompt: 'What does a wave actually transport?', choices: ['energy', 'temperature', 'mass', 'matter'], answer: 0, hint: 'Think about the bobbing duck on a ripple.', explain: 'Energy moves; the medium stays put.' },
-          { type: 'mc', prompt: 'Sound cannot travel through space because:', choices: ['space is too cold', 'there are almost no particles to carry the vibration', 'sound is absorbed by gravity', 'space is too large'], answer: 1, hint: 'What does a sound wave actually push on?', explain: 'Sound is particles bumping into neighbouring particles. With nearly no particles, there is nothing to do the bumping.' },
+          { type: 'mc', prompt: 'Sound cannot travel through space because:', choices: ['space is far too cold for vibration', 'there are almost no particles to carry it', 'sound is absorbed by strong gravity', 'space is simply too large to cross'], answer: 1, hint: 'What does a sound wave actually push on?', explain: 'Sound is particles bumping into neighbouring particles. With nearly no particles, there is nothing to do the bumping.' },
           { type: 'numeric', prompt: 'A wave has wavelength 3 m and frequency 5 Hz. What is its speed, in m/s?', answer: 15, hint: 'speed = wavelength × frequency.', explain: '3 × 5 = 15 m/s.' },
           { type: 'mc', prompt: 'If speed is fixed and wavelength gets longer, frequency:', choices: ['becomes zero', 'gets larger', 'gets smaller', 'stays the same'], answer: 2, hint: 'Their product has to stay constant.', explain: 'An inverse relationship — one up means the other down.' },
         ],
@@ -252,9 +252,9 @@ export const RESTORED = {
           'Every statement has exactly one truth value.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'Which of these is a statement?', choices: ['Wow!', 'Phoenix is in Arizona.', 'Please sit down.', 'How old are you?'], answer: 1, hint: 'Which one could you check as true or false?', explain: 'Only the last one makes a checkable claim.' },
-          { type: 'mc', prompt: '“The Moon is made of cheese.” This sentence is:', choices: ['not a statement, because it is false', 'a statement, and a false one', 'a statement only if someone believes it', 'neither true nor false'], answer: 1, hint: 'False is a truth value too.', explain: 'A statement is anything that can be true or false. Being false is one of the two ways to qualify.' },
-          { type: 'mc', prompt: '"Is it raining?" is not a statement because it:', choices: ['is about weather', 'has no verb', 'is too short', 'cannot be true or false'], answer: 3, hint: 'Try assigning it true or false.', explain: 'Questions carry no truth value.' },
+          { type: 'mc', prompt: 'Which of these is a statement?', choices: ['Wow!', 'How old are you?', 'Please sit down.', 'Phoenix is in Arizona.'], answer: 3, hint: 'Which one could you check as true or false?', explain: 'Only the last one makes a checkable claim.' },
+          { type: 'mc', prompt: '“The Moon is made of cheese.” This sentence is:', choices: ['a statement, and a false one', 'not a statement, because it is false', 'a statement only if someone believes it', 'neither true nor false'], answer: 0, hint: 'False is a truth value too.', explain: 'A statement is anything that can be true or false. Being false is one of the two ways to qualify.' },
+          { type: 'mc', prompt: '"Is it raining?" is not a statement because it:', choices: ['is about weather', 'cannot be true or false', 'is too short', 'has no verb'], answer: 1, hint: 'Try assigning it true or false.', explain: 'Questions carry no truth value.' },
           { type: 'mc', prompt: 'How many truth values does a statement have?', choices: ['none', 'as many as you like', 'exactly one', 'two at once'], answer: 2, hint: 'Not both, not neither.', explain: 'Exactly one: true or false.' },
         ],
       },
@@ -284,10 +284,10 @@ export const RESTORED = {
           'NOT reverses a truth value.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'In logic, “A or B” is false only when:', choices: ['both A and B are true', 'exactly one of them is true', 'both A and B are false', 'A is true and B is false'], answer: 2, hint: 'Logical OR is inclusive — both counts as yes.', explain: 'OR needs at least one. It fails only when nothing is true. Everyday speech often means “one or the other but not both”, which is where the confusion comes from.' },
+          { type: 'mc', prompt: 'In logic, “A or B” is false only when:', choices: ['both A and B are true', 'exactly one of them is true', 'A is true and B is false', 'both A and B are false'], answer: 3, hint: 'Logical OR is inclusive — both counts as yes.', explain: 'OR needs at least one. It fails only when nothing is true. Everyday speech often means “one or the other but not both”, which is where the confusion comes from.' },
           { type: 'mc', prompt: '"P AND Q" is true when:', choices: ['both are true', 'exactly one is true', 'neither is true', 'at least one is true'], answer: 0, hint: 'AND is the demanding one.', explain: 'Both parts must be true.' },
           { type: 'mc', prompt: 'If P is false, what is NOT P?', choices: ['false', 'true', 'unknown', 'both'], answer: 1, hint: 'NOT reverses it.', explain: 'NOT false is true.' },
-          { type: 'mc', prompt: 'AND, OR and NOT are physically built into computers as:', choices: ['passwords', 'pixels', 'files', 'logic gates'], answer: 3, hint: 'Think about what a processor is made of.', explain: 'Logic gates — the building blocks of every chip.' },
+          { type: 'mc', prompt: 'AND, OR and NOT are physically built into computers as:', choices: ['passwords', 'pixels', 'logic gates', 'files'], answer: 2, hint: 'Think about what a processor is made of.', explain: 'Logic gates — the building blocks of every chip.' },
         ],
       },
       {
@@ -317,9 +317,9 @@ export const RESTORED = {
         ],
         quiz: [
           { type: 'mc', prompt: '"If P then Q" is false only when:', choices: ['both are false', 'both are true', 'P is false and Q is true', 'P is true and Q is false'], answer: 3, hint: 'When is the promise actually broken?', explain: 'The condition happened and the result did not follow.' },
-          { type: 'mc', prompt: 'Swapping the two halves of an if-then statement:', choices: ['keeps the meaning the same', 'can turn a true statement into a false one', 'always makes it false', 'is only a problem in mathematics'], answer: 1, hint: 'Four sides — is a rectangle a square?', explain: 'Every square has four sides, but plenty of four-sided shapes are not squares. Reversing an if-then is a different claim entirely.' },
-          { type: 'mc', prompt: 'The converse of "if A then B" is:', choices: ['A and B', 'not A', 'if B then A', 'if not A then not B'], answer: 2, hint: 'Converse means swap the two parts.', explain: 'Swap hypothesis and conclusion.' },
-          { type: 'mc', prompt: '"If it snows, school closes." It does not snow. The statement is:', choices: ['not broken', 'meaningless', 'proven false', 'broken'], answer: 0, hint: 'Was any claim made about non-snowy days?', explain: 'No claim was made, so nothing was broken.' },
+          { type: 'mc', prompt: 'Swapping the two halves of an if-then statement:', choices: ['can turn a true statement into a false one', 'keeps the meaning exactly the same', 'always makes the statement false', 'only matters inside mathematics'], answer: 0, hint: 'Four sides — is a rectangle a square?', explain: 'Every square has four sides, but plenty of four-sided shapes are not squares. Reversing an if-then is a different claim entirely.' },
+          { type: 'mc', prompt: 'The converse of "if A then B" is:', choices: ['A and B', 'if B then A', 'not A', 'if not A then not B'], answer: 1, hint: 'Converse means swap the two parts.', explain: 'Swap hypothesis and conclusion.' },
+          { type: 'mc', prompt: '"If it snows, school closes." It does not snow. The statement is:', choices: ['proven false', 'meaningless', 'not broken', 'broken'], answer: 2, hint: 'Was any claim made about non-snowy days?', explain: 'No claim was made, so nothing was broken.' },
         ],
       },
       {
@@ -348,10 +348,10 @@ export const RESTORED = {
           'A valid argument with false premises gives a false conclusion.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'A valid argument guarantees that:', choices: ['the conclusion is true', 'if the premises are true, the conclusion is', 'the argument is persuasive', 'the premises are true'], answer: 1, hint: 'Validity is conditional.', explain: 'Validity is about the link, not about the premises being true.' },
-          { type: 'mc', prompt: 'An argument whose logic is airtight but whose conclusion is false must have:', choices: ['a mistake in its reasoning', 'at least one false premise', 'too few premises', 'nothing wrong with it at all'], answer: 1, hint: 'Remember the flying penguins.', explain: 'Validity is about the shape of the reasoning. Feed a valid shape a false premise and it will deliver a false conclusion perfectly.' },
-          { type: 'mc', prompt: 'An argument that is valid AND has true premises is called:', choices: ['certain', 'formal', 'sound', 'strong'], answer: 2, hint: 'One word covers both conditions.', explain: 'Sound: valid plus true premises.' },
-          { type: 'mc', prompt: '"Garbage in, garbage out" describes an argument that is:', choices: ['valid with false premises', 'neither valid nor true', 'sound', 'invalid with true premises'], answer: 0, hint: 'The machinery works; the input does not.', explain: 'Good reasoning, bad starting material.' },
+          { type: 'mc', prompt: 'A valid argument guarantees that:', choices: ['the argument will persuade people', 'the conclusion is definitely true', 'the premises given are all true', 'if the premises are true, so is the end'], answer: 3, hint: 'Validity is conditional.', explain: 'Validity is about the link, not about the premises being true.' },
+          { type: 'mc', prompt: 'An argument whose logic is airtight but whose conclusion is false must have:', choices: ['at least one false premise', 'a mistake in its reasoning', 'too few premises', 'nothing wrong with it at all'], answer: 0, hint: 'Remember the flying penguins.', explain: 'Validity is about the shape of the reasoning. Feed a valid shape a false premise and it will deliver a false conclusion perfectly.' },
+          { type: 'mc', prompt: 'An argument that is valid AND has true premises is called:', choices: ['certain', 'sound', 'formal', 'strong'], answer: 1, hint: 'One word covers both conditions.', explain: 'Sound: valid plus true premises.' },
+          { type: 'mc', prompt: '"Garbage in, garbage out" describes an argument that is:', choices: ['sound', 'neither valid nor true', 'valid with false premises', 'invalid with true premises'], answer: 2, hint: 'The machinery works; the input does not.', explain: 'Good reasoning, bad starting material.' },
         ],
       },
       {
@@ -380,10 +380,10 @@ export const RESTORED = {
           'A false dilemma hides the options it left out.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'Ice cream sales and drownings both rise in summer. Concluding ice cream causes drowning is:', choices: ['a valid argument', 'circular reasoning', 'a false dilemma', 'mistaking correlation for cause'], answer: 3, hint: 'What third thing explains both?', explain: 'Hot weather drives both. Correlation is not causation.' },
-          { type: 'mc', prompt: '“Either you agree with me or you hate science.” The problem with this is that it:', choices: ['uses emotional language', 'offers only two options when more exist', 'assumes what it is trying to prove', 'attacks the person instead of the claim'], answer: 1, hint: 'Count the options you are being offered.', explain: 'A false dilemma. You could disagree on one point and love science — but the sentence is built so that option does not appear.' },
+          { type: 'mc', prompt: 'Ice cream sales and drownings both rise in summer. Concluding ice cream causes drowning is:', choices: ['a false dilemma between two', 'a valid argument from the data', 'circular reasoning about heat', 'mistaking correlation for cause'], answer: 3, hint: 'What third thing explains both?', explain: 'Hot weather drives both. Correlation is not causation.' },
+          { type: 'mc', prompt: '“Either you agree with me or you hate science.” The problem with this is that it:', choices: ['offers only two options when more exist', 'uses emotional language', 'assumes what it is trying to prove', 'attacks the person instead of the claim'], answer: 0, hint: 'Count the options you are being offered.', explain: 'A false dilemma. You could disagree on one point and love science — but the sentence is built so that option does not appear.' },
           { type: 'mc', prompt: '"The book is good because it is well written, and it is well written because it is good" is:', choices: ['sound', 'circular reasoning', 'correlation', 'a false dilemma'], answer: 1, hint: 'Follow the reasons in a loop.', explain: 'Each claim leans on the other. Nothing supports either.' },
-          { type: 'mc', prompt: 'The best first question when someone claims A causes B is:', choices: ['how loud they said it', 'what else could explain both', 'whether it sounds right', 'who said it'], answer: 1, hint: 'Look for a hidden third factor.', explain: 'Rule out a common cause before accepting the link.' },
+          { type: 'mc', prompt: 'The best first question when someone claims A causes B is:', choices: ['how loud they said it', 'whether it sounds right', 'what else could explain both', 'who said it'], answer: 2, hint: 'Look for a hidden third factor.', explain: 'Rule out a common cause before accepting the link.' },
         ],
       },
       {
@@ -413,9 +413,9 @@ export const RESTORED = {
         ],
         quiz: [
           { type: 'numeric', prompt: 'How many counterexamples does it take to disprove "all swans are white"?', answer: 1, hint: 'Think about the black swan.', explain: 'One is enough, permanently.' },
-          { type: 'mc', prompt: 'You check a thousand examples of a claim about ALL cases and every one fits. This:', choices: ['proves the claim', 'supports it but never proves it', 'proves it only for those thousand', 'disproves the claim'], answer: 1, hint: 'What about the one you did not check?', explain: 'A universal claim covers cases you have not seen. A thousand hits build confidence; one miss would settle it the other way instantly.' },
+          { type: 'mc', prompt: 'You check a thousand examples of a claim about ALL cases and every one fits. This:', choices: ['proves the claim', 'disproves the claim', 'proves it only for those thousand', 'supports it but never proves it'], answer: 3, hint: 'What about the one you did not check?', explain: 'A universal claim covers cases you have not seen. A thousand hits build confidence; one miss would settle it the other way instantly.' },
           { type: 'mc', prompt: 'To disprove "every prime number is odd" you would name:', choices: ['2', '9', '3', '7'], answer: 0, hint: 'Find a prime that is even.', explain: '2 is prime and even — a single counterexample.' },
-          { type: 'mc', prompt: 'Splitting a claim into "even" and "odd" and proving both is:', choices: ['a counterexample', 'circular reasoning', 'correlation', 'proof by cases'], answer: 3, hint: 'The groups cover every possibility.', explain: 'Proof by cases — exhaust the options.' },
+          { type: 'mc', prompt: 'Splitting a claim into "even" and "odd" and proving both is:', choices: ['a counterexample', 'proof by cases', 'correlation', 'circular reasoning'], answer: 1, hint: 'The groups cover every possibility.', explain: 'Proof by cases — exhaust the options.' },
         ],
       },
     ],
@@ -452,9 +452,9 @@ export const RESTORED = {
         ],
         quiz: [
           { type: 'mc', prompt: 'How do scientists know what Earth’s interior is made of?', choices: ['core samples from volcanoes', 'deep drilling', 'earthquake waves', 'satellite photos'], answer: 2, hint: 'No drill has come close to the mantle.', explain: 'Seismic waves change speed in different materials, revealing the layers.' },
-          { type: 'mc', prompt: 'The inner core is the hottest layer, yet it is solid. What keeps it that way?', choices: ['it has cooled more than the outer core', 'the enormous pressure on it', 'it is made of a different element', 'it is not actually the hottest layer'], answer: 1, hint: 'Something other than temperature decides state.', explain: 'Pressure. Squeeze hard enough and atoms cannot move past each other, however hot they are.' },
-          { type: 'mc', prompt: 'Which layer is thin, rocky and on the outside?', choices: ['mantle', 'outer core', 'inner core', 'crust'], answer: 3, hint: 'It is the part you stand on.', explain: 'The crust — only a few kilometres thick under the oceans.' },
-          { type: 'mc', prompt: 'Going deeper into Earth, temperature and pressure:', choices: ['both rise', 'both fall', 'rise then fall', 'stay constant'], answer: 0, hint: 'Both trend the same way.', explain: 'Both increase steadily with depth.' },
+          { type: 'mc', prompt: 'The inner core is the hottest layer, yet it is solid. What keeps it that way?', choices: ['it has cooled more than the outer core', 'it is not actually the hottest layer', 'it is made of a different element', 'the enormous pressure on it'], answer: 3, hint: 'Something other than temperature decides state.', explain: 'Pressure. Squeeze hard enough and atoms cannot move past each other, however hot they are.' },
+          { type: 'mc', prompt: 'Which layer is thin, rocky and on the outside?', choices: ['crust', 'outer core', 'inner core', 'mantle'], answer: 0, hint: 'It is the part you stand on.', explain: 'The crust — only a few kilometres thick under the oceans.' },
+          { type: 'mc', prompt: 'Going deeper into Earth, temperature and pressure:', choices: ['both fall', 'both rise', 'rise then fall', 'stay constant'], answer: 1, hint: 'Both trend the same way.', explain: 'Both increase steadily with depth.' },
         ],
       },
       {
@@ -483,10 +483,10 @@ export const RESTORED = {
           'Coastline fit, fossils and rock layers together proved it.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'Roughly how fast do tectonic plates move?', choices: ['a few metres a year', 'a few centimetres a year', 'a few kilometres a year', 'they do not move'], answer: 1, hint: 'About as fast as fingernails grow.', explain: 'Centimetres per year — slow, but relentless over millions of years.' },
-          { type: 'mc', prompt: 'Most earthquakes and volcanoes happen:', choices: ['in the middle of plates', 'randomly across Earth', 'at plate boundaries', 'only at the equator'], answer: 2, hint: 'Think about where the action is.', explain: 'Plate edges are where the stress concentrates.' },
-          { type: 'mc', prompt: 'Identical fossils turn up on continents now separated by ocean. The best explanation is:', choices: ['the animals swam across', 'the continents were once joined', 'the species evolved twice, identically', 'the fossils were misidentified'], answer: 1, hint: 'Which explanation needs the fewest lucky coincidences?', explain: 'Land-dwelling species that could not cross an ocean appear on both sides — because the land was one piece when they lived.' },
-          { type: 'mc', prompt: 'The Himalayas are still rising because:', choices: ['sea level is falling', 'erosion is slowing', 'two plates are colliding', 'the crust is cooling'], answer: 2, hint: 'India is still moving north.', explain: 'A continuing collision keeps pushing them up.' },
+          { type: 'mc', prompt: 'Roughly how fast do tectonic plates move?', choices: ['a few metres a year', 'a few kilometres a year', 'a few centimetres a year', 'they do not move'], answer: 2, hint: 'About as fast as fingernails grow.', explain: 'Centimetres per year — slow, but relentless over millions of years.' },
+          { type: 'mc', prompt: 'Most earthquakes and volcanoes happen:', choices: ['in the middle of plates', 'randomly across Earth', 'only at the equator', 'at plate boundaries'], answer: 3, hint: 'Think about where the action is.', explain: 'Plate edges are where the stress concentrates.' },
+          { type: 'mc', prompt: 'Identical fossils turn up on continents now separated by ocean. The best explanation is:', choices: ['the continents were once joined', 'the animals swam across', 'the species evolved twice, identically', 'the fossils were misidentified'], answer: 0, hint: 'Which explanation needs the fewest lucky coincidences?', explain: 'Land-dwelling species that could not cross an ocean appear on both sides — because the land was one piece when they lived.' },
+          { type: 'mc', prompt: 'The Himalayas are still rising because:', choices: ['sea level is falling', 'two plates are colliding', 'erosion is slowing', 'the crust is cooling'], answer: 1, hint: 'India is still moving north.', explain: 'A continuing collision keeps pushing them up.' },
         ],
       },
       {
@@ -515,9 +515,9 @@ export const RESTORED = {
           'Water is conserved — moved and transformed, never used up.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'Water vapour turning back into liquid droplets is:', choices: ['condensation', 'collection', 'evaporation', 'precipitation'], answer: 0, hint: 'It is what forms a cloud.', explain: 'Condensation — gas to liquid as it cools.' },
-          { type: 'mc', prompt: 'The amount of water on Earth is:', choices: ['growing noticeably each year', 'essentially fixed — the same water cycles round', 'shrinking quickly', 'created by rainfall'], answer: 1, hint: 'Think about where the dinosaurs’ drinking water went.', explain: 'It is the same water, cycling. Rain does not create water, it moves it — which is why what you drank today is genuinely ancient.' },
-          { type: 'mc', prompt: 'What supplies the energy driving the water cycle?', choices: ['the moon', "Earth's core", 'the wind', 'the sun'], answer: 3, hint: 'What makes water evaporate?', explain: 'Solar energy powers evaporation.' },
+          { type: 'mc', prompt: 'Water vapour turning back into liquid droplets is:', choices: ['evaporation', 'collection', 'condensation', 'precipitation'], answer: 2, hint: 'It is what forms a cloud.', explain: 'Condensation — gas to liquid as it cools.' },
+          { type: 'mc', prompt: 'The amount of water on Earth is:', choices: ['created fresh by every rainfall', 'growing noticeably with each year', 'shrinking quickly as we use it', 'essentially fixed — the same water cycles'], answer: 3, hint: 'Think about where the dinosaurs’ drinking water went.', explain: 'It is the same water, cycling. Rain does not create water, it moves it — which is why what you drank today is genuinely ancient.' },
+          { type: 'mc', prompt: 'What supplies the energy driving the water cycle?', choices: ['the sun', "Earth's core", 'the wind', 'the moon'], answer: 0, hint: 'What makes water evaporate?', explain: 'Solar energy powers evaporation.' },
           { type: 'mc', prompt: 'The water cycle is an example of:', choices: ['a one-way process', 'a conservation law', 'a chemical reaction', 'radioactive decay'], answer: 1, hint: 'Compare it to energy conservation.', explain: 'The total is conserved; only the form and location change.' },
         ],
       },
@@ -547,9 +547,9 @@ export const RESTORED = {
           'A single measurement is not a trend.',
         ],
         quiz: [
-          { type: 'mc', prompt: '"It snowed today" is a statement about:', choices: ['both equally', 'neither', 'climate', 'weather'], answer: 3, hint: 'What timescale is one day?', explain: 'A single day is weather.' },
-          { type: 'mc', prompt: 'One unusually cold winter tells you:', choices: ['the long-term trend has reversed', 'about weather, not about climate', 'nothing at all about anything', 'that the measurements were wrong'], answer: 1, hint: 'One data point against a long-term pattern.', explain: 'Weather is right now; climate is the pattern over decades. A single cold winter sits inside the pattern rather than replacing it.' },
-          { type: 'mc', prompt: 'Climate is usually averaged over at least:', choices: ['a week', 'a year', '30 years', '5 days'], answer: 2, hint: 'It is decades, not seasons.', explain: 'Thirty years is the standard window.' },
+          { type: 'mc', prompt: '"It snowed today" is a statement about:', choices: ['both equally', 'neither', 'weather', 'climate'], answer: 2, hint: 'What timescale is one day?', explain: 'A single day is weather.' },
+          { type: 'mc', prompt: 'One unusually cold winter tells you:', choices: ['the long-term trend has reversed', 'that the measurements were wrong', 'nothing at all about anything', 'about weather, not about climate'], answer: 3, hint: 'One data point against a long-term pattern.', explain: 'Weather is right now; climate is the pattern over decades. A single cold winter sits inside the pattern rather than replacing it.' },
+          { type: 'mc', prompt: 'Climate is usually averaged over at least:', choices: ['30 years', 'a year', 'a week', '5 days'], answer: 0, hint: 'It is decades, not seasons.', explain: 'Thirty years is the standard window.' },
           { type: 'mc', prompt: 'What ultimately drives most weather?', choices: ["Earth's core heat", 'uneven heating by the sun', 'plate movement', 'the moon’s gravity'], answer: 1, hint: 'Compare the equator with the poles.', explain: 'The heating difference sets air in motion.' },
         ],
       },
@@ -579,10 +579,10 @@ export const RESTORED = {
           'Moon phases depend on how much of the lit half faces us.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'What causes Earth’s seasons?', choices: ['the tilt of the axis', 'the moon’s pull', 'solar flares', 'distance from the sun'], answer: 0, hint: 'Earth is closest to the sun in January.', explain: 'The 23.5° tilt changes how directly sunlight strikes each hemisphere.' },
-          { type: 'mc', prompt: 'What causes summer in the northern hemisphere?', choices: ['Earth being closest to the Sun', 'the northern half being tilted toward the Sun', 'Earth spinning faster', 'the Sun giving off more energy'], answer: 1, hint: 'This one surprises almost everybody.', explain: 'Tilt, not distance. Earth is actually slightly farther from the Sun during northern summer — distance is not what makes the seasons.' },
+          { type: 'mc', prompt: 'What causes Earth’s seasons?', choices: ['solar flares', 'the moon’s pull', 'the tilt of the axis', 'distance from the sun'], answer: 2, hint: 'Earth is closest to the sun in January.', explain: 'The 23.5° tilt changes how directly sunlight strikes each hemisphere.' },
+          { type: 'mc', prompt: 'What causes summer in the northern hemisphere?', choices: ['the Sun giving off more energy', 'Earth being at its closest to the Sun', 'Earth spinning faster on its axis', 'the northern half tilting toward the Sun'], answer: 3, hint: 'This one surprises almost everybody.', explain: 'Tilt, not distance. Earth is actually slightly farther from the Sun during northern summer — distance is not what makes the seasons.' },
           { type: 'mc', prompt: 'One rotation of Earth takes about:', choices: ['a day', 'an hour', 'a month', 'a year'], answer: 0, hint: 'Rotation is spinning on the axis.', explain: 'One rotation is one day.' },
-          { type: 'mc', prompt: 'How much of the moon is lit by the sun at any moment?', choices: ['it varies', 'all of it', 'half of it', 'a quarter'], answer: 2, hint: 'Separate what is lit from what we can see.', explain: 'Half is always lit; the phase is how much of that half we see.' },
+          { type: 'mc', prompt: 'How much of the moon is lit by the sun at any moment?', choices: ['it varies', 'half of it', 'all of it', 'a quarter'], answer: 1, hint: 'Separate what is lit from what we can see.', explain: 'Half is always lit; the phase is how much of that half we see.' },
         ],
       },
       {
@@ -612,10 +612,10 @@ export const RESTORED = {
           'An orbit is falling forward fast enough to keep missing.',
         ],
         quiz: [
-          { type: 'mc', prompt: 'If you double the distance between two objects, gravity between them becomes:', choices: ['half as strong', 'one quarter as strong', 'twice as strong', 'unchanged'], answer: 1, hint: 'It is an inverse SQUARE law.', explain: '2 squared is 4, so the pull drops to one quarter.' },
-          { type: 'mc', prompt: 'Why does the Moon never crash into Earth?', choices: ['there is no gravity that far out', 'it is moving sideways fast enough to keep missing', 'Earth pushes it away', 'it is too light to fall'], answer: 1, hint: 'If it is falling, why does it never land?', explain: 'It is falling constantly — and travelling sideways fast enough that it keeps missing. An orbit is a fall that never arrives.' },
+          { type: 'mc', prompt: 'If you double the distance between two objects, gravity between them becomes:', choices: ['half as strong', 'twice as strong', 'one quarter as strong', 'unchanged'], answer: 2, hint: 'It is an inverse SQUARE law.', explain: '2 squared is 4, so the pull drops to one quarter.' },
+          { type: 'mc', prompt: 'Why does the Moon never crash into Earth?', choices: ['it is far too light to fall', 'there is no gravity that far out', 'Earth pushes it away constantly', 'it moves sideways fast enough to miss'], answer: 3, hint: 'If it is falling, why does it never land?', explain: 'It is falling constantly — and travelling sideways fast enough that it keeps missing. An orbit is a fall that never arrives.' },
           { type: 'numeric', prompt: 'If you triple the distance, gravity becomes one over what number?', answer: 9, hint: 'Square the 3.', explain: '3² = 9, so the pull is one ninth.' },
-          { type: 'mc', prompt: 'What keeps a satellite in orbit rather than flying off?', choices: ['its engines', 'air pressure', 'magnetism', 'gravity'], answer: 3, hint: 'Which force bends its path into a circle?', explain: 'Gravity continually pulls it away from a straight line.' },
+          { type: 'mc', prompt: 'What keeps a satellite in orbit rather than flying off?', choices: ['gravity', 'air pressure', 'magnetism', 'its engines'], answer: 0, hint: 'Which force bends its path into a circle?', explain: 'Gravity continually pulls it away from a straight line.' },
         ],
       },
     ],

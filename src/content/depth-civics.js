@@ -41,10 +41,10 @@ export const GOV_EXTRA = [
       'Due process stops rules being applied arbitrarily.',
     ],
     quiz: [
-      { type: 'mc', prompt: 'Rights generally have limits because:', choices: ['unlimited use would take away someone else’s', 'they are hard to write', 'courts are slow', 'governments dislike them'], answer: 0, hint: 'What happens when two rights collide?', explain: 'A boundary is needed where one person’s use costs another theirs.' },
-      { type: 'mc', prompt: 'Due process protects:', choices: ['only people who turn out to be innocent', 'everyone accused, because guilt is not known in advance', 'only citizens', 'only people who can afford a lawyer'], answer: 1, hint: 'How would anyone know who is innocent before the process runs?', explain: 'The process is how guilt gets established. Applying it only to the innocent would require already knowing the answer it exists to find.' },
+      { type: 'mc', prompt: 'Rights generally have limits because:', choices: ['governments would prefer to restrict them', 'they are difficult to write down precisely', 'courts move too slowly to enforce them', 'unlimited use would take away someone else’s'], answer: 3, hint: 'What happens when two rights collide?', explain: 'A boundary is needed where one person’s use costs another theirs.' },
+      { type: 'mc', prompt: 'Due process protects:', choices: ['everyone accused, since guilt is not yet known', 'only those who turn out to be innocent', 'citizens but not visitors to the country', 'only those who can afford a lawyer'], answer: 0, hint: 'How would anyone know who is innocent before the process runs?', explain: 'The process is how guilt gets established. Applying it only to the innocent would require already knowing the answer it exists to find.' },
       { type: 'mc', prompt: '"Either total freedom or total control" is an example of:', choices: ['due process', 'a false dilemma', 'circular reasoning', 'judicial review'], answer: 1, hint: 'Count the real options.', explain: 'It hides everything in between — straight from the Logic lane.' },
-      { type: 'mc', prompt: 'Who tests whether a limit on a right is constitutional?', choices: ['the police', 'voters directly', 'the press', 'the courts'], answer: 3, hint: 'Which branch interprets?', explain: 'The judicial branch measures laws against the Constitution.' },
+      { type: 'mc', prompt: 'Who tests whether a limit on a right is constitutional?', choices: ['the police', 'voters directly', 'the courts', 'the press'], answer: 2, hint: 'Which branch interprets?', explain: 'The judicial branch measures laws against the Constitution.' },
     ],
   },
   {
@@ -73,10 +73,10 @@ export const GOV_EXTRA = [
       'Precedent can be overturned, rarely and deliberately.',
     ],
     quiz: [
-      { type: 'mc', prompt: 'Precedent means courts:', choices: ['decide only new questions', 'ignore old cases', 'follow earlier decisions in similar cases', 'must agree with the legislature'], answer: 2, hint: 'What makes law predictable?', explain: 'Following settled decisions is what lets people plan around the law.' },
-      { type: 'mc', prompt: 'A legal precedent:', choices: ['can never be overturned', 'can be overturned by a later court', 'expires after fifty years', 'applies only in the state where it was set'], answer: 1, hint: 'What would happen to a mistake otherwise?', explain: 'Precedent gives stability, not permanence. Courts have overturned their own past rulings when those rulings were wrong.' },
-      { type: 'mc', prompt: 'Judicial review is the power to:', choices: ['elect judges', 'write new laws', 'veto a bill', 'decide whether a law conflicts with the Constitution'], answer: 3, hint: 'Which branch measures laws against the Constitution?', explain: 'Courts test laws against the Constitution.' },
-      { type: 'mc', prompt: 'Courts and science are alike because both:', choices: ['treat conclusions as settled until strong evidence overturns them', 'never change', 'require unanimous agreement', 'are run by governments'], answer: 0, hint: 'How does each handle being wrong?', explain: 'Both value stability but keep a route to correction.' },
+      { type: 'mc', prompt: 'Precedent means courts:', choices: ['decide only genuinely new questions', 'must agree with whatever Congress says', 'ignore rulings older than a century', 'follow earlier decisions in similar cases'], answer: 3, hint: 'What makes law predictable?', explain: 'Following settled decisions is what lets people plan around the law.' },
+      { type: 'mc', prompt: 'A legal precedent:', choices: ['can be overturned by a later court', 'can never be overturned', 'expires after fifty years', 'applies only in the state where it was set'], answer: 0, hint: 'What would happen to a mistake otherwise?', explain: 'Precedent gives stability, not permanence. Courts have overturned their own past rulings when those rulings were wrong.' },
+      { type: 'mc', prompt: 'Judicial review is the power to:', choices: ['appoint judges to the federal bench', 'decide whether a law breaks the Constitution', 'rewrite a law it finds unconstitutional', 'block a bill before it reaches the President'], answer: 1, hint: 'Which branch measures laws against the Constitution?', explain: 'Courts test laws against the Constitution.' },
+      { type: 'mc', prompt: 'Courts and science are alike because both:', choices: ['never revisit a conclusion once it is reached', 'require complete agreement before deciding anything', 'treat conclusions as settled until evidence overturns them', 'are ultimately controlled by the government'], answer: 2, hint: 'How does each handle being wrong?', explain: 'Both value stability but keep a route to correction.' },
     ],
   },
   {
@@ -106,8 +106,8 @@ export const GOV_EXTRA = [
     ],
     quiz: [
       { type: 'numeric', prompt: 'A 5% sales tax on a $60 item adds how many dollars?', answer: 3, hint: '5% of 60.', explain: '$3 — the same percentage calculation from the Business lane.' },
-      { type: 'mc', prompt: 'Arguments about taxes are usually really arguments about:', choices: ['geography', 'arithmetic', 'fairness — who should pay what share', 'technology'], answer: 2, hint: 'The sums are the easy part.', explain: 'Who bears the burden is the contested question.' },
-      { type: 'mc', prompt: 'A government budget is best understood as:', choices: ['mostly arithmetic', 'a set of choices about what matters most', 'a legal formality', 'a prediction of the economy'], answer: 1, hint: 'What happens when two good things need the same money?', explain: 'The arithmetic is the easy half. Deciding what to fund when everything cannot be funded is the actual work.' },
+      { type: 'mc', prompt: 'Arguments about taxes are usually really arguments about:', choices: ['the arithmetic of adding the numbers up', 'which regions of the country pay most', 'which technology collects them best', 'fairness — who should pay what share'], answer: 3, hint: 'The sums are the easy part.', explain: 'Who bears the burden is the contested question.' },
+      { type: 'mc', prompt: 'A government budget is best understood as:', choices: ['a set of choices about what matters', 'mostly a matter of arithmetic', 'a legal formality with little effect', 'a forecast of next year’s economy'], answer: 0, hint: 'What happens when two good things need the same money?', explain: 'The arithmetic is the easy half. Deciding what to fund when everything cannot be funded is the actual work.' },
       { type: 'mc', prompt: 'The reason budgets are contested at all is:', choices: ['precedent', 'scarcity', 'inflation', 'voting'], answer: 1, hint: 'What is the problem at the heart of money?', explain: 'Limited resources force choices — the first idea in the Business lane.' },
     ],
   },
@@ -138,9 +138,9 @@ export const GOV_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'Knowing what a speaker wants is useful because it tells you:', choices: ['they are trustworthy', 'they are lying', 'which parts to check first', 'to ignore them'], answer: 2, hint: 'Motive points at where to look.', explain: 'Motive is a map of where to check, not proof of dishonesty.' },
-      { type: 'mc', prompt: 'A claim that makes you instantly furious deserves extra checking because:', choices: ['anger means it is false', 'it may have been written to produce exactly that reaction', 'angry claims are always exaggerated', 'you should never trust your feelings'], answer: 1, hint: 'Why might it have been written that way?', explain: 'Strong feeling makes people share before verifying. Something designed to spread often aims at that reaction on purpose.' },
-      { type: 'mc', prompt: 'In "this disastrous policy is destroying our schools", the checkable part is:', choices: ['destroying', 'that the policy changed something measurable', 'our', 'disastrous'], answer: 1, hint: 'Which part could you actually look up?', explain: 'The rest is emotional temperature, not assertion.' },
-      { type: 'mc', prompt: 'The best question to ask about any strong claim is:', choices: ['how would I find out if it is true', 'how popular is it', 'does it sound right', 'who agrees with it'], answer: 0, hint: 'Which one leads to an answer?', explain: 'Checkability — the same standard from evaluating sources in English.' },
+      { type: 'mc', prompt: 'A claim that makes you instantly furious deserves extra checking because:', choices: ['anger is a reliable sign it is false', 'feelings should never be trusted at all', 'strong claims are always exaggerated', 'it may be written to produce that reaction'], answer: 3, hint: 'Why might it have been written that way?', explain: 'Strong feeling makes people share before verifying. Something designed to spread often aims at that reaction on purpose.' },
+      { type: 'mc', prompt: 'In "this disastrous policy is destroying our schools", the checkable part is:', choices: ['that the policy changed something measurable', 'the word disastrous, which we can test', 'the word destroying, which is precise', 'the word our, which names who is affected'], answer: 0, hint: 'Which part could you actually look up?', explain: 'The rest is emotional temperature, not assertion.' },
+      { type: 'mc', prompt: 'The best question to ask about any strong claim is:', choices: ['how many people already believe it', 'how would I find out if it is true', 'does it match what I already think', 'who else is willing to say it'], answer: 1, hint: 'Which one leads to an answer?', explain: 'Checkability — the same standard from evaluating sources in English.' },
     ],
   },
 ];
@@ -172,10 +172,10 @@ export const FOSSILS_EXTRA = [
       'Common in space and rare in time is what makes a good marker.',
     ],
     quiz: [
-      { type: 'mc', prompt: 'A good index fossil comes from a species that was:', choices: ['large and slow', 'found only in one place', 'rare and long-lived', 'widespread and short-lived'], answer: 3, hint: 'You need it everywhere, but only briefly.', explain: 'Common in space, rare in time — that combination dates a layer precisely.' },
-      { type: 'mc', prompt: 'What makes a good index fossil?', choices: ['a species that survived for a very long time', 'a species that was widespread but existed only briefly', 'the largest animal in the layer', 'a species found on one continent only'], answer: 1, hint: 'How narrowly does it pin down a date?', explain: 'A species that lasted 200 million years tells you almost nothing about when. You want widespread and short-lived — common enough to find, brief enough to date.' },
-      { type: 'mc', prompt: 'Index fossils let geologists:', choices: ['weigh rock layers', 'match layers on different continents', 'find oil', 'measure temperature'], answer: 1, hint: 'The problem was comparing distant places.', explain: 'They correlate layers across the world.' },
-      { type: 'mc', prompt: 'Matching fossils on two continents supported which idea?', choices: ['fossils form quickly', 'oceans never change', 'the continents were once joined', 'the Earth is young'], answer: 2, hint: 'Recall the plate tectonics evidence.', explain: 'It was a key line of evidence for continental drift.' },
+      { type: 'mc', prompt: 'A good index fossil comes from a species that was:', choices: ['large and slow', 'found only in one place', 'widespread and short-lived', 'rare and long-lived'], answer: 2, hint: 'You need it everywhere, but only briefly.', explain: 'Common in space, rare in time — that combination dates a layer precisely.' },
+      { type: 'mc', prompt: 'What makes a good index fossil?', choices: ['a species that survived for a very long time', 'a species found on just one continent', 'the largest animal found in that layer', 'a species that was widespread but short-lived'], answer: 3, hint: 'How narrowly does it pin down a date?', explain: 'A species that lasted 200 million years tells you almost nothing about when. You want widespread and short-lived — common enough to find, brief enough to date.' },
+      { type: 'mc', prompt: 'Index fossils let geologists:', choices: ['match layers on different continents', 'work out the weight of a rock layer', 'locate oil deposits deep underground', 'measure the temperature of formation'], answer: 0, hint: 'The problem was comparing distant places.', explain: 'They correlate layers across the world.' },
+      { type: 'mc', prompt: 'Matching fossils on two continents supported which idea?', choices: ['that fossils can form very quickly', 'that the continents were once joined', 'that ocean floors never change shape', 'that Earth is far younger than thought'], answer: 1, hint: 'Recall the plate tectonics evidence.', explain: 'It was a key line of evidence for continental drift.' },
     ],
   },
   {
@@ -204,10 +204,10 @@ export const FOSSILS_EXTRA = [
       'Not finding a fossil is much weaker evidence than finding one.',
     ],
     quiz: [
-      { type: 'mc', prompt: 'Soft-bodied animals are rare in the fossil record because they:', choices: ['decay before they can fossilise', 'lived only in deserts', 'are hard to recognise', 'were rare when alive'], answer: 0, hint: 'What survives burial?', explain: 'Without hard parts they usually decay completely.' },
-      { type: 'mc', prompt: 'The fossil record over-represents:', choices: ['everything equally', 'hard-bodied organisms buried quickly', 'soft-bodied organisms', 'land animals over sea animals'], answer: 1, hint: 'What conditions does fossilising actually need?', explain: 'Shells and bones in fast-burying sediment. Jellyfish and worms are nearly invisible in the record, which is a fact about preservation, not about how common they were.' },
-      { type: 'mc', prompt: 'Not finding a fossil of some creature means:', choices: ['the rock is too young', 'the dating is wrong', 'it definitely never existed', 'it may not have preserved or been found yet'], answer: 3, hint: 'How many explanations fit?', explain: 'Absence has several possible causes, so it is weak evidence.' },
-      { type: 'mc', prompt: 'Knowing the limits of your evidence is valuable because it:', choices: ['makes conclusions sound weaker', 'stops you claiming more than you can support', 'speeds up research', 'avoids maths'], answer: 1, hint: 'What error does it prevent?', explain: 'It keeps conclusions matched to what the evidence can actually carry.' },
+      { type: 'mc', prompt: 'Soft-bodied animals are rare in the fossil record because they:', choices: ['are too hard for us to recognise now', 'lived mainly in deserts and dry places', 'decay before they can be fossilised', 'were genuinely rare while they lived'], answer: 2, hint: 'What survives burial?', explain: 'Without hard parts they usually decay completely.' },
+      { type: 'mc', prompt: 'The fossil record over-represents:', choices: ['everything equally', 'land animals over sea animals', 'soft-bodied organisms', 'hard-bodied organisms buried quickly'], answer: 3, hint: 'What conditions does fossilising actually need?', explain: 'Shells and bones in fast-burying sediment. Jellyfish and worms are nearly invisible in the record, which is a fact about preservation, not about how common they were.' },
+      { type: 'mc', prompt: 'Not finding a fossil of some creature means:', choices: ['it may not have preserved or been found', 'it definitely never existed at all', 'the rock layer is much too young', 'the dating method must be wrong'], answer: 0, hint: 'How many explanations fit?', explain: 'Absence has several possible causes, so it is weak evidence.' },
+      { type: 'mc', prompt: 'Knowing the limits of your evidence is valuable because it:', choices: ['makes your conclusions sound weaker', 'stops you claiming more than you can', 'speeds up the research considerably', 'lets you avoid difficult mathematics'], answer: 1, hint: 'What error does it prevent?', explain: 'It keeps conclusions matched to what the evidence can actually carry.' },
     ],
   },
   {
@@ -236,10 +236,10 @@ export const FOSSILS_EXTRA = [
       'Behaviour cannot be read from bones alone.',
     ],
     quiz: [
-      { type: 'mc', prompt: 'A trace fossil records:', choices: ['something an organism did', 'the age of a rock', 'the climate', 'the body of an organism'], answer: 0, hint: 'Think footprints and burrows.', explain: 'Activity, not anatomy.' },
-      { type: 'mc', prompt: 'From a fossil trackway, longer strides suggest the animal was:', choices: ['larger', 'moving faster', 'older', 'heavier'], answer: 1, hint: 'What changes about your own stride when you run?', explain: 'Stride lengthens with speed. Combined with leg length it gives a genuine estimate of how fast something moved millions of years ago.' },
-      { type: 'mc', prompt: 'Several parallel trackways of one species suggest:', choices: ['the rock is young', 'two different species', 'a flood', 'the animals moved as a group'], answer: 3, hint: 'Same direction, same time.', explain: 'It is among the best evidence for herding behaviour.' },
-      { type: 'mc', prompt: 'A complete skeleton still cannot tell you:', choices: ['the animal’s size', 'its bone structure', 'whether it cared for its young', 'roughly what it ate'], answer: 2, hint: 'Which is behaviour rather than anatomy?', explain: 'Behaviour needs trace fossils or other evidence entirely.' },
+      { type: 'mc', prompt: 'A trace fossil records:', choices: ['the climate', 'the age of a rock', 'something an organism did', 'the body of an organism'], answer: 2, hint: 'Think footprints and burrows.', explain: 'Activity, not anatomy.' },
+      { type: 'mc', prompt: 'From a fossil trackway, longer strides suggest the animal was:', choices: ['larger', 'heavier', 'older', 'moving faster'], answer: 3, hint: 'What changes about your own stride when you run?', explain: 'Stride lengthens with speed. Combined with leg length it gives a genuine estimate of how fast something moved millions of years ago.' },
+      { type: 'mc', prompt: 'Several parallel trackways of one species suggest:', choices: ['the animals moved as a group', 'two different species', 'a flood', 'the rock is young'], answer: 0, hint: 'Same direction, same time.', explain: 'It is among the best evidence for herding behaviour.' },
+      { type: 'mc', prompt: 'A complete skeleton still cannot tell you:', choices: ['roughly how large the animal was', 'whether it cared for its young', 'how its bones fitted together', 'roughly what kind of food it ate'], answer: 1, hint: 'Which is behaviour rather than anatomy?', explain: 'Behaviour needs trace fossils or other evidence entirely.' },
     ],
   },
   {
@@ -268,10 +268,10 @@ export const FOSSILS_EXTRA = [
       'Two independent methods agreeing is far stronger than either alone.',
     ],
     quiz: [
-      { type: 'mc', prompt: 'Relative dating tells you:', choices: ['the temperature', 'the species', 'an exact age in years', 'which came first'], answer: 3, hint: 'Order, not number.', explain: 'It establishes sequence without giving a figure.' },
+      { type: 'mc', prompt: 'Relative dating tells you:', choices: ['the temperature', 'the species', 'which came first', 'an exact age in years'], answer: 2, hint: 'Order, not number.', explain: 'It establishes sequence without giving a figure.' },
       { type: 'numeric', prompt: 'A material has a half-life of 25 million years. After 3 half-lives, how many million years have passed?', answer: 75, hint: 'Multiply the half-life by how many have elapsed.', explain: '25 × 3 = 75 million years.' },
-      { type: 'mc', prompt: 'Heating or squeezing a rock changes its radioactive decay rate:', choices: ['a great deal', 'not measurably', 'only at very high temperatures', 'only under extreme pressure'], answer: 1, hint: 'Why would that matter for using it as a clock?', explain: 'The rate is set by the nucleus and is essentially untouched by outside conditions. That stubbornness is precisely what makes it a usable clock.' },
-      { type: 'mc', prompt: 'Two independent dating methods agreeing is important because it:', choices: ['saves time', 'makes the conclusion much harder to dismiss', 'is required by law', 'costs less'], answer: 1, hint: 'Recall the plate tectonics evidence.', explain: 'Independent lines pointing the same way is the strongest kind of case.' },
+      { type: 'mc', prompt: 'Heating or squeezing a rock changes its radioactive decay rate:', choices: ['a great deal', 'only under extreme pressure', 'only at very high temperatures', 'not measurably'], answer: 3, hint: 'Why would that matter for using it as a clock?', explain: 'The rate is set by the nucleus and is essentially untouched by outside conditions. That stubbornness is precisely what makes it a usable clock.' },
+      { type: 'mc', prompt: 'Two independent dating methods agreeing is important because it:', choices: ['makes the conclusion harder to dismiss', 'saves a great deal of laboratory time', 'is required before publishing results', 'costs less than running one method'], answer: 0, hint: 'Recall the plate tectonics evidence.', explain: 'Independent lines pointing the same way is the strongest kind of case.' },
     ],
   },
 ];

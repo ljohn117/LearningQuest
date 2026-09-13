@@ -794,14 +794,49 @@ for (const lane of Object.values(CURRICULUM)) {
 const atPos = [0, 1, 2, 3].map((i) => mcs.filter((q) => q.answer === i).length);
 const worstSlot = Math.max(...atPos) / mcs.length;
 ok('no answer slot is overwhelmingly the right one',
-  worstSlot <= 0.40, `slot distribution ${JSON.stringify(atPos)} — worst is ${Math.round(worstSlot * 100)}%`);
+  worstSlot <= 0.28, `slot distribution ${JSON.stringify(atPos)} — worst is ${Math.round(worstSlot * 100)}%`);
 
-const longestTell = mcs.filter((q) => {
+const margin = (q) => {
   const lens = q.choices.map((x) => String(x).length);
-  return lens[q.answer] > Math.max(...lens.filter((_, i) => i !== q.answer));
-}).length / mcs.length;
+  return lens[q.answer] - Math.max(...lens.filter((_, i) => i !== q.answer));
+};
+const bigTell = mcs.filter((q) => margin(q) >= 10).length;
+eq('no correct answer is conspicuously longer than every wrong one', bigTell, 0);
+
+const maxMargin = Math.max(...mcs.map(margin));
+ok('no answer stands out by more than a few characters', maxMargin <= 9, `worst margin is ${maxMargin} characters`);
+
+/* Still above where it should be. Every remaining case is within nine
+   characters, so "pick the longest" is no longer something a child can see —
+   but it is still something a child could count, and 49% beats 25%. The
+   remaining work is recorded in docs/ROADMAP.md. */
+const longestTell = mcs.filter((q) => margin(q) > 0).length / mcs.length;
 ok('the longest option is not almost always the right one',
-  longestTell <= 0.62, `correct is longest in ${Math.round(longestTell * 100)}% of questions — target is under 35%`);
+  longestTell <= 0.50, `correct is longest in ${Math.round(longestTell * 100)}% of questions — target is under 35%`);
+
+/* A permutation that moved `choices` without moving `answer` would leave
+   every test above passing and every question silently wrong. These pin a
+   sample of answers to their CONTENT rather than their position. */
+const ANSWER_CONTENT = {
+  'Which pair can be combined into a single term?': '3x and 5x',
+  '10⁶ equals:': '1,000,000',
+  'In a² + b² = c², the side c is always:': 'longest side',
+  'The graph of y = x² is:': 'U-shaped',
+  'Why does the Moon never crash into Earth?': 'sideways',
+  'A catalyst speeds up a reaction by:': 'lowering the energy',
+  'Judicial review is the power to:': 'breaks the Constitution',
+  'A charged battery actually stores:': 'chemical arrangement',
+  'Which value satisfies x > 4?': '4.5',
+  'Scarcity means:': 'resources are limited while wants are not',
+  'Because resources are scarce, every choice you make:': 'the next best thing you gave up',
+};
+for (const q of mcs) {
+  const want = ANSWER_CONTENT[q.prompt];
+  if (!want) continue;
+  ok(`"${q.prompt.slice(0, 36)}" still marks the right option correct`,
+    String(q.choices[q.answer]).includes(want),
+    `answer ${q.answer} is "${q.choices[q.answer]}" — a permutation moved choices without moving answer`);
+}
 
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);
