@@ -569,6 +569,92 @@ export const EXTRA_DRILLS = [
         answer: Math.pow(k * j, 2), hint: `The distances multiply first (${k} × ${j}), and only then do you square.` };
     },
   },
+
+  /* ---- Algebra II and precalculus (days 20-26) --------------------------
+     Added with the advanced maths days. Ids are progress keys: m20a..m26a
+     are frozen in scripts/test.mjs and must never be renamed. */
+  { id: 'm20a', subj: 'math', day: 'm20', name: 'Factoring', gen(L) {
+      /* The first version of this printed the solutions inside the prompt —
+         "x² + 5x + 4 = 0 has solutions x = −4 and x = −1, what is the smaller"
+         — which is reading comprehension, not factoring. It must state the
+         quadratic and nothing else. */
+      const term = (n) => (n < 0 ? `− ${Math.abs(n)}` : `+ ${n}`);
+      if (L === 1) { const p = rnd(1, 6), q = rnd(1, 6);
+        return { prompt: `Solve x² + ${p + q}x + ${p * q} = 0. What is the SMALLER solution?`,
+          answer: -Math.max(p, q), hint: 'Two numbers multiplying to the last term and adding to the middle one. Then flip the signs.' }; }
+      if (L === 2) { const n = rnd(2, 12);
+        return { prompt: `Solve x² − ${n * n} = 0 for the POSITIVE value of x.`, answer: n,
+          hint: 'No middle term — this is a difference of two squares.' }; }
+      const p = rnd(3, 9), q = rnd(1, p - 1);
+      return { prompt: `Solve x² ${term(-(p - q))}x − ${p * q} = 0. What is the POSITIVE solution?`,
+        answer: p, hint: 'One root is positive and one is negative, so the two numbers multiply to a negative.' } },
+  },
+  { id: 'm21a', subj: 'math', day: 'm21', name: 'Discriminant', gen(L) {
+      if (L === 1) { const b = rnd(2, 9), c = rnd(1, 5);
+        return { prompt: `What is the discriminant b² − 4ac of x² + ${b}x + ${c} = 0?`, answer: b * b - 4 * c,
+          hint: 'Here a = 1, so it is b² − 4c.' }; }
+      if (L === 2) { const d = pickOne([-11, -7, -3, 0, 5, 9, 16, 25]);
+        return { prompt: `A quadratic has discriminant ${d}. How many REAL solutions does it have?`,
+          answer: d < 0 ? 0 : d === 0 ? 1 : 2, hint: 'Negative means none, zero means one, positive means two.' }; }
+      const r1 = rnd(1, 7), r2 = rnd(1, 7);
+      return { prompt: `Solve x² − ${r1 + r2}x + ${r1 * r2} = 0 and give the LARGER solution.`,
+        answer: Math.max(r1, r2), hint: 'Two numbers adding to the middle and multiplying to the end.' } },
+  },
+  { id: 'm22a', subj: 'math', day: 'm22', name: 'Rational Expressions', gen(L) {
+      if (L === 1) { const a = rnd(2, 12);
+        return { prompt: `Which value of x is excluded from 5 ÷ (x − ${a})?`, answer: a,
+          hint: 'Whatever makes the bottom zero is not allowed.' }; }
+      if (L === 2) { const n = rnd(2, 9), k = rnd(10, 20);
+        return { prompt: `Simplify (x² − ${n * n}) ÷ (x + ${n}), then evaluate it at x = ${k}.`, answer: k - n,
+          hint: 'Factor the top; the (x + n) cancels and leaves x − n.' }; }
+      const a = rnd(2, 12);
+      return { prompt: `(2x + ${2 * a}) ÷ 2 simplifies to x + c. What is c?`, answer: a,
+        hint: 'The 2 divides BOTH terms, not just the first.' } },
+  },
+  { id: 'm23a', subj: 'math', day: 'm23', name: 'Exponential Growth', gen(L) {
+      if (L === 1) { const a = rnd(2, 6), k = rnd(2, 5);
+        return { prompt: `For y = ${a} · 2ˣ, what is y when x = ${k}?`, answer: a * Math.pow(2, k),
+          hint: 'Work out the power first, then multiply.' }; }
+      if (L === 2) { const k = rnd(3, 7), a = Math.pow(2, k);
+        return { prompt: `A colony starts at 1 and doubles every hour. After how many hours does it first reach ${a}?`,
+          answer: k, hint: 'Count the doublings needed.' }; }
+      const k = rnd(1, 5), a = Math.pow(2, k) * rnd(1, 5);
+      return { prompt: `A sample of ${a} grams halves every day. How many grams remain after ${k} day${k === 1 ? '' : 's'}?`,
+        answer: a / Math.pow(2, k), hint: 'Halve it once per day.' } },
+  },
+  { id: 'm24a', subj: 'math', day: 'm24', name: 'Logarithms', gen(L) {
+      if (L === 1) { const k = rnd(1, 6);
+        return { prompt: `What is log₂(${Math.pow(2, k)})?`, answer: k, hint: 'What power of 2 gives that number?' }; }
+      if (L === 2) { const b = pickOne([3, 5, 10]), k = rnd(2, 4);
+        return { prompt: `Evaluate log base ${b} of ${Math.pow(b, k)}.`, answer: k,
+          hint: `How many ${b}s multiply together to make it?` }; }
+      const b = pickOne([2, 3, 5]), k = rnd(2, 4);
+      return { prompt: `If log base ${b} of x equals ${k}, what is x?`, answer: Math.pow(b, k),
+        hint: 'A logarithm IS an exponent — raise the base to it.' } },
+  },
+  { id: 'm25a', subj: 'math', day: 'm25', name: 'Sequences', gen(L) {
+      if (L === 1) { const a = rnd(2, 12), d = rnd(2, 9);
+        return { prompt: `What is the common difference of ${a}, ${a + d}, ${a + 2 * d}, ${a + 3 * d}?`, answer: d,
+          hint: 'Subtract any term from the next one.' }; }
+      if (L === 2) { const a = rnd(2, 9), d = rnd(2, 7), n = rnd(10, 30);
+        return { prompt: `A sequence starts at ${a} and rises by ${d} each step. What is term number ${n}?`,
+          answer: a + (n - 1) * d, hint: 'It takes n − 1 steps to reach term n, not n.' }; }
+      const n = rnd(10, 60);
+      return { prompt: `Add up every whole number from 1 to ${n}. What is the total?`, answer: n * (n + 1) / 2,
+        hint: 'Pair the first with the last; every pair makes the same total.' } },
+  },
+  { id: 'm26a', subj: 'math', day: 'm26', name: 'Trigonometry', gen(L) {
+      const TRIPLES = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [9, 12, 15], [8, 15, 17]];
+      if (L === 1) { const h = pickOne([10, 20, 50, 100]), s = pickOne([0.2, 0.4, 0.5, 0.6, 0.8]);
+        return { prompt: `A right triangle has hypotenuse ${h} and an angle whose sine is ${s}. How long is the OPPOSITE side?`,
+          answer: Math.round(h * s * 100) / 100, hint: 'sin = opposite ÷ hypotenuse, so multiply.' }; }
+      if (L === 2) { const [o, a, h] = pickOne(TRIPLES);
+        return { prompt: `In a right triangle the adjacent side is ${a} and the hypotenuse is ${h}. What is the cosine of that angle, to two decimal places?`,
+          answer: Math.round(a / h * 100) / 100, hint: 'cos = adjacent ÷ hypotenuse.' }; }
+      const [o, a, h] = pickOne(TRIPLES);
+      return { prompt: `A right triangle has hypotenuse ${h} and opposite side ${o}. Use a² + b² = c² to find the ADJACENT side.`,
+        answer: a, hint: 'Square the hypotenuse, subtract the square of the opposite, take the root.' } },
+  },
 ];
 
 /* ---- Mathematics, days 1-14 --------------------------------------------

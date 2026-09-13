@@ -775,4 +775,67 @@ export const EXPLAIN = {
       'I did not treat this as a figure of speech.',
     ],
   },
+
+  /* ==== Mathematics, Algebra II and precalculus ========================== */
+  m20: {
+    id: 'x-m20', kind: 'mechanism', words: 40,
+    task: 'Why does rewriting an equation as two brackets multiplied together find EVERY solution, not just one?',
+    starter: 'Start from what has to be true for a product to come out as zero.',
+    checklist: [
+      'I said what must be true for a product to be zero.',
+      'I explained why each bracket gives its own solution.',
+      'I did not just describe the steps of factoring.',
+    ],
+  },
+  m21: {
+    id: 'x-m21', kind: 'flaw', words: 35,
+    task: 'Find the mistake, and say exactly what it costs.',
+    claim: '"For 2x\u00b2 \u2212 5x + 3 = 0 I get a = 2, b = 5, c = 3, so the discriminant is 25 \u2212 24 = 1."',
+    starter: 'The arithmetic is fine. Check what was read off the equation.',
+    checklist: [
+      'I said which value was read wrongly.',
+      'I gave the correct discriminant.',
+      'I said why that sign matters even though b gets squared.',
+    ],
+  },
+  m23: {
+    id: 'x-m23', kind: 'predict', words: 40,
+    task: 'y = 100x and y = 2\u02e3 both start small. Predict which is bigger at x = 5, at x = 10, and at x = 20 \u2014 then check.',
+    starter: 'Commit to all three before you work any of them out.',
+    checklist: [
+      'I committed to all three before checking.',
+      'I said where I was wrong, if I was.',
+      'I said what that tells me about trusting my first instinct here.',
+    ],
+  },
+  m24: {
+    id: 'x-m24', kind: 'teach', words: 40,
+    task: 'Explain what a logarithm is to someone who has never heard the word \u2014 without using the word.',
+    starter: 'It is the answer to one question. What is the question?',
+    checklist: [
+      'I avoided the banned word.',
+      'I gave a concrete example with real numbers.',
+      'Someone could work out log\u2082(32) from my explanation alone.',
+    ],
+  },
+  m26: {
+    id: 'x-m26', kind: 'connect', words: 40,
+    task: 'Pythagoras and trigonometry both find a missing side. Explain what each one needs, and why you would pick one over the other.',
+    starter: 'Count what you have to already know before each method will work.',
+    checklist: [
+      'I said what Pythagoras needs to know.',
+      'I said what trigonometry needs instead.',
+      'I gave a case where only one of them would work.',
+    ],
+  },
+  mr4: {
+    id: 'x-mr4', kind: 'teach', words: 45,
+    task: 'Seven days, one idea. Teach the idea, then show it working on two operations from different days.',
+    starter: 'Factoring, roots, logarithms and inverse trig are all doing the same job.',
+    checklist: [
+      'I stated the idea in one sentence.',
+      'I showed it on two genuinely different operations.',
+      'I said why the undo is usually the useful half.',
+    ],
+  },
 };

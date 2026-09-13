@@ -5,6 +5,7 @@ import { CONNECTIONS } from './connections.js';
 import { CHEMISTRY } from './chemistry.js';
 import { TEARDOWNS } from './teardowns.js';
 import { MATH_EXTRA } from './math-extra.js';
+import { MATH_ADVANCED } from './math-advanced.js';
 import { ELA_EXTRA, BIO_EXTRA } from './depth.js';
 import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
 import { CHECKPOINTS } from './checkpoints.js';
@@ -29,6 +30,11 @@ append('bio', BIO_EXTRA);
 append('gov', GOV_EXTRA);
 append('fossils', FOSSILS_EXTRA);
 for (const [subj, days] of Object.entries(CHECKPOINTS)) append(subj, days);
+
+/* Algebra II and precalculus, appended AFTER the checkpoints so the lane ends
+   ...m19, mr3, m20...m26, mr4 — each block of days followed by its review.
+   Appending only: no existing id moves, and nothing above is renumbered. */
+append('math', MATH_ADVANCED);
 
 /* Append spiral callbacks to the days that had none. Kept out of the content
    files so the additions stay reviewable in one place and the prototype prose

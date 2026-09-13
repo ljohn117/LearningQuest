@@ -157,6 +157,7 @@ for (const [subj, ids] of Object.entries(FROZEN)) {
  * add difficulty levels was precisely the kind of edit that could have
  * dropped one without anything failing, so these are frozen too. */
 const FROZEN_DRILLS = [
+  'm20a', 'm21a', 'm22a', 'm23a', 'm24a', 'm25a', 'm26a',
   'dr1','dr2','dr3','dr4','dr5','dr6','dr7','dr8','dr9','dr10','dr11','dr12','dr13','dr14',
   'cs2a','cs2b','cs2c','cs4a','cs5a',
   'biz3a','biz3b','biz5a','biz5b','biz10a','biz10b',
@@ -363,6 +364,7 @@ const FROZEN_WRITE_IDS = [
   'x-f3', 'x-f4', 'x-f7', 'x-f8', 'x-f10',
   'x-cx1', 'x-cx2', 'x-cx5', 'x-cx7',
   'x-td1', 'x-td2', 'x-td4', 'x-td6',
+  'x-m20', 'x-m21', 'x-m23', 'x-m24', 'x-m26', 'x-mr4',
 ];
 
 const liveWrites = [];
@@ -486,6 +488,14 @@ section('Quiz order is frozen');
  * may only be APPENDED. This guard exists specifically so that retiring the
  * 116 true/false questions (roadmap phase 2) cannot shift a single index. */
 const FROZEN_QUIZ_LENGTHS = {
+  "math:m20": 5,
+  "math:m21": 5,
+  "math:m22": 5,
+  "math:m23": 5,
+  "math:m24": 5,
+  "math:m25": 5,
+  "math:m26": 5,
+  "math:mr4": 7,
   "math:m1": 5,
   "math:m2": 5,
   "math:m3": 5,

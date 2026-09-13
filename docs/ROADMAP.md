@@ -1,10 +1,7 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1, 2 and 3 done. 2b partial (one target unmet, and now
-> deprioritised — the owner can steer the behaviour it was guarding against).
-> DIRECTION CHANGED after Phase 3: the remaining phases are re-ordered around
-> content depth beyond middle school, presentation, and new tracks. See
-> "Revised direction" below.**
+> **Status: Phases 1, 2, 3 and 4 done. 2b partial and parked.
+> Phase 5 (depth in the science lanes) is next. See "Revised direction".**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -278,11 +275,47 @@ the target band**. That is the clearest single signal: the maths lane is
 written more simply than the child reads, while stopping well short of where
 he could go.
 
-### Phase 4 — Raise the maths ceiling
-Algebra II and precalculus: systems in three variables, polynomial factoring,
-rational expressions, exponentials and logs, sequences and series, right-angle
-trigonometry. Appended as new day ids — **never renumbered**. This is the lane
-he lives in (18 of 22 days done) and the one that gates everything else.
+### Phase 4 — Raise the maths ceiling — DONE
+
+Eight days appended as `m20`–`m26` and `mr4`. Nothing above them moved.
+
+| | |
+|---|---|
+| maths days | 22 → **30** |
+| ceiling | intro quadratics → **right-angle trigonometry** |
+| maths reading grade | 5.0 *(below band)* → **5.5 *(in band)*** |
+| drills | 51 → **58** (`m20a`–`m26a`, all frozen) |
+| questions in lane | 111 → **153** |
+
+Factoring · the quadratic formula and discriminant · rational expressions and
+excluded values · exponential growth · logarithms · sequences and series ·
+right-angle trigonometry · checkpoint.
+
+The spine is deliberately one idea: **every operation worth knowing has an
+inverse, and the inverse is where the power sits.** Factoring undoes
+multiplying, logarithms undo exponentials, inverse trig undoes a ratio — and
+the checkpoint ties all seven back to Chemistry (pH is a logarithm), Fossils
+(half-life is exponential decay) and Business (compound interest is
+exponential growth), so the new maths is notation for things he has already
+met rather than a fresh pile.
+
+**Three things caught by verification, not by writing:**
+
+- The first factoring generator printed the solutions inside the prompt —
+  *"x² + 5x + 4 = 0 has solutions x = −4 and x = −1, what is the smaller?"* —
+  which is reading comprehension, not factoring. Rebuilt.
+- Day 23 was specified to use the existing `graph` visual. That kind is a
+  **hardcoded straight line** for day 6, so it would have drawn a line and
+  labelled it exponential. A real `curves` primitive now plots both functions
+  from their actual formulas.
+- A JSX comment placed inside a `.map()` return broke the build, and the
+  screenshot that "verified" the fix had silently used the previous bundle.
+  Only `npm run build` caught it.
+
+`profile-check` and `restore-check` both hardcoded "of 131 days" and failed
+the moment the curriculum grew. Both now derive the total — a stale test that
+reports a content addition as progress loss is exactly the kind of false alarm
+that trains people to ignore the check that matters most.
 
 ### Phase 5 — Depth in the science lanes
 Moles and stoichiometry in Chemistry; equations of motion and energy
@@ -374,7 +407,7 @@ spatial.
 | 1 — Make the invisible visible | **done** 2026-09-13 | days with no visual: **92 → 85**; his 9 weak days: 7 without a picture → **0** |
 | 2 — Retire the coin flip | not started | true/false: 116 → ? |
 | 3 — Route him to practice | **done** 2026-09-13 | teardown days open to him: **0 → 6**; weakest-day drill now named on the dashboard and offered after a low score |
-| 4 — Raise the maths ceiling | not started | maths ceiling: **quadratics → precalculus** |
+| 4 — Raise the maths ceiling | **done** 2026-09-13 | maths days **22 → 30**; ceiling **intro quadratics → right-angle trigonometry**; maths reading grade **5.0 (below band) → 5.5 (in band)**; drills **51 → 58** |
 | 5 — Depth in the science lanes | not started | chemistry ceiling: **rates → stoichiometry** |
 | 6 — Presentation | not started | days with no visual: **85 → ?**; interactive block types: **1 → 3** |
 | 7 — New tracks | not started | lanes: **13 → 16** |

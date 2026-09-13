@@ -35,8 +35,16 @@ ok('calibration kept',       Object.keys(after.calibration).length === Object.ke
 ok('recall history kept',    Object.keys(after.review).length === Object.keys(src.review).length);
 ok('his name kept',          after.name === src.name);
 
+/* Derive the totals rather than hardcoding them. The first version asserted
+   "35 of 131" and failed the moment eight maths days were appended — a stale
+   test reporting a content addition as progress loss, which is exactly the
+   kind of false alarm that trains people to ignore this check. */
+const { CURRICULUM, SUBJECT_ORDER } = await import('../src/content/index.js');
+const totalDays = SUBJECT_ORDER.reduce((n, s) => n + (CURRICULUM[s]?.days.length || 0), 0);
+const hisDays = Object.keys(src.completed).length;
 const dash = await p.evaluate(()=>document.body.innerText);
-ok('dashboard shows his real total', /35 of 131/.test(dash), dash.split('\n').filter(Boolean).slice(0,4).join(' | '));
+ok('dashboard shows his real total', new RegExp(`${hisDays} of ${totalDays}`).test(dash),
+   `expected "${hisDays} of ${totalDays}" — ` + dash.split('\n').filter(Boolean).slice(0,4).join(' | '));
 
 /* The days that got a diagram must still be open and still scored as before. */
 for (const [lane,label,key] of [['Mathematics','Inequalities','math:m12'],['Logic','And, Or, Not','logic:lg2'],['Chemistry','Two Kinds','chem:ch1']]) {

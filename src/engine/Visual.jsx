@@ -501,5 +501,43 @@ export function Visual({ v, accent }) {
     </>, 180);
   }
 
+  /* Two curves on one pair of axes, plotted from real functions rather than
+     drawn by hand. Built because the advanced maths days needed to SHOW an
+     exponential overtaking a line, and the existing `graph` kind is a
+     hardcoded straight line for day 6 — using it here would have drawn a
+     straight line and labelled it exponential. */
+  if (v.kind === 'curves') {
+    const x0 = 44, x1 = 300, yBase = 128, yTop = 22;
+    const xs = Array.from({ length: 60 }, (_, i) => (i / 59) * (v.xMax || 6));
+    const fns = {
+      linear: (x) => (v.m || 2) * x + (v.b || 1),
+      exponential: (x) => (v.a || 1) * Math.pow(v.base || 2, x),
+      decay: (x) => (v.a || 16) * Math.pow(0.5, x),
+    };
+    const series = (v.series || ['linear', 'exponential']).map((k) => ({ k, ys: xs.map(fns[k]) }));
+    const yMax = v.yMax || Math.max(...series.flatMap((s) => s.ys).filter((y) => Number.isFinite(y)));
+    const px = (x) => x0 + (x / (v.xMax || 6)) * (x1 - x0);
+    const py = (y) => yBase - Math.min(1, y / yMax) * (yBase - yTop);
+    const COL = { linear: '#5aa9ff', exponential: accent, decay: accent };
+    const path = (ys) => ys.map((y, i) => `${i ? 'L' : 'M'}${px(xs[i]).toFixed(1)},${py(y).toFixed(1)}`).join(' ');
+    return wrap(<>
+      <line x1={x0} y1={yBase} x2={x1} y2={yBase} stroke="#3a4154" strokeWidth="2" />
+      <line x1={x0} y1={yTop - 4} x2={x0} y2={yBase} stroke="#3a4154" strokeWidth="2" />
+      {series.map((s, i) => (
+        <path key={i} d={path(s.ys)} fill="none" stroke={COL[s.k]} strokeWidth="2.5" strokeLinecap="round" />
+      ))}
+      {/* Labels sit left: a growth curve leaves the upper left empty, and
+          right-anchored labels clipped the viewBox edge. */}
+      {series.map((s, i) => (
+        <text key={'l' + i} x={x0 + 10} y={yTop + 2 + i * 14} textAnchor="start" fill={COL[s.k]}
+              fontSize="10" fontWeight="700" fontFamily="JetBrains Mono, monospace">
+          {s.k === 'linear' ? (v.linearLabel || 'y = 2x + 1') : s.k === 'decay' ? (v.decayLabel || 'halving') : (v.expLabel || 'y = 2ˣ')}
+        </text>
+      ))}
+      <text x="172" y={yBase + 22} textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">{v.caption || 'the curve starts lower and never gives the lead back'}</text>
+    </>, 158);
+  }
+
   return null;
 }

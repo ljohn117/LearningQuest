@@ -163,4 +163,48 @@ export const VISUALS = {
     caption: 'CHEMICAL \u2014 regrouped into something new',
     note: 'same four atoms, different substance',
   }],
+
+  /* ---- Algebra II and precalculus (days 20-26) -------------------------- */
+
+  /* m23 Exponential growth. The whole day rests on one claim — that the curve
+     overtakes the line and never gives the lead back — and that claim is a
+     picture, not a sentence. */
+  m23: [{
+    page: 1,
+    kind: 'curves', series: ['linear', 'exponential'],
+    xMax: 6, m: 4, b: 1, base: 2,
+    linearLabel: 'y = 4x + 1', expLabel: 'y = 2\u02e3',
+    caption: 'the line leads at first, then loses forever',
+  }],
+
+  /* m24 Logarithms. The definition is a single sentence read in two
+     directions; a two-column grid is that sentence made simultaneous. */
+  m24: [{
+    page: 0,
+    kind: 'grid',
+    cols: ['exponent form', 'logarithm form'],
+    rows: [
+      ['2\u00b3 = 8', 'log\u2082(8) = 3'],
+      ['10\u00b2 = 100', 'log\u2081\u2080(100) = 2'],
+      ['5\u00b3 = 125', 'log\u2085(125) = 3'],
+      ['3\u2074 = 81', 'log\u2083(81) = 4'],
+    ],
+    caption: 'the same fact, read both ways',
+  }],
+
+  /* m25 Sequences. Arithmetic and geometric look alike listed separately and
+     obviously different side by side. */
+  m25: [{
+    page: 0,
+    kind: 'grid',
+    cols: ['step', 'arithmetic +3', 'geometric \u00d73'],
+    rows: [
+      ['1', '4', '4'],
+      ['2', '7', '12'],
+      ['3', '10', '36'],
+      ['4', '13', '108'],
+      ['5', '16', '324'],
+    ],
+    caption: 'same start, same number, different operation',
+  }],
 };

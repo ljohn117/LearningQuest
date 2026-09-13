@@ -93,7 +93,12 @@ if (hasRestore) {
   ok('calibration carried over', p.calibration?.['math:m2'] === 'just right');
   ok('his writing carried over', p.writing?.['ela:ela5:3:2']?.text === 'half-life halves a pile each time', JSON.stringify(p.writing));
   const shown = await dest.evaluate(() => document.body.innerText);
-  ok('dashboard reflects the restore', /Explorer/.test(shown) && /6 of 131/.test(shown), shown.split('\n').filter(Boolean).slice(0,4).join(' | '));
+  /* Derived, not hardcoded: a literal "6 of 131" turns any content addition
+     into a false alarm about progress loss. */
+  const { CURRICULUM, SUBJECT_ORDER } = await import('../src/content/index.js');
+  const totalDays = SUBJECT_ORDER.reduce((n, s) => n + (CURRICULUM[s]?.days.length || 0), 0);
+  ok('dashboard reflects the restore', /Explorer/.test(shown) && new RegExp(`6 of ${totalDays}`).test(shown),
+     `expected "6 of ${totalDays}" — ` + shown.split('\n').filter(Boolean).slice(0,4).join(' | '));
 }
 ok('no page errors on either side', srcErrs.length===0 && destErrs.length===0, [...srcErrs,...destErrs].join(' | '));
 await b.close();
