@@ -14,6 +14,7 @@ import { DuelIntro, DuelSession, DuelWon } from './engine/Duel.jsx';
 import { ParentView } from './engine/ParentView.jsx';
 import { LadderView } from './engine/Ladder.jsx';
 import { recordReview, REVIEW_XP, pickLesson } from './engine/daily.js';
+import { isReady } from './engine/readiness.js';
 
 export default function App() {
   const [db, setDb] = useState(null);          // { profiles: [], lastActive }
@@ -68,6 +69,11 @@ export default function App() {
   const isDayUnlocked = (subj, idx) => {
     const day = CURRICULUM[subj].days[idx];
     if (day.requires && !day.requires.every((k) => !!profile.completed[k])) return false;
+    /* Depth days additionally ask that the day they build on was UNDERSTOOD,
+       not merely finished. Only days declaring `readiness` are affected; the
+       original spine stays ungated, and finishing any day still completes it
+       whatever the score. See src/engine/readiness.js for why. */
+    if (!isReady(profile, day)) return false;
     return idx === 0 || isDayDone(subj, CURRICULUM[subj].days[idx - 1].id);
   };
   function subjStats(subj) {
@@ -227,7 +233,7 @@ export default function App() {
           onContinue={() => setView({ name: 'practice' })} />
       )}
       {view.name === 'subject' && (
-        <SubjectView subj={view.subj} isDayDone={isDayDone} isDayUnlocked={isDayUnlocked} stats={subjStats(view.subj)}
+        <SubjectView subj={view.subj} isDayDone={isDayDone} isDayUnlocked={isDayUnlocked} stats={subjStats(view.subj)} profile={profile}
           onBack={() => setView({ name: 'dash' })} onDay={(day) => setView({ name: 'lesson', subj: view.subj, day })} />
       )}
       {view.name === 'lesson' && (

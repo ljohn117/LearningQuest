@@ -28,6 +28,7 @@ const { SPIRAL, WRITING, SCALE } = await import('../src/content/spiral.js');
 const { EXPLAIN } = await import('../src/content/explain.js');
 const { drillForDay } = await import('../src/engine/drills.js');
 const { suggestedDrill } = await import('../src/engine/suggest.js');
+const { isReady, readinessNote, MASTERY_STREAK } = await import('../src/engine/readiness.js');
 const { VISUALS } = await import('../src/content/visuals.js');
 const { migrateWriting } = await import('../src/store.js');
 const { writeKeyFor } = await import('../src/engine/writekey.js');
@@ -123,14 +124,16 @@ section('Existing day ids are frozen');
  * almost never to edit the list — it is to put the id back.
  */
 const FROZEN = {
-  math: ['m1','m2','m3','m4','m5','m6','m7','mr1','m8','m9','m10','m11','m12','m13','m14','mr2',
-         'm15','m16','m17','m18','m19','mr3'],
+  math: ['m1','m2','m3','m4','m5','m6','m7','mr1','m8','m9','m10','m11','m12','m13',
+         'm14','mr2','m15','m16','m17','m18','m19','mr3','m20','m21','m22','m23','m24',
+         'm25','m26','mr4'],
   cs: ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12'],
-  physics: ['phy1','phy2','phy3','phy4','phy5','phy6','phyr1'],
+  physics: ['phy1','phy2','phy3','phy4','phy5','phy6','phyr1','phy7','phy8'],
   logic: ['lg1','lg2','lg3','lg4','lg5','lg6','lgr1'],
   earth: ['es1','es2','es3','es4','es5','es6','esr1'],
-  bio: ['bio1','bio2','bio3','bio4','bio5','bio6','bio7','bio8','bio9','bio10'],
-  chem: ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','chr1'],
+  bio: ['bio1','bio2','bio3','bio4','bio5','bio6','bio7','bio8','bio9','bio10','bio11'],
+  chem: ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','chr1','ch11',
+         'ch12','ch13'],
   ela: ['ela1','ela2','ela3','ela4','ela5','ela6','ela7','ela8','ela9','ela10'],
   biz: ['b1','b2','b3','b4','b5','b6','b7','b8','b9','b10','b11','b12'],
   gov: ['g1','g2','g3','g4','g5','g6','g7','g8','g9','g10'],
@@ -157,6 +160,8 @@ for (const [subj, ids] of Object.entries(FROZEN)) {
  * add difficulty levels was precisely the kind of edit that could have
  * dropped one without anything failing, so these are frozen too. */
 const FROZEN_DRILLS = [
+  'ch6a',
+  'ch11a', 'ch12a', 'ch13a', 'phy7a', 'phy8a', 'bio11a',
   'm20a', 'm21a', 'm22a', 'm23a', 'm24a', 'm25a', 'm26a',
   'dr1','dr2','dr3','dr4','dr5','dr6','dr7','dr8','dr9','dr10','dr11','dr12','dr13','dr14',
   'cs2a','cs2b','cs2c','cs4a','cs5a',
@@ -488,6 +493,12 @@ section('Quiz order is frozen');
  * may only be APPENDED. This guard exists specifically so that retiring the
  * 116 true/false questions (roadmap phase 2) cannot shift a single index. */
 const FROZEN_QUIZ_LENGTHS = {
+  "physics:phy7": 5,
+  "physics:phy8": 5,
+  "bio:bio11": 5,
+  "chem:ch11": 5,
+  "chem:ch12": 5,
+  "chem:ch13": 5,
   "math:m20": 5,
   "math:m21": 5,
   "math:m22": 5,
@@ -904,6 +915,75 @@ for (const day of CURRICULUM.teardown.days) {
 const hisDays = new Set(['math:m1','math:m2','math:m3','math:m4','math:m5','cs:c1','math:m6','math:m7','math:mr1','math:m8','physics:phy1','math:m9','cs:c2','math:m10','bio:bio1','earth:es1','logic:lg1','bio:bio2','math:m11','chem:ch1','fossils:f1','fossils:f2','math:m12','math:m13','physics:phy2','biz:b1','gov:g1','math:m14','math:mr2','gov:g2','math:m15','math:m16','logic:lg2','ela:ela1','gov:g3']);
 const openToHim = CURRICULUM.teardown.days.filter((d) => !d.requires || d.requires.every((r) => hisDays.has(r))).length;
 ok('teardowns are open on a real profile', openToHim >= 5, `only ${openToHim} of 6 open`);
+
+/* ---- earned, not merely reached ---------------------------------------- */
+section('Depth days ask to be understood, not just finished');
+
+/* His data showed nine days finished under 60%, one at 25%, each unlocking
+ * the next and each looking identical to a day he aced. That is fine for the
+ * main spine — a child who assumes he will fail does not need a locked door,
+ * and finishing a day is his to claim whatever the score.
+ *
+ * It stops being fine when the next thing genuinely depends on the last.
+ * Stoichiometry on a half-grasp of conservation of mass is the APPEARANCE of
+ * progress, and it ends with a child concluding he is bad at chemistry when
+ * what happened is that nobody checked. */
+const depthDays = [];
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  for (const day of lane.days) if (Array.isArray(day.readiness) && day.readiness.length) depthDays.push({ subj, day });
+}
+ok('some days declare readiness', depthDays.length >= 6, `${depthDays.length} found`);
+
+/* Every prerequisite named must be a day that actually exists, or the door
+   can never be opened by anyone. */
+for (const { day } of depthDays) {
+  for (const key of day.readiness) {
+    const [s2, id2] = key.split(':');
+    ok(`${day.id} names a real prerequisite (${key})`,
+      !!CURRICULUM[s2]?.days.find((d) => d.id === id2), 'an unreachable door');
+  }
+}
+
+/* The promise is two routes: score well on the earlier day, OR beat its duel.
+   A prerequisite with no generator silently offers only one, which is a
+   quieter and meaner gate than the one that was designed. */
+for (const { day } of depthDays) {
+  for (const key of day.readiness) {
+    const [s2, id2] = key.split(':');
+    ok(`${day.id}'s prerequisite ${key} has a duel route too`,
+      !!drillForDay(s2, id2), 'a readiness gate with only one way through it');
+  }
+}
+
+/* The original spine must stay ungated. */
+const ORIGINAL_LANES = ['math', 'cs', 'logic', 'earth', 'ela', 'biz', 'gov', 'fossils', 'connect', 'teardown'];
+for (const subj of ORIGINAL_LANES) {
+  const gated = CURRICULUM[subj].days.filter((d) => d.readiness && d.readiness.length);
+  eq(`${subj} has no readiness gates`, gated.length, 0);
+}
+
+const shakyProfile = { completed: { 'chem:ch5': { best: 2, total: 5 }, 'chem:ch6': { best: 2, total: 4 } }, practice: {} };
+const solidProfile = { completed: { 'chem:ch5': { best: 4, total: 5 }, 'chem:ch6': { best: 3, total: 4 } }, practice: {} };
+const ch11 = CURRICULUM.chem.days.find((d) => d.id === 'ch11');
+ok('a shaky prerequisite keeps the depth day closed', !isReady(shakyProfile, ch11));
+ok('an understood prerequisite opens it', isReady(solidProfile, ch11));
+
+/* The duel is a genuine second route, and it must be a real demonstration
+   rather than a participation trophy. */
+const viaDuel = { completed: { 'chem:ch5': { best: 2, total: 5 } }, practice: { chem5a: { runs: 3, bestStreak: MASTERY_STREAK } } };
+const weakDuel = { completed: { 'chem:ch5': { best: 2, total: 5 } }, practice: { chem5a: { runs: 9, bestStreak: 2 } } };
+ok('winning the duel opens the door too', isReady(viaDuel, ch11), 'the drill route must work');
+ok('merely playing the duel does not', !isReady(weakDuel, ch11), 'a participation trophy is not a demonstration');
+
+/* The door has to name its own key. "Locked" tells him nothing. */
+const note = readinessNote(shakyProfile, ch11);
+ok('a closed door names the day it needs', !!note && /of/.test(note), String(note));
+ok('the note never says locked or failed', !/lock|fail|cannot|not allowed/i.test(note || ''), String(note));
+
+/* Days with no readiness declared are unaffected, always. */
+const m1 = CURRICULUM.math.days.find((d) => d.id === 'm1');
+ok('an ordinary day is always ready', isReady({ completed: {}, practice: {} }, m1));
+eq('an ordinary day produces no note', readinessNote({ completed: {} }, m1), null);
 
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);

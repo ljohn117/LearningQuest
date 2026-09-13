@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, AlertTriangle, Volume2, VolumeX, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
+import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, KeyRound, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, AlertTriangle, Volume2, VolumeX, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
 import { S } from './styles.jsx';
 import { writeKeyFor } from './writekey.js';
 import { suggestedDrill } from './suggest.js';
+import { readinessNote } from './readiness.js';
 import { drillForDay } from './drills.js';
 import { play, soundOn, setSound } from './sound.js';
 import { Visual } from './Visual.jsx';
@@ -338,7 +339,7 @@ export function BackupPanel({ onClose, onBackedUp }) {
 
 
 /* ---- 9. SUBJECT VIEW ----------------------------------------------------------- */
-export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onDay }) {
+export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onDay, profile }) {
   const s = CURRICULUM[subj], Icon = s.icon;
   return (
     <div>
@@ -353,14 +354,23 @@ export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onD
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 18 }}>
         {s.days.map((d, i) => {
           const done = isDayDone(subj, d.id), open = isDayUnlocked(subj, i);
+          const note = open ? null : readinessNote(profile, d);
           return (
             <button key={d.id} type="button" disabled={!open}
               className={`lq-rise ${open ? 'lq-tap lq-card' : ''}`}
-              aria-label={`Day ${i + 1}, ${d.title}${done ? ', complete' : open ? '' : ', locked'}`}
+              aria-label={`Day ${i + 1}, ${d.title}${done ? ', complete' : open ? '' : note ? ', ' + note : ', locked'}`}
               style={{ ...S.cardBtn, ...S.dayCard, animationDelay: `${i * .06}s`, opacity: open ? 1 : .55, cursor: open ? 'pointer' : 'default' }}
               onClick={() => open && onDay(d)}>
               <div style={{ ...S.dayNode, borderColor: done ? s.accent : open ? '#3a4154' : '#2a2f3d', background: done ? s.accent : 'transparent' }}>
-                {done ? <Check size={16} color="#0c0e16" /> : open ? <span style={{ ...S.mono, color: '#aeb4c4', fontSize: 13 }}>{i + 1}</span> : <Lock size={13} color="#5b6275" />}
+                {/* A readiness-closed day gets a KEY, not a padlock. A padlock
+                    says "you cannot"; the card beside it says exactly how to
+                    open the day, and the icon should not contradict it. Days
+                    closed for the ordinary reason — the previous day is not
+                    finished — keep the lock. */}
+                {done ? <Check size={16} color="#0c0e16" />
+                  : open ? <span style={{ ...S.mono, color: '#aeb4c4', fontSize: 13 }}>{i + 1}</span>
+                  : note ? <KeyRound size={13} color={s.accent} />
+                  : <Lock size={13} color="#5b6275" />}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
@@ -369,7 +379,13 @@ export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onD
                 </div>
                 <div style={S.dayTitle}>{d.title}</div>
               </div>
+              {/* A closed door should name its own key. "Locked" tells him
+                  nothing; the exact score on a named day, with a duel as an
+                  alternative route, tells him what to do next. */}
               {open ? <ChevronRight size={18} color="#5b6275" />
+                : note ? <span style={{ ...S.muted, fontSize: 11.5, textAlign: 'right', maxWidth: 140, lineHeight: 1.4 }}>
+                    {note}
+                  </span>
                 : d.requires ? <span style={{ ...S.muted, fontSize: 11.5, textAlign: 'right', maxWidth: 118 }}>
                     needs {d.requires.map((k) => CURRICULUM[k.split(':')[0]]?.name).filter((v, i, a) => v && a.indexOf(v) === i).join(' + ')}
                   </span>

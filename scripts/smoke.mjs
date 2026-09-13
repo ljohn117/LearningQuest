@@ -164,6 +164,49 @@ const pv = await p.evaluate(() => document.body.innerText);
 const parentOK = /new-key answer/.test(pv) && /legacy-key answer/.test(pv) && !/undefined/.test(pv);
 console.log('parent view resolves both key shapes:', parentOK);
 
+/* ---- readiness --------------------------------------------------------
+ * Depth days open on demonstrated understanding, not completion alone. The
+ * card must name its own key and must never read as a punishment; a lock icon
+ * with no explanation is the thing this replaced. Synthetic profile: real
+ * progress data never belongs in this repo.
+ *
+ * Chemistry days 11-13 require chem:ch5 or chem:ch6 at 60%. Here ch5 is
+ * finished but shaky, so they stay closed and must say why. */
+await p.evaluate(() => {
+  const completed = {};
+  for (const id of ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','chr1']) {
+    completed['chem:' + id] = { best: 2, total: 5 };     // finished, not understood
+  }
+  localStorage.setItem('lq_v3', JSON.stringify({
+    version: 3,
+    profiles: [{ id: 'p1', name: 'Seeded', xp: 400, completed, practice: {}, review: {}, writing: {},
+                 calibration: {}, streak: { count: 2, last: '2026-09-13' }, skips: 0 }],
+    lastActive: 'p1',
+  }));
+});
+await p.reload({ waitUntil: 'domcontentloaded' }); await p.waitForTimeout(600);
+await p.getByText('Chemistry').first().click(); await p.waitForTimeout(600);
+const gateBody = await p.evaluate(() => document.body.innerText);
+const gateNames = /opens at \d+ of \d+ on /i.test(gateBody);
+const gateDuel = /or win the .+ duel/i.test(gateBody);
+const gateKind = !/\blocked\b|\bfailed\b/i.test(gateBody);
+console.log('closed depth day names its key:', gateNames, '| offers the duel too:', gateDuel, '| never says locked:', gateKind);
+
+/* And it must actually OPEN once the prerequisite is understood. */
+await p.evaluate(() => {
+  const st = JSON.parse(localStorage.getItem('lq_v3'));
+  st.profiles[0].completed['chem:ch5'] = { best: 4, total: 5 };
+  st.profiles[0].completed['chem:ch6'] = { best: 4, total: 5 };
+  localStorage.setItem('lq_v3', JSON.stringify(st));
+});
+await p.reload({ waitUntil: 'domcontentloaded' }); await p.waitForTimeout(600);
+await p.getByText('Chemistry').first().click(); await p.waitForTimeout(600);
+const openNow = await p.evaluate(() => [...document.querySelectorAll('button')]
+  .filter((b) => (b.getAttribute('aria-label') || '').startsWith('Day '))
+  .filter((b) => !b.disabled).length);
+const gateOpens = openNow >= 12;
+console.log('understanding the prerequisite opens the depth days:', gateOpens, `(${openNow} open)`);
+
 console.log('pageerrors:', errs.length ? errs : 'none');
 
 /* Fail loudly. Printing 'BLANK/CRASH' and exiting 0 made this test unable to
@@ -185,6 +228,10 @@ if (!writeRendered) failures.push('the write prompt did not render');
 if (writeRendered && !writeFiled) failures.push('writing was not filed under the prompt id');
 if (!noStrayKey) failures.push('writing was filed under a positional key');
 if (!parentOK) failures.push('the parent view could not resolve a write key');
+if (!gateNames) failures.push('a closed depth day did not name what opens it');
+if (!gateDuel) failures.push('a closed depth day offered no duel route');
+if (!gateKind) failures.push('a closed depth day read as a punishment');
+if (!gateOpens) failures.push('understanding the prerequisite did not open the depth days');
 if (failures.length) { console.error('\nFAILED: ' + failures.join('; ')); process.exit(1); }
 console.log('\nsmoke passed');
 await b.close();

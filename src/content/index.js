@@ -6,6 +6,7 @@ import { CHEMISTRY } from './chemistry.js';
 import { TEARDOWNS } from './teardowns.js';
 import { MATH_EXTRA } from './math-extra.js';
 import { MATH_ADVANCED } from './math-advanced.js';
+import { CHEM_DEPTH, PHYSICS_DEPTH, BIO_DEPTH } from './science-depth.js';
 import { ELA_EXTRA, BIO_EXTRA } from './depth.js';
 import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
 import { CHECKPOINTS } from './checkpoints.js';
@@ -35,6 +36,13 @@ for (const [subj, days] of Object.entries(CHECKPOINTS)) append(subj, days);
    ...m19, mr3, m20...m26, mr4 — each block of days followed by its review.
    Appending only: no existing id moves, and nothing above is renumbered. */
 append('math', MATH_ADVANCED);
+
+/* Science depth. These are the first days that declare `readiness` — they
+   open on demonstrated understanding of a named earlier day, not on mere
+   completion. Appended only; nothing above them moves. */
+append('chem', CHEM_DEPTH);
+append('physics', PHYSICS_DEPTH);
+append('bio', BIO_DEPTH);
 
 /* Append spiral callbacks to the days that had none. Kept out of the content
    files so the additions stay reviewable in one place and the prototype prose

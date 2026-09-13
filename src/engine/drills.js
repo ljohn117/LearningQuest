@@ -655,6 +655,97 @@ export const EXTRA_DRILLS = [
       return { prompt: `A right triangle has hypotenuse ${h} and opposite side ${o}. Use a² + b² = c² to find the ADJACENT side.`,
         answer: a, hint: 'Square the hypotenuse, subtract the square of the opposite, take the root.' } },
   },
+
+  /* ---- science depth (chemistry 11-13, physics 7-8, biology 11) ---------- */
+  { id: 'ch11a', subj: 'chem', day: 'ch11', name: 'Moles', gen(L) {
+      const MM = [['carbon', 12], ['oxygen', 16], ['sulfur', 32], ['magnesium', 24], ['calcium', 40]];
+      if (L === 1) { const [n, m] = pickOne(MM), k = rnd(2, 6);
+        return { prompt: `${n} has a molar mass of ${m}. How many grams is ${k} moles of it?`, answer: k * m,
+          hint: 'mass = moles × molar mass.' }; }
+      if (L === 2) { const [n, m] = pickOne(MM), k = rnd(2, 6);
+        return { prompt: `You weigh out ${k * m} grams of ${n}, molar mass ${m}. How many moles is that?`, answer: k,
+          hint: 'moles = grams ÷ molar mass.' }; }
+      const [n, m] = pickOne(MM), k = rnd(2, 5);
+      return { prompt: `A sample of ${n} contains ${k} moles and weighs ${k * m} grams. What is its molar mass?`,
+        answer: m, hint: 'Divide the mass by the number of moles.' } },
+  },
+  { id: 'ch12a', subj: 'chem', day: 'ch12', name: 'Molar Mass', gen(L) {
+      if (L === 1) { const c = rnd(1, 3), o = rnd(1, 3);
+        return { prompt: `Find the molar mass of C${c > 1 ? c : ''}O${o > 1 ? o : ''}. Use C = 12 and O = 16.`,
+          answer: c * 12 + o * 16, hint: 'Multiply each atom by its subscript, then add.' }; }
+      if (L === 2) { const h = rnd(2, 6), o = rnd(1, 3);
+        return { prompt: `Find the molar mass of H${h}O${o > 1 ? o : ''}, using H = 1 and O = 16.`,
+          answer: h * 1 + o * 16, hint: 'The subscript multiplies only the symbol before it.' }; }
+      /* Vary the metal, never the subscript: Ca(OH)₃ is not a compound, and a
+         drill that invents chemistry to make its numbers work is worse than
+         no drill at all. All three of these are real hydroxides. */
+      const [sym, mass] = pickOne([['Ca', 40], ['Mg', 24], ['Ba', 137]]);
+      return { prompt: `Find the molar mass of ${sym}(OH)₂. Use ${sym} = ${mass}, O = 16, H = 1.`,
+        answer: mass + 2 * 17, hint: 'The 2 after the bracket multiplies EVERYTHING inside it.' } },
+  },
+  { id: 'ch13a', subj: 'chem', day: 'ch13', name: 'Stoichiometry', gen(L) {
+      if (L === 1) { const k = rnd(2, 8) * 2;
+        return { prompt: `For 2H₂ + O₂ → 2H₂O, how many moles of water come from ${k} moles of H₂?`,
+          answer: k, hint: 'The H₂ to H₂O ratio is 2 : 2, which is 1 : 1.' }; }
+      if (L === 2) { const k = rnd(2, 9) * 2;
+        return { prompt: `For 2H₂ + O₂ → 2H₂O, how many moles of O₂ are needed to react with ${k} moles of H₂?`,
+          answer: k / 2, hint: 'The H₂ to O₂ ratio is 2 : 1.' }; }
+      const k = rnd(2, 6);
+      return { prompt: `For N₂ + 3H₂ → 2NH₃, how many moles of NH₃ come from ${k} moles of N₂?`,
+        answer: k * 2, hint: 'The N₂ to NH₃ ratio is 1 : 2.' } },
+  },
+  { id: 'phy7a', subj: 'physics', day: 'phy7', name: 'Motion', gen(L) {
+      if (L === 1) { const t = rnd(2, 12), v = rnd(3, 20);
+        return { prompt: `An object covers ${v * t} metres in ${t} seconds. What is its speed, in m/s?`, answer: v,
+          hint: 'speed = distance ÷ time.' }; }
+      if (L === 2) { const t = rnd(2, 8), a = rnd(2, 9);
+        return { prompt: `A car starts from rest and reaches ${a * t} m/s in ${t} seconds. What is its acceleration, in m/s²?`,
+          answer: a, hint: 'a = (v − u) ÷ t, and u is zero from rest.' }; }
+      /* The drop must be smaller than the starting speed, or the train
+         "slows" to a negative velocity — which is not slowing, it is
+         reversing, and it is not what the question claims. */
+      const t = rnd(2, 6), a = rnd(1, 4), drop = a * t, u = drop + rnd(4, 15);
+      return { prompt: `A train slows from ${u} m/s to ${u - drop} m/s in ${t} seconds. What is its acceleration, in m/s²?`,
+        answer: -a, hint: 'Final minus starting, then divide. Keep the minus sign.' } },
+  },
+  { id: 'phy8a', subj: 'physics', day: 'phy8', name: 'Force and Mass', gen(L) {
+      if (L === 1) { const m = rnd(2, 12), a = rnd(2, 9);
+        return { prompt: `What force, in newtons, accelerates a ${m} kg mass at ${a} m/s²?`, answer: m * a,
+          hint: 'F = m × a.' }; }
+      if (L === 2) { const m = rnd(2, 10), a = rnd(2, 9);
+        return { prompt: `A force of ${m * a} N acts on a ${m} kg mass. What is the acceleration, in m/s²?`, answer: a,
+          hint: 'Rearrange to a = F ÷ m.' }; }
+      const m = rnd(2, 15);
+      return { prompt: `What is the weight, in newtons, of a ${m} kg mass where g = 10 m/s²?`, answer: m * 10,
+        hint: 'Weight is a force: W = m × g.' } },
+  },
+  { id: 'bio11a', subj: 'bio', day: 'bio11', name: 'Punnett Squares', gen(L) {
+      if (L === 1) { const cross = pickOne([['Bb', 'Bb', 1], ['BB', 'bb', 0], ['Bb', 'bb', 2], ['BB', 'Bb', 0]]);
+        return { prompt: `In a ${cross[0]} × ${cross[1]} cross, how many of the four squares show the RECESSIVE trait?`,
+          answer: cross[2], hint: 'Only two recessive copies together show it.' }; }
+      if (L === 2) { const cross = pickOne([['Bb', 'Bb', 3], ['BB', 'bb', 4], ['Bb', 'bb', 2], ['BB', 'Bb', 4]]);
+        return { prompt: `In a ${cross[0]} × ${cross[1]} cross, how many of the four squares show the DOMINANT trait?`,
+          answer: cross[2], hint: 'Any square containing at least one B shows it.' }; }
+      const cross = pickOne([['Bb', 'Bb', 25], ['Bb', 'bb', 50], ['BB', 'bb', 0], ['BB', 'Bb', 0]]);
+      return { prompt: `In a ${cross[0]} × ${cross[1]} cross, what PERCENTAGE of offspring are expected to show the recessive trait?`,
+        answer: cross[2], hint: 'Count the recessive squares out of four, then convert to a percentage.' } },
+  },
+
+  /* Conservation of mass. Added because ch13 (stoichiometry) names ch6 as its
+     readiness prerequisite, and ch6 had no generator — which would have left
+     that door with only one route through it, quietly breaking the promise
+     that a closed day can always be opened either by the lesson or the duel. */
+  { id: 'ch6a', subj: 'chem', day: 'ch6', name: 'Conservation of Mass', gen(L) {
+      if (L === 1) { const n = rnd(2, 6);
+        return { prompt: `${n * 10} grams of reactants go into a sealed flask and react completely. How many grams of products come out?`,
+          answer: n * 10, hint: 'Sealed means nothing can leave. Atoms are rearranged, never destroyed.' }; }
+      if (L === 2) { const a = rnd(10, 40), b = rnd(10, 40), gas = rnd(2, 9);
+        return { prompt: `${a} g of one substance reacts with ${b} g of another in an OPEN dish, and ${gas} g escapes as gas. What mass of solid is left, in grams?`,
+          answer: a + b - gas, hint: 'Total in equals total out — but some of the output walked off as gas.' }; }
+      const k = rnd(2, 6);
+      return { prompt: `In 2H₂ + O₂ → 2H₂O, there are ${2 * k} hydrogen atoms on the left. How many hydrogen atoms are on the right?`,
+        answer: 2 * k, hint: 'Balanced means the same count of every element on both sides.' } },
+  },
 ];
 
 /* ---- Mathematics, days 1-14 --------------------------------------------

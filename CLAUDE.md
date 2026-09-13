@@ -53,8 +53,34 @@ never confirm that.
 - No companion, character or copy scolds him after a wrong answer.
 - The wrong-answer sound is one soft low note. Never a failure buzzer.
 - Nothing is taken away for being wrong — no lost points, lives, or streak.
-- Days are **never** gated on scoring well. A low score still finishes a day.
-  (The parent page surfaces weak days instead — see "Finished, but shaky".)
+- **Finishing a day is never gated on scoring well.** A low score still
+  completes the day, always. (The parent page surfaces weak days instead —
+  see "Finished, but shaky".)
+
+**One deliberate exception, added 2026-09-13 at the owner's request**, because
+"no progress for progress' sake" and "never punish a wrong answer" are both
+true and had to be reconciled:
+
+A day may declare `readiness: ['chem:ch6']` — an earlier day that must be
+**understood**, not merely finished, before it opens. It applies **only** to
+days that declare it; every original day in the app remains ungated, and
+finishing any day still completes it whatever the score.
+
+It is a door with its key written on it, not a punishment:
+
+- The bar is 60%, the same threshold the parent page already calls "shaky".
+- **Two routes, always**: score 60% on the named day, *or* beat its duel
+  (a sustained streak of 6, which means reaching the generator's top level).
+  A test asserts every readiness prerequisite has a drill, so the second route
+  is never silently missing.
+- The card says *"opens at 3 of 4 on Two Kinds of Change, or win the
+  Rearrangement duel"* — never "locked", never "failed".
+- Retries are unlimited and cost nothing. Nothing is ever taken away.
+
+The reason is specific: stoichiometry resting on a half-grasp of conservation
+of mass is not progress, it is the appearance of progress, and it ends with a
+child concluding he is bad at chemistry when what actually happened is that
+nobody checked. See `src/engine/readiness.js`.
 
 ### 3. Calibration is never a currency
 

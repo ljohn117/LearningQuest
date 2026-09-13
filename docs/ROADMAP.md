@@ -1,7 +1,8 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1, 2, 3 and 4 done. 2b partial and parked.
-> Phase 5 (depth in the science lanes) is next. See "Revised direction".**
+> **Status: Phases 1–5 done (2b partial and parked). Phase 5 also introduced
+> READINESS — the first days that open on demonstrated understanding rather
+> than completion, at the owner's request. Phase 6 (presentation) is next.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -317,12 +318,42 @@ the moment the curriculum grew. Both now derive the total — a stale test that
 reports a content addition as progress loss is exactly the kind of false alarm
 that trains people to ignore the check that matters most.
 
-### Phase 5 — Depth in the science lanes
-Moles and stoichiometry in Chemistry; equations of motion and energy
-calculations in Physical Science; inheritance beyond one gene in Biology.
-Each extends its lane rather than replacing it.
+### Phase 5 — Depth in the science lanes — DONE
 
-### Phase 6 — Presentation
+Six days: `ch11`–`ch13` (the mole, molar mass, stoichiometry), `phy7`–`phy8`
+(motion with equations, F = ma), `bio11` (Punnett squares). Seven new drills,
+including `ch6a`, added because a readiness prerequisite had no duel route.
+
+**The bigger change is the mechanism.** At the owner's instruction — *"scale
+into this content with verification of understanding, no point in progress for
+progress' sake"* — these are the first days in the app that do not open on
+completion alone.
+
+A day may declare `readiness: ['chem:ch6']`. It opens when that day is at 60%
+**or** its duel has been won on a sustained streak of six. This modifies a
+load-bearing rule, so `CLAUDE.md` records the exception and its reasoning
+rather than the change happening quietly.
+
+It is a door with its key written on it:
+
+- Applies **only** to days that declare it. Every original day stays ungated,
+  and finishing any day still completes it whatever the score.
+- **Two routes, always** — a test asserts every readiness prerequisite has a
+  drill, so the second route can never go silently missing. That test found
+  `ch6` had none and the gap was filled.
+- The card reads *"opens at 3 of 4 on Reading a Formula, or win the Counting
+  Atoms duel"*, with a **key** icon rather than a padlock — a padlock says
+  "you cannot" while the text says exactly how, and the icon should not
+  contradict the words.
+- Unlimited, free retries. Nothing is ever taken away.
+
+**Caught by verification, not by writing:** a generator invented **Ca(OH)₃**,
+which is not a compound — a drill that fabricates chemistry to make its
+numbers work is worse than no drill. Another had a train "slow" from 12 m/s to
+−12 m/s. A Punnett question offered "all Bb" and "all bb" as separate options,
+differing only by case and genuinely easy to misread.
+
+### Phase 6 — Presentation (next)
 Two new block types (`slider`, `order`), and visuals for the remaining
 **85 of 131 days without one**. Block mix today is 36% plain text, 22%
 callout, **5% visual** — the app is still mostly prose with boxes round it.
@@ -408,7 +439,7 @@ spatial.
 | 2 — Retire the coin flip | not started | true/false: 116 → ? |
 | 3 — Route him to practice | **done** 2026-09-13 | teardown days open to him: **0 → 6**; weakest-day drill now named on the dashboard and offered after a low score |
 | 4 — Raise the maths ceiling | **done** 2026-09-13 | maths days **22 → 30**; ceiling **intro quadratics → right-angle trigonometry**; maths reading grade **5.0 (below band) → 5.5 (in band)**; drills **51 → 58** |
-| 5 — Depth in the science lanes | not started | chemistry ceiling: **rates → stoichiometry** |
+| 5 — Depth in the science lanes | **done** 2026-09-13 | chemistry **rates → stoichiometry**; physics **no equations → F = ma**; biology **one gene → Punnett squares**; 6 days, 7 drills; **readiness gating introduced** |
 | 6 — Presentation | not started | days with no visual: **85 → ?**; interactive block types: **1 → 3** |
 | 7 — New tracks | not started | lanes: **13 → 16** |
 | — parked — | | 2b remainder; MAX_LEVEL 3 → 6; practice coverage 43/131 |
