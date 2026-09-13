@@ -746,6 +746,63 @@ export const EXTRA_DRILLS = [
       return { prompt: `In 2H₂ + O₂ → 2H₂O, there are ${2 * k} hydrogen atoms on the left. How many hydrogen atoms are on the right?`,
         answer: 2 * k, hint: 'Balanced means the same count of every element on both sides.' } },
   },
+
+  /* ---- statistics (days 27-33) ------------------------------------------ */
+  { id: 'm27a', subj: 'math', day: 'm27', name: 'Samples', gen(L) {
+      if (L === 1) { const pop = rnd(2, 9) * 1000, pct = pickOne([1, 2, 5, 10]);
+        return { prompt: `A town has ${pop.toLocaleString()} adults. A survey reaches ${pct}% of them. How many people were asked?`,
+          answer: pop * pct / 100, hint: 'Find that percentage of the population.' }; }
+      if (L === 2) { const pop = rnd(2, 8) * 500, n = pop / pickOne([4, 5, 10]);
+        return { prompt: `${n} people were surveyed out of a population of ${pop}. What percentage were asked?`,
+          answer: Math.round(n / pop * 10000) / 100, hint: 'sample ÷ population, then ×100.' }; }
+      const pop = rnd(3, 9) * 1000, n = rnd(2, 9) * 100;
+      return { prompt: `A population of ${pop.toLocaleString()} is surveyed by asking ${n} people. How many were NOT asked?`,
+        answer: pop - n, hint: 'The ones left out are the ones worth thinking about.' } },
+  },
+  { id: 'm28a', subj: 'math', day: 'm28', name: 'Spread', gen(L) {
+      if (L === 1) { const a = rnd(2, 20), r = rnd(5, 40);
+        return { prompt: `A data set runs from ${a} to ${a + r}. What is its range?`, answer: r,
+          hint: 'Largest minus smallest.' }; }
+      if (L === 2) { const q1 = rnd(5, 30), iqr = rnd(4, 25);
+        return { prompt: `A data set has Q1 = ${q1} and Q3 = ${q1 + iqr}. What is the interquartile range?`,
+          answer: iqr, hint: 'IQR = Q3 − Q1.' }; }
+      const lo = rnd(2, 10), hi = lo + rnd(20, 60), mid = lo + rnd(3, 8);
+      return { prompt: `Scores run ${lo} to ${hi}, but the middle half runs ${mid} to ${mid + 6}. How much wider is the range than the IQR?`,
+        answer: (hi - lo) - 6, hint: 'Work out each, then subtract.' } },
+  },
+  { id: 'm31a', subj: 'math', day: 'm31', name: 'Combining Chances', gen(L) {
+      if (L === 1) { const n = rnd(2, 4);
+        return { prompt: `A fair coin is flipped ${n} times. Out of how many equally likely outcomes is "all heads" one?`,
+          answer: Math.pow(2, n), hint: 'Each flip doubles the number of outcomes.' }; }
+      if (L === 2) { const a = rnd(10, 30), b = rnd(8, 25), both = rnd(2, 6);
+        return { prompt: `In a group, ${a} play football and ${b} play chess, and ${both} do both. How many play at least one?`,
+          answer: a + b - both, hint: 'Add them, then subtract the overlap once.' }; }
+      const total = pickOne([52, 40, 60]), red = total / 2, face = pickOne([12, 8, 10]), overlap = face / 2;
+      return { prompt: `Of ${total} cards, ${red} are red and ${face} are face cards, ${overlap} of which are red. How many are red OR a face card?`,
+        answer: red + face - overlap, hint: 'The overlap gets counted twice unless you remove it.' } },
+  },
+  { id: 'm32a', subj: 'math', day: 'm32', name: 'Base Rates', gen(L) {
+      if (L === 1) { const pop = 10000, rate = pickOne([1, 2, 5]);
+        return { prompt: `A disease affects ${rate} in 1,000. In a town of ${pop.toLocaleString()}, how many people have it?`,
+          answer: pop / 1000 * rate, hint: 'Scale the rate up to the whole population.' }; }
+      if (L === 2) { const healthy = pickOne([9900, 9950, 9990]), err = pickOne([1, 2]);
+        return { prompt: `${healthy.toLocaleString()} healthy people are tested and ${err}% are wrongly flagged. How many false positives?`,
+          answer: Math.round(healthy * err / 100), hint: 'That percentage of the healthy group.' }; }
+      const ill = pickOne([10, 20, 50]), fp = pickOne([100, 200]);
+      return { prompt: `A test finds all ${ill} ill people and also flags ${fp} healthy ones. How many positive results are there altogether?`,
+        answer: ill + fp, hint: 'True positives plus false positives.' } },
+  },
+  { id: 'm33a', subj: 'math', day: 'm33', name: 'Margin of Error', gen(L) {
+      if (L === 1) { const p = rnd(35, 60), m = rnd(2, 5);
+        return { prompt: `A poll reports ${p}% with a margin of error of ${m} points. What is the HIGHEST the true value probably is?`,
+          answer: p + m, hint: 'Add the margin to the reported figure.' }; }
+      if (L === 2) { const p = rnd(35, 60), m = rnd(2, 5);
+        return { prompt: `A poll reports ${p}% with a margin of error of ${m} points. What is the LOWEST the true value probably is?`,
+          answer: p - m, hint: 'Subtract the margin.' }; }
+      const a = rnd(48, 55), gap = rnd(2, 8), m = rnd(2, 5);
+      return { prompt: `One side polls ${a}% and the other ${a - gap}%, margin of error ${m} points. How many points wide is the whole uncertainty, counting both directions?`,
+        answer: m * 2, hint: 'The range runs from minus the margin to plus it.' } },
+  },
 ];
 
 /* ---- Mathematics, days 1-14 --------------------------------------------

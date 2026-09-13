@@ -652,5 +652,46 @@ export function Visual({ v, accent }) {
     </>, 112);
   }
 
+  /* The same numbers drawn twice, on two different vertical axes. Day 29's
+     entire claim is that a truncated axis changes the impression while the
+     data stays identical, and that is not a claim prose can land — you have
+     to see the two pictures side by side and check they are the same. */
+  if (v.kind === 'twobars') {
+    const vals = v.values || [48, 52];
+    const labels = v.labels || vals.map((n) => n + '%');
+    const panel = (x0, lo, hi, title) => {
+      const w = 128, base = 118, top = 34, bw = 34, gap = 22;
+      const py = (n) => base - ((n - lo) / (hi - lo)) * (base - top);
+      return (
+        <g>
+          <text x={x0 + w / 2} y={24} textAnchor="middle" fill="#8b91a3" fontSize="9.5"
+                fontFamily="JetBrains Mono, monospace">{title}</text>
+          <line x1={x0 + 14} y1={base} x2={x0 + w - 6} y2={base} stroke="#3a4154" strokeWidth="1.5" />
+          <line x1={x0 + 14} y1={top - 4} x2={x0 + 14} y2={base} stroke="#3a4154" strokeWidth="1.5" />
+          {vals.map((n, i) => (
+            <g key={i}>
+              <rect x={x0 + 26 + i * (bw + gap)} y={py(n)} width={bw} height={Math.max(2, base - py(n))}
+                    rx={3} fill={i === 0 ? '#5aa9ff' : accent} />
+              <text x={x0 + 26 + i * (bw + gap) + bw / 2} y={base + 12} textAnchor="middle"
+                    fill="#8b91a3" fontSize="9" fontFamily="JetBrains Mono, monospace">{labels[i]}</text>
+            </g>
+          ))}
+          <text x={x0 + 10} y={base + 2} textAnchor="end" fill="#5b6275" fontSize="8"
+                fontFamily="JetBrains Mono, monospace">{lo}</text>
+          <text x={x0 + 10} y={top + 4} textAnchor="end" fill="#5b6275" fontSize="8"
+                fontFamily="JetBrains Mono, monospace">{hi}</text>
+        </g>
+      );
+    };
+    const lo2 = v.truncatedFrom ?? Math.min(...vals) - 1;
+    const hi2 = v.truncatedTo ?? Math.max(...vals) + 1;
+    return wrap(<>
+      {panel(6, 0, Math.max(...vals) + 10, 'axis from 0')}
+      {panel(172, lo2, hi2, `axis from ${lo2}`)}
+      <text x="160" y={142} textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">{v.caption || 'identical numbers, both times'}</text>
+    </>, 152);
+  }
+
   return null;
 }

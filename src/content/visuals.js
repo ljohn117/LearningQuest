@@ -633,4 +633,38 @@ export const VISUALS = {
   cx5: [{ page: 1, kind: 'grid', cols: ['seems to vanish', 'actually'],
     rows: [['energy', 'became heat and sound'], ['water', 'evaporated, will rain'], ['matter in a fire', 'left as gas'], ['money spent', 'someone else has it']],
     caption: 'ask where it went, never whether it did' }],
+
+  /* ---- statistics (days 27-33) ------------------------------------------ */
+
+  m27: [{ page: 1, kind: 'grid', cols: ['asked by', 'systematically misses'],
+    rows: [['telephone', 'anyone without a phone'], ['a news website', 'readers of other sites'], ['at a football ground', 'people who dislike football'], ['a random national list', 'nobody in particular']],
+    caption: 'only the last one has no built-in lean' }],
+
+  m28: [{ page: 0, kind: 'grid', cols: ['class', 'scores', 'mean', 'range'],
+    rows: [['A', '68, 70, 70, 72', '70', '4'], ['B', '20, 60, 80, 120', '70', '100']],
+    caption: 'same centre, nothing else the same' }],
+
+  m29: [{ page: 1, kind: 'twobars', values: [48, 52], labels: ['48%', '52%'],
+    truncatedFrom: 47, truncatedTo: 53,
+    caption: 'same two numbers — only the axis moved' }],
+
+  m30: [{ page: 1, kind: 'grid', cols: ['A and B move together', 'could mean'],
+    rows: [['A causes B', 'the assumed one'], ['B causes A', 'often survives testing'], ['C causes both', 'summer, age, wealth'], ['coincidence', 'rarer than it feels']],
+    caption: 'three real candidates, not one' }],
+
+  m31: [{ page: 1, kind: 'grid', cols: ['want', 'rule', 'careful of'],
+    rows: [['A and B', 'multiply', 'only if independent'], ['A or B', 'add, minus overlap', 'double counting'], ['not A', '1 − P(A)', '—']],
+    caption: 'the condition on AND is the bit forgotten' }],
+
+  m32: [{ page: 1, kind: 'grid', cols: ['of 10,000 people', 'test positive'],
+    rows: [['10 are ill', '10 — all of them'], ['9,990 are healthy', 'about 100 anyway'], ['total positives', '110'], ['actually ill', '10 of 110 ≈ 9%']],
+    caption: '1% of nearly everyone beats 100% of few' }],
+
+  m33: [{ page: 1, kind: 'grid', cols: ['poll says', '±3 points', 'so the truth is'],
+    rows: [['52%', '49 – 55', 'somewhere in there'], ['48%', '45 – 51', 'somewhere in there'], ['gap of 4', 'ranges overlap', 'too close to call']],
+    caption: 'the gap is smaller than the uncertainty' }],
+
+  mr5: [{ page: 1, kind: 'grid', cols: ['ask', 'catches'],
+    rows: [['where is it from?', 'bias — nothing later fixes it'], ['what is the spread?', 'an average hiding the range'], ['what are the axes?', 'a chart arguing at you'], ['cause or company?', 'the confounder'], ['how wrong may it be?', 'a gap inside the margin']],
+    caption: 'sample first — always sample first' }],
 };

@@ -838,4 +838,57 @@ export const EXPLAIN = {
       'I said why the undo is usually the useful half.',
     ],
   },
+
+  /* ==== Statistics ======================================================= */
+  m27: {
+    id: 'x-m27', kind: 'flaw', words: 40,
+    task: 'This number is probably true and still tells you almost nothing. Say why.',
+    claim: '\u201c94% of our customers rate us excellent \u2014 based on responses to our follow-up email.\u201d',
+    starter: 'Who received that email, and who bothered to reply?',
+    checklist: [
+      'I said who is systematically missing from this sample.',
+      'I said why those people would have answered differently.',
+      'I did not accuse anyone of lying \u2014 the number may be accurate.',
+    ],
+  },
+  m29: {
+    id: 'x-m29', kind: 'teach', words: 40,
+    task: 'Teach someone how to look at a chart in a newspaper, in the order you would actually do it.',
+    starter: 'What do you check before you let the shape mean anything?',
+    checklist: [
+      'I gave an order, not a list of worries.',
+      'I said what the axis can do to an impression.',
+      'Someone could use it on a real chart tomorrow.',
+    ],
+  },
+  m30: {
+    id: 'x-m30', kind: 'predict', words: 40,
+    task: 'People who eat breakfast get better marks. Before looking anything up: give all three explanations, and say which you would bet on.',
+    starter: 'A causes B, B causes A, or something else causes both. Commit to one.',
+    checklist: [
+      'I gave all three candidates, not just the obvious one.',
+      'I committed to which I would bet on, and said why.',
+      'I named what would settle it.',
+    ],
+  },
+  m32: {
+    id: 'x-m32', kind: 'mechanism', words: 45,
+    task: 'A test is 99% accurate and it says you have a rare disease, yet you probably do not. Explain how both of those are true at once.',
+    starter: 'Count actual people out of ten thousand rather than arguing about percentages.',
+    checklist: [
+      'I used real numbers of people, not just percentages.',
+      'I said why the healthy group produces so many positives.',
+      'I did not claim the test was inaccurate \u2014 it is not.',
+    ],
+  },
+  mr5: {
+    id: 'x-mr5', kind: 'teach', words: 45,
+    task: 'Someone shows you a statistic they are certain about. Teach them the four questions to ask, in order, and say why the first one comes first.',
+    starter: 'Seven days, one reflex. What is the order?',
+    checklist: [
+      'I gave four questions in a definite order.',
+      'I explained why the sample has to be first.',
+      'Someone could run my list on a real headline.',
+    ],
+  },
 };

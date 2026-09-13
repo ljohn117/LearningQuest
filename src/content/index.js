@@ -6,6 +6,7 @@ import { CHEMISTRY } from './chemistry.js';
 import { TEARDOWNS } from './teardowns.js';
 import { MATH_EXTRA } from './math-extra.js';
 import { MATH_ADVANCED } from './math-advanced.js';
+import { STATISTICS } from './statistics.js';
 import { CHEM_DEPTH, PHYSICS_DEPTH, BIO_DEPTH } from './science-depth.js';
 import { ELA_EXTRA, BIO_EXTRA } from './depth.js';
 import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
@@ -37,6 +38,11 @@ for (const [subj, days] of Object.entries(CHECKPOINTS)) append(subj, days);
    ...m19, mr3, m20...m26, mr4 — each block of days followed by its review.
    Appending only: no existing id moves, and nothing above is renumbered. */
 append('math', MATH_ADVANCED);
+
+/* Statistics and probability. Inside the maths lane deliberately: it is a
+   named subject that maps to the world, and it is the next part of
+   mathematics rather than a fourteenth tile on a grid he is 24% through. */
+append('math', STATISTICS);
 
 /* Science depth. These are the first days that declare `readiness` — they
    open on demonstrated understanding of a named earlier day, not on mere

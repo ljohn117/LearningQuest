@@ -1,8 +1,10 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1–6 done, including 6b. 2b partial and parked.
-> EVERY DAY NOW HAS A VISUAL — 0 of 145 are prose-only, held there by a test.
-> Phase 7 (new tracks) is next.**
+> **Status: Phases 1–7 done (2b partial and parked). Every day has a visual.
+> Phase 7 became STATISTICS, inside the maths lane — the original three
+> proposed tracks were rejected by the owner as ad hoc, correctly.
+> NOTHING SINCE PHASE 1 HAS BEEN VALIDATED AGAINST THE LEARNER: he last did
+> a lesson on 2026-09-10 and all seven phases landed after it.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -428,9 +430,57 @@ the viewBox, a `spectrum` label long enough to overlap its neighbour, and a
 `grid` row shorter than its header all now fail the suite. The last three
 each caught a real instance on their first run.
 
-### Phase 7 — New tracks
-In priority order: **How to notice you do not know something** (he finished a
-day at 25% and moved on); **Data & charts that lie**; **History**.
+### Phase 7 — Statistics — DONE
+
+**The three tracks originally proposed here were rejected by the owner as ad
+hoc, and they were right — for three different reasons:**
+
+- *"How to notice you don't know something"* — real pedagogy, no external
+  referent, and it should not be a lane anyway. It belongs distributed inside
+  existing days, and partly already is: the calibration tap, the readiness
+  gates, the explain prompts, Logic 6, Biology 10.
+- *"Data & charts that lie"* — that was **Statistics**, badly named. The cute
+  framing hid an actual named subject.
+- *"History"* — maps cleanly but is a department, not a track. Unscoped.
+
+So Phase 7 became **Statistics and Probability**, eight days appended to the
+Mathematics lane as `m27`–`m33` and `mr5`. Inside the maths lane deliberately:
+it is the next part of mathematics, not a fourteenth tile on a grid the
+learner is 24% of the way through.
+
+| | |
+|---|---|
+| maths days | 30 → **38** |
+| drills | 65 → **70** |
+| new visuals | 8, including a new `twobars` primitive |
+
+Sampling and bias · spread · charts that argue · correlation and cause ·
+combining probabilities · base rates · margin of error · checkpoint.
+
+Five days already existed and are not repeated (m16–m19, mr3 — averages,
+counting, probability, scaling). Those covered the *centre* of a data set and
+basic chance. These cover where the numbers came from, how spread out they
+are, and what follows from them.
+
+`twobars` draws the same two numbers on a zero-based axis and a truncated one,
+side by side. The day's entire claim is that the impression changes while the
+data does not, and that is not something prose can land.
+
+**Two of my own tests caught real problems.** `m33` named a prerequisite with
+no drill, which would have left a readiness gate with only one route through
+it — the missing generator was written. And the "original lanes stay ungated"
+assertion was too coarse: it checked whole lanes, so adding statistics to
+maths tripped a rule that only ever meant to protect days that already
+existed. It now checks the specific day ids frozen when readiness was
+introduced, which is the actual intent — a day he may already have finished
+must never become gated behind a score.
+
+### Remaining named subjects, if tracks are wanted later
+Economics (Business & Money is entrepreneurship, not economics) · History
+(needs scoping: which, and what period) · Environmental Science ·
+Psychology. Skip geography, and skip a world language — an offline app with
+no audio and no conversation partner is the wrong vehicle, and saying so
+beats building something weak.
 
 ### Parked
 - 2b remainder: 228 questions where the correct option is longest by one to
@@ -511,7 +561,7 @@ spatial.
 | 4 — Raise the maths ceiling | **done** 2026-09-13 | maths days **22 → 30**; ceiling **intro quadratics → right-angle trigonometry**; maths reading grade **5.0 (below band) → 5.5 (in band)**; drills **51 → 58** |
 | 5 — Depth in the science lanes | **done** 2026-09-13 | chemistry **rates → stoichiometry**; physics **no equations → F = ma**; biology **one gene → Punnett squares**; 6 days, 7 drills; **readiness gating introduced** |
 | 6 — Presentation | **done** 2026-09-13 | days with no visual: **94 → 73**; interactive block types: **1 → 3** (`slider` 5 uses / 3 lanes, `order` 5 uses / 5 lanes) |
-| 7 — New tracks | not started | lanes: **13 → 16** |
+| 7 — Statistics | **done** 2026-09-13 | maths days **30 → 38**; a named subject, not a new lane; drills **65 → 70** |
 | — parked — | | 2b remainder; MAX_LEVEL 3 → 6; practice coverage 43/131 |
 
 ## Deferred

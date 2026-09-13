@@ -127,13 +127,14 @@ section('Existing day ids are frozen');
  */
 const FROZEN = {
   math: ['m1','m2','m3','m4','m5','m6','m7','mr1','m8','m9','m10','m11','m12','m13',
-         'm14','mr2','m15','m16','m17','m18','m19','mr3','m20','m21','m22','m23','m24',
-         'm25','m26','mr4'],
+         'm14','mr2','m15','m16','m17','m18','m19','mr3','m20','m21','m22','m23',
+         'm24','m25','m26','mr4','m27','m28','m29','m30','m31','m32','m33','mr5'],
   cs: ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12'],
   physics: ['phy1','phy2','phy3','phy4','phy5','phy6','phyr1','phy7','phy8'],
   logic: ['lg1','lg2','lg3','lg4','lg5','lg6','lgr1'],
   earth: ['es1','es2','es3','es4','es5','es6','esr1'],
-  bio: ['bio1','bio2','bio3','bio4','bio5','bio6','bio7','bio8','bio9','bio10','bio11'],
+  bio: ['bio1','bio2','bio3','bio4','bio5','bio6','bio7','bio8','bio9','bio10',
+        'bio11'],
   chem: ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','chr1','ch11',
          'ch12','ch13'],
   ela: ['ela1','ela2','ela3','ela4','ela5','ela6','ela7','ela8','ela9','ela10'],
@@ -161,7 +162,26 @@ for (const [subj, ids] of Object.entries(FROZEN)) {
  * practice history in the same way. Rewriting all twenty-three generators to
  * add difficulty levels was precisely the kind of edit that could have
  * dropped one without anything failing, so these are frozen too. */
+/* The curriculum as it stood when readiness was introduced. Anything here
+   predates the mechanism and must never acquire a gate. */
+const FROZEN_AT_PHASE_5 = {
+  math: ['m1','m2','m3','m4','m5','m6','m7','mr1','m8','m9','m10','m11','m12','m13','m14','mr2','m15','m16','m17','m18','m19','mr3','m20','m21','m22','m23','m24','m25','m26','mr4'],
+  cs: ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12'],
+  physics: ['phy1','phy2','phy3','phy4','phy5','phy6','phyr1'],
+  logic: ['lg1','lg2','lg3','lg4','lg5','lg6','lgr1'],
+  earth: ['es1','es2','es3','es4','es5','es6','esr1'],
+  bio: ['bio1','bio2','bio3','bio4','bio5','bio6','bio7','bio8','bio9','bio10'],
+  chem: ['ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','chr1'],
+  ela: ['ela1','ela2','ela3','ela4','ela5','ela6','ela7','ela8','ela9','ela10'],
+  biz: ['b1','b2','b3','b4','b5','b6','b7','b8','b9','b10','b11','b12'],
+  gov: ['g1','g2','g3','g4','g5','g6','g7','g8','g9','g10'],
+  fossils: ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10'],
+  connect: ['cx1','cx2','cx3','cx4','cx5','cx6','cx7'],
+  teardown: ['td1','td2','td3','td4','td5','td6'],
+};
+
 const FROZEN_DRILLS = [
+  'm27a', 'm28a', 'm31a', 'm32a', 'm33a',
   'ch6a',
   'ch11a', 'ch12a', 'ch13a', 'phy7a', 'phy8a', 'bio11a',
   'm20a', 'm21a', 'm22a', 'm23a', 'm24a', 'm25a', 'm26a',
@@ -372,6 +392,7 @@ const FROZEN_WRITE_IDS = [
   'x-cx1', 'x-cx2', 'x-cx5', 'x-cx7',
   'x-td1', 'x-td2', 'x-td4', 'x-td6',
   'x-m20', 'x-m21', 'x-m23', 'x-m24', 'x-m26', 'x-mr4',
+  'x-m27', 'x-m29', 'x-m30', 'x-m32', 'x-mr5',
 ];
 
 const liveWrites = [];
@@ -495,6 +516,14 @@ section('Quiz order is frozen');
  * may only be APPENDED. This guard exists specifically so that retiring the
  * 116 true/false questions (roadmap phase 2) cannot shift a single index. */
 const FROZEN_QUIZ_LENGTHS = {
+  "math:m27": 5,
+  "math:m28": 5,
+  "math:m29": 5,
+  "math:m30": 5,
+  "math:m31": 5,
+  "math:m32": 5,
+  "math:m33": 5,
+  "math:mr5": 6,
   "physics:phy7": 5,
   "physics:phy8": 5,
   "bio:bio11": 5,
@@ -957,11 +986,22 @@ for (const { day } of depthDays) {
   }
 }
 
-/* The original spine must stay ungated. */
-const ORIGINAL_LANES = ['math', 'cs', 'logic', 'earth', 'ela', 'biz', 'gov', 'fossils', 'connect', 'teardown'];
-for (const subj of ORIGINAL_LANES) {
-  const gated = CURRICULUM[subj].days.filter((d) => d.readiness && d.readiness.length);
-  eq(`${subj} has no readiness gates`, gated.length, 0);
+/* The original spine must stay ungated.
+ *
+ * This first checked whole lanes, which was too coarse: adding statistics to
+ * the maths lane put readiness on NEW maths days and tripped an assertion
+ * that was only ever meant to protect the days that already existed. What
+ * matters is that no day HE HAS ALREADY MET becomes gated behind a score —
+ * that would be moving a goalpost after the fact, which is the one thing
+ * this rule exists to forbid. New days may gate on old ones freely. */
+const ORIGINAL_DAYS = new Set(Object.entries(FROZEN_AT_PHASE_5).flatMap(([s2, ids]) => ids.map((i) => s2 + ':' + i)));
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  for (const day of lane.days) {
+    if (!day.readiness || !day.readiness.length) continue;
+    ok(`${subj}:${day.id} is a new day, not a retro-gated one`,
+      !ORIGINAL_DAYS.has(subj + ':' + day.id),
+      'a day he may already have finished must never become gated');
+  }
 }
 
 const shakyProfile = { completed: { 'chem:ch5': { best: 2, total: 5 }, 'chem:ch6': { best: 2, total: 4 } }, practice: {} };
