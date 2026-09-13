@@ -13,6 +13,7 @@ import { CHECKPOINTS } from './checkpoints.js';
 import { SPIRAL, WRITING, SCALE } from './spiral.js';
 import { EXPLAIN } from './explain.js';
 import { VISUALS } from './visuals.js';
+import { INTERACTIVE } from './interactive.js';
 
 /* Merged curriculum. Subject keys are distinct across all sources and every
    day id is unique, so the merge cannot collide.
@@ -81,6 +82,23 @@ for (const lane of Object.values(merged)) {
       const mine = adds.filter((a) => (a.page ?? 0) === i);
       if (!mine.length) return p;
       return { ...p, blocks: [...p.blocks, ...mine.map(({ page, ...spec }) => ({ type: 'visual', ...spec }))] };
+    });
+    return { ...day, pages };
+  });
+}
+
+/* Sliders and sequences, onto the page that introduces the relationship or
+   the order they make manipulable. Same safety as visuals: neither block
+   carries a progress key, quiz arrays are untouched, and write prompts are
+   filed by id rather than position. */
+for (const lane of Object.values(merged)) {
+  lane.days = lane.days.map((day) => {
+    const adds = INTERACTIVE[day.id];
+    if (!adds) return day;
+    const pages = day.pages.map((p, i) => {
+      const mine = adds.filter((a) => (a.page ?? 0) === i);
+      if (!mine.length) return p;
+      return { ...p, blocks: [...p.blocks, ...mine.map(({ page, ...spec }) => ({ ...spec }))] };
     });
     return { ...day, pages };
   });

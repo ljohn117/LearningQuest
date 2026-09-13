@@ -30,6 +30,8 @@ const { drillForDay } = await import('../src/engine/drills.js');
 const { suggestedDrill } = await import('../src/engine/suggest.js');
 const { isReady, readinessNote, MASTERY_STREAK } = await import('../src/engine/readiness.js');
 const { VISUALS } = await import('../src/content/visuals.js');
+const { INTERACTIVE } = await import('../src/content/interactive.js');
+const { evalExpr, showNum } = await import('../src/engine/expr.js');
 const { migrateWriting } = await import('../src/store.js');
 const { writeKeyFor } = await import('../src/engine/writekey.js');
 const { LADDERS, rungEarned } = await import('../src/content/ladder.js');
@@ -984,6 +986,77 @@ ok('the note never says locked or failed', !/lock|fail|cannot|not allowed/i.test
 const m1 = CURRICULUM.math.days.find((d) => d.id === 'm1');
 ok('an ordinary day is always ready', isReady({ completed: {}, practice: {} }, m1));
 eq('an ordinary day produces no note', readinessNote({ completed: {} }, m1), null);
+
+/* ---- two more ways to learn -------------------------------------------- */
+section('Some ideas are manipulated, not read');
+
+/* The app had one interactive block type, used six times, all in one lane.
+ * 36% of blocks were plain text and pages averaged 2.1 blocks — nearer a
+ * slide than a lesson. Some ideas are not statements: "doubling the side
+ * multiplies the volume by eight" is a relationship to feel by dragging, and
+ * "oldest at the bottom" is an order to produce rather than recognise. */
+const interactive = { slider: [], order: [] };
+const laneOf = {};
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  for (const day of lane.days) for (const p of day.pages) for (const b of p.blocks) {
+    if (b.type === 'slider' || b.type === 'order') {
+      interactive[b.type].push({ b, day: day.id });
+      (laneOf[b.type] = laneOf[b.type] || new Set()).add(subj);
+    }
+  }
+}
+ok('sliders are used on several days', interactive.slider.length >= 4, `${interactive.slider.length} uses`);
+ok('sequences are used on several days', interactive.order.length >= 4, `${interactive.order.length} uses`);
+ok('sliders span at least three lanes', (laneOf.slider || new Set()).size >= 3, `${(laneOf.slider || new Set()).size} lanes`);
+ok('sequences span at least three lanes', (laneOf.order || new Set()).size >= 3, `${(laneOf.order || new Set()).size} lanes`);
+
+/* A mistyped formula renders a silent dash rather than crashing, which is
+   merciful at runtime and useless for finding the typo. So every expression
+   is evaluated here, across its slider's actual range. */
+for (const { b, day } of interactive.slider) {
+  const min = b.min ?? 1, max = b.max ?? 10;
+  for (const o of b.outputs || []) {
+    const vals = [min, (min + max) / 2, max].map((x) => evalExpr(o.expr, x));
+    ok(`${day}: "${o.expr}" evaluates across the whole range`,
+      vals.every((v) => Number.isFinite(v)), `got ${vals.map(showNum).join(', ')}`);
+  }
+  ok(`${day}: the slider starts inside its own range`,
+    (b.start ?? min) >= min && (b.start ?? min) <= max, `start ${b.start} outside ${min}..${max}`);
+  ok(`${day}: the slider has at least one output`, (b.outputs || []).length >= 1);
+}
+
+/* A sequence needs enough items to be worth ordering, and no duplicates —
+   two identical rows make one of them impossible to place. */
+for (const { b, day } of interactive.order) {
+  ok(`${day}: the sequence has at least three steps`, (b.items || []).length >= 3, `${(b.items || []).length} items`);
+  const uniq = new Set((b.items || []).map((x) => String(x).trim().toLowerCase()));
+  eq(`${day}: no step is repeated`, uniq.size, (b.items || []).length);
+  ok(`${day}: the sequence says what to do`, typeof b.task === 'string' && b.task.length > 10);
+}
+
+/* Neither block may become a progress key or a score. They are manipulatives
+   — the digital equivalent of blocks on a table, which nobody marks. */
+const interSrc = readFileSync(new URL('../src/engine/Interactive.jsx', import.meta.url), 'utf8');
+ok('the interactive blocks never touch storage', !/localStorage|lq_v3/.test(interSrc));
+ok('the interactive blocks never record progress', !/onWrite|completed|practice\[|xp\b/.test(interSrc));
+/* Comments stripped: this tests the words he READS. The same assertion on the
+   offer card once failed on its own explanatory comment, which measures the
+   wrong thing. */
+const interText = interSrc.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
+ok('an unsolved sequence is not scolded', !/(wrong|incorrect|try again|failed|not quite)/i.test(interText),
+  'getting it out of order is the ordinary state of working on it');
+ok('the sequence is keyboard reachable', /aria-label=\{`Move/.test(interSrc), 'drag-only would exclude keyboards and be unreliable on touch');
+ok('the slider is a real range input', /type="range"/.test(interSrc));
+
+/* The evaluator itself. */
+eq('expr: multiplication', evalExpr('x*2', 5), 10);
+eq('expr: powers are right-associative', evalExpr('2^3^2', 0), 512);
+eq('expr: parentheses', evalExpr('(x+1)*2', 4), 10);
+eq('expr: division', evalExpr('60/x', 4), 15);
+eq('expr: decimals', evalExpr('1000*1.05^x', 0), 1000);
+ok('expr: junk yields NaN rather than throwing', Number.isNaN(evalExpr('wat', 1)));
+eq('showNum trims noise', showNum(12.000000000000002), '12');
+eq('showNum shows a dash for NaN', showNum(NaN), '—');
 
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);

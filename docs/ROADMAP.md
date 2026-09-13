@@ -1,8 +1,8 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1–5 done (2b partial and parked). Phase 5 also introduced
-> READINESS — the first days that open on demonstrated understanding rather
-> than completion, at the owner's request. Phase 6 (presentation) is next.**
+> **Status: Phases 1–6 done (2b partial and parked). Phase 7 (new tracks) is
+> next. Days without a visual are down to 73 of 145 — the remaining 73 are
+> the honest continuation of Phase 6 if presentation is still the priority.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -353,10 +353,47 @@ numbers work is worse than no drill. Another had a train "slow" from 12 m/s to
 −12 m/s. A Punnett question offered "all Bb" and "all bb" as separate options,
 differing only by case and genuinely easy to misread.
 
-### Phase 6 — Presentation (next)
-Two new block types (`slider`, `order`), and visuals for the remaining
-**85 of 131 days without one**. Block mix today is 36% plain text, 22%
-callout, **5% visual** — the app is still mostly prose with boxes round it.
+### Phase 6 — Presentation — DONE
+
+Two new interactive block types, plus 21 more days given a diagram.
+
+**`slider`** — drag one number and watch what depends on it move. Formulas
+travel with the content as strings, evaluated by a tiny recursive-descent
+parser in `src/engine/expr.js` (numbers, `x`, `+ - * / ^`, parentheses; no
+`eval`, no `Function`). So a new slider is a data edit, not a new component.
+Five uses across three lanes — cube scaling, slope, exponential growth,
+F = ma, and compound against simple interest over forty years.
+
+**`order`** — produce a sequence rather than recognise one. Rock layers,
+an algorithm, a bill becoming law, the water cycle, a food chain. Moved with
+buttons rather than drag: drag is unreliable on touch and invisible to a
+keyboard, and this has to work on a phone.
+
+Neither block stores anything, neither is scored, and nothing depends on
+whether he touches them — asserted by test. An unsolved sequence says
+**nothing**; getting it out of order is the ordinary state of working on it,
+and an app that comments on that is an app that punishes trying.
+
+**Days with no visual: 94 → 73.** Twenty-one days gained one using primitives
+that already existed — exponent laws, scientific notation, square roots, the
+mean-versus-median trap, factoring, binary place values, ionic bonding,
+reading a formula, the pH scale, the if-then truth table, word parts, levels
+of government, what taxes buy, the geologic time scale, dating methods,
+profit, markup, taxonomy, and powers of two.
+
+**Two things caught by looking rather than testing:** the sequence row let its
+arrow buttons stretch and squeezed every label to one word per line — every
+assertion passed. And the browser check's first sort driver clicked every
+"up" button, which rotates a list rather than sorting it, so it never reached
+the solved state it was asserting on.
+
+New tooling: `npm run interactive-check` drags a real slider, sorts a real
+sequence, and writes `slider.png` / `order.png`, because layout is not
+correctness.
+
+### Remaining
+73 days still have no visual. Block mix is still text-heavy. This is the
+honest continuation of Phase 6 whenever presentation is the priority again.
 
 ### Phase 7 — New tracks
 In priority order: **How to notice you do not know something** (he finished a
@@ -440,7 +477,7 @@ spatial.
 | 3 — Route him to practice | **done** 2026-09-13 | teardown days open to him: **0 → 6**; weakest-day drill now named on the dashboard and offered after a low score |
 | 4 — Raise the maths ceiling | **done** 2026-09-13 | maths days **22 → 30**; ceiling **intro quadratics → right-angle trigonometry**; maths reading grade **5.0 (below band) → 5.5 (in band)**; drills **51 → 58** |
 | 5 — Depth in the science lanes | **done** 2026-09-13 | chemistry **rates → stoichiometry**; physics **no equations → F = ma**; biology **one gene → Punnett squares**; 6 days, 7 drills; **readiness gating introduced** |
-| 6 — Presentation | not started | days with no visual: **85 → ?**; interactive block types: **1 → 3** |
+| 6 — Presentation | **done** 2026-09-13 | days with no visual: **94 → 73**; interactive block types: **1 → 3** (`slider` 5 uses / 3 lanes, `order` 5 uses / 5 lanes) |
 | 7 — New tracks | not started | lanes: **13 → 16** |
 | — parked — | | 2b remainder; MAX_LEVEL 3 → 6; practice coverage 43/131 |
 

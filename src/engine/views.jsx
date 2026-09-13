@@ -5,6 +5,7 @@ import { writeKeyFor } from './writekey.js';
 import { suggestedDrill } from './suggest.js';
 import { readinessNote } from './readiness.js';
 import { drillForDay } from './drills.js';
+import { SliderBlock, OrderBlock } from './Interactive.jsx';
 import { play, soundOn, setSound } from './sound.js';
 import { Visual } from './Visual.jsx';
 import { Question } from './Question.jsx';
@@ -504,6 +505,8 @@ export function Block({ b, accent, delay, writeKey, writing, onWrite }) {
   );
   if (b.type === 'visual') return <div className="lq-rise" style={base}><Visual v={b} accent={accent} /></div>;
   if (b.type === 'codelab') return <CodeLab b={b} accent={accent} />;
+  if (b.type === 'slider') return <SliderBlock b={b} accent={accent} />;
+  if (b.type === 'order') return <OrderBlock b={b} accent={accent} />;
   if (b.type === 'write') return (
     <WriteBlock b={b} accent={accent}
       value={writing?.[writeKey]}
