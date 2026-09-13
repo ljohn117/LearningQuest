@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ArrowLeft, BookOpen, Check, ChevronLeft, ChevronRight, Eye, Flame, HelpCircle, Lock, Play, Rocket, RotateCcw, Ruler, Shuffle, AlertTriangle, Volume2, VolumeX, Sparkles, Star, Target, Terminal, Trophy, Users, Zap } from 'lucide-react';
 import { S } from './styles.jsx';
 import { writeKeyFor } from './writekey.js';
+import { suggestedDrill } from './suggest.js';
+import { drillForDay } from './drills.js';
 import { play, soundOn, setSound } from './sound.js';
 import { Visual } from './Visual.jsx';
 import { Question } from './Question.jsx';
@@ -112,6 +114,7 @@ export function SoundToggle() {
 }
 
 export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onLadder, onReset, onRestore, onSetName, onSwitch, onBackedUp, isDemo }) {
+  const suggested = suggestedDrill(state);
   const [confirm, setConfirm] = useState(false);
   const [editing, setEditing] = useState(false);
   const [backing, setBacking] = useState(false);
@@ -188,7 +191,11 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
         <div style={{ ...S.subjIcon, background: '#f6b73c22', border: '1px solid #f6b73c55' }}><Target size={22} color="#f6b73c" /></div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={S.subjName}>Battle a guardian</div>
-          <div style={S.subjBlurb}>Endless fresh practice questions from every math skill you have unlocked.</div>
+          <div style={S.subjBlurb}>
+            {suggested
+              ? `Fresh questions, nothing to memorise. ${suggested.drill.name} is a good one to try.`
+              : 'Endless fresh practice questions from every skill you have unlocked.'}
+          </div>
         </div>
         <ChevronRight size={18} color="#5b6275" />
       </button>
@@ -574,7 +581,7 @@ export function Calibration({ accent, value, onRate }) {
   );
 }
 
-export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue, sessionMinutes, rating, onRate, skipSpent = 0, next }) {
+export function ResultsView({ subj, day, correct, earned, leveledTo, userName, onContinue, sessionMinutes, rating, onRate, skipSpent = 0, next, onDrill }) {
   useEffect(() => { if (leveledTo) play('level'); }, [leveledTo]);
   const accent = CURRICULUM[subj].accent;
   const total = day.quiz.length, perfect = correct === total;
@@ -600,6 +607,29 @@ export function ResultsView({ subj, day, correct, earned, leveledTo, userName, o
       )}
 
       {onRate && <Calibration accent={accent} value={rating} onRate={onRate} />}
+
+      {/* An offer of more practice, shown when the score suggests the idea has
+          not landed yet and a generator exists for it.
+          
+          Tone is the whole design here. It never says he did badly, never
+          says he should, and never blocks Continue — a day is finished when
+          he finishes it, and that rule does not bend. It names the thing and
+          points at the door. He had finished 35 days and opened zero duels
+          before this existed, not because he refused but because nothing
+          ever mentioned them. */}
+      {onDrill && correct / total < 0.6 && drillForDay(subj, day.id) && (
+        <button className="lq-rise lq-tap" onClick={() => onDrill(drillForDay(subj, day.id).id)}
+          style={{ ...S.cardBtn, ...S.teaser, animationDelay: '.38s', borderColor: '#f6b73c55',
+                   textAlign: 'left', width: '100%', cursor: 'pointer' }}>
+          <span style={{ ...S.teaserLbl, color: '#f6b73c' }}>MORE OF THIS, IF YOU WANT IT</span>
+          <span style={{ color: '#e7e9f0', fontSize: 14.5 }}>
+            {drillForDay(subj, day.id).name} duel
+          </span>
+          <span style={{ ...S.muted, fontSize: 13.5, lineHeight: 1.5 }}>
+            Fresh questions every time, so there is nothing to memorise. Takes a couple of minutes.
+          </span>
+        </button>
+      )}
 
       {/* One line about what is next. An unfinished thing is easier to come
           back to than a finished one, and this costs a sentence. */}

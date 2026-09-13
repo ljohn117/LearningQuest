@@ -26,6 +26,8 @@ const { CURRICULUM, SUBJECT_ORDER } = await import('../src/content/index.js');
 const { COMPANIONS } = await import('../src/content/companions.js');
 const { SPIRAL, WRITING, SCALE } = await import('../src/content/spiral.js');
 const { EXPLAIN } = await import('../src/content/explain.js');
+const { drillForDay } = await import('../src/engine/drills.js');
+const { suggestedDrill } = await import('../src/engine/suggest.js');
 const { VISUALS } = await import('../src/content/visuals.js');
 const { migrateWriting } = await import('../src/store.js');
 const { writeKeyFor } = await import('../src/engine/writekey.js');
@@ -837,6 +839,61 @@ for (const q of mcs) {
     String(q.choices[q.answer]).includes(want),
     `answer ${q.answer} is "${q.choices[q.answer]}" — a permutation moved choices without moving answer`);
 }
+
+/* ---- routing him to the practice that exists --------------------------- */
+section('The practice engine is reachable from where he actually is');
+
+/* He finished 35 days and played zero duels. Twenty-two drills were unlocked
+ * and had never been opened — not refused, just never mentioned anywhere he
+ * was looking. Six of his nine weakest days have a generator sitting right
+ * there producing fresh questions on exactly what he missed. */
+eq('a day with a drill resolves to it', drillForDay('math', 'm15')?.id, 'm15a');
+eq('a day without one resolves to nothing', drillForDay('ela', 'ela1'), undefined);
+
+/* The suggestion names his weakest finished day that has a drill — not the
+   most recent, and not just any unlocked one. */
+const fakeProfile = {
+  completed: {
+    'math:m15': { best: 1, total: 4 },   // 25% — worst, and has a drill
+    'math:m12': { best: 2, total: 5 },   // 40% — has a drill
+    'ela:ela1': { best: 1, total: 4 },   // 25% but NO drill exists
+    'math:m1':  { best: 5, total: 5 },   // fine, must not be suggested
+  },
+};
+eq('it suggests the weakest day that has a drill', suggestedDrill(fakeProfile)?.drill?.id, 'm15a');
+eq('a day with no drill is skipped, not crashed on', suggestedDrill({ completed: { 'ela:ela1': { best: 1, total: 4 } } }), null);
+eq('nothing is suggested when nothing is shaky', suggestedDrill({ completed: { 'math:m1': { best: 5, total: 5 } } }), null);
+eq('an empty profile suggests nothing', suggestedDrill({}), null);
+eq('a junk profile does not crash', suggestedDrill(null), null);
+
+/* The offer must never become a punishment. Finishing stays unconditional. */
+const viewsSrc = readFileSync(new URL('../src/engine/views.jsx', import.meta.url), 'utf8');
+/* Comments stripped first: this must test the words he READS, not the
+   commentary explaining why they were chosen. The first version of this
+   assertion failed on its own code comment, which is a test measuring the
+   wrong thing rather than a real finding. */
+const stripComments = (t) => t.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
+const at = viewsSrc.indexOf('MORE OF THIS, IF YOU WANT IT');
+const offer = stripComments(viewsSrc.slice(at - 200, at + 700));
+ok('the offer is shown only below 60%', /correct \/ total < 0\.6/.test(stripComments(viewsSrc)));
+ok('the offer never scolds', !/(wrong|failed|poor|badly|should have|try harder|weak)/i.test(offer), 'a wrong answer must never be punished');
+ok('Continue is never gated behind the offer', /onClick=\{onContinue\}/.test(viewsSrc));
+
+/* ---- teardowns are reachable ------------------------------------------- */
+section('The most engaging lane is no longer the most locked');
+
+/* Every teardown needed TWO prerequisites, and the lane was the only fully
+ * locked one in the app: 0 of 6 days open to him. Loosening can only ever
+ * unlock — each day now needs one prerequisite, and where a requirement was
+ * replaced it was replaced by an EARLIER day in the same lane, which anyone
+ * who satisfied the original necessarily also has. */
+for (const day of CURRICULUM.teardown.days) {
+  ok(`teardown ${day.id} needs at most one prerequisite`,
+    !day.requires || day.requires.length <= 1, `needs ${JSON.stringify(day.requires)}`);
+}
+const hisDays = new Set(['math:m1','math:m2','math:m3','math:m4','math:m5','cs:c1','math:m6','math:m7','math:mr1','math:m8','physics:phy1','math:m9','cs:c2','math:m10','bio:bio1','earth:es1','logic:lg1','bio:bio2','math:m11','chem:ch1','fossils:f1','fossils:f2','math:m12','math:m13','physics:phy2','biz:b1','gov:g1','math:m14','math:mr2','gov:g2','math:m15','math:m16','logic:lg2','ela:ela1','gov:g3']);
+const openToHim = CURRICULUM.teardown.days.filter((d) => !d.requires || d.requires.every((r) => hisDays.has(r))).length;
+ok('teardowns are open on a real profile', openToHim >= 5, `only ${openToHim} of 6 open`);
 
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);

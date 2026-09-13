@@ -42,7 +42,7 @@ export const TEARDOWNS = {
       {
         id: 'td1', tag: 'Teardown', title: 'A Pencil',
         subtitle: 'Graphite · Rock · Cost',
-        requires: ['chem:ch4', 'fossils:f3'],
+        requires: ['chem:ch1'],
         pages: [
           { title: 'The least interesting object in the room', blocks: [
             { type: 'text', text: 'A wooden stick with grey stuff in the middle. Nobody has ever wondered how a pencil works. So here is the question nobody asks: why does the grey stuff come off on the paper, but the wood does not?' },
@@ -85,7 +85,7 @@ export const TEARDOWNS = {
       {
         id: 'td2', tag: 'Teardown', title: 'A Bicycle',
         subtitle: 'Gears · Forces · Where the energy goes',
-        requires: ['math:m1', 'physics:phy3'],
+        requires: ['math:m1'],
         pages: [
           { title: 'Why does changing gear help at all?', blocks: [
             { type: 'text', text: 'You are pedalling the same legs at roughly the same speed either way. The hill did not get shorter. So what exactly does a gear change do?' },
@@ -128,7 +128,7 @@ export const TEARDOWNS = {
       {
         id: 'td3', tag: 'Teardown', title: 'A Loaf of Bread',
         subtitle: 'Living things · Gas · Temperature',
-        requires: ['chem:ch10', 'bio:bio9'],
+        requires: ['bio:bio1'],
         pages: [
           { title: 'Why is it full of holes?', blocks: [
             { type: 'text', text: 'Flour and water make a dense paste. Bread is mostly air. Something put thousands of separate bubbles inside that paste and then made them stay there.' },
@@ -171,7 +171,7 @@ export const TEARDOWNS = {
       {
         id: 'td4', tag: 'Teardown', title: 'The Battery in Your Hand',
         subtitle: 'Electrons · Ions · Stored energy',
-        requires: ['chem:ch4', 'physics:phy4'],
+        requires: ['chem:ch1'],
         pages: [
           { title: 'What is actually stored in a charged battery?', blocks: [
             { type: 'text', text: 'Not electricity. You cannot put electricity in a box any more than you can put a push in a box. Something else is in there, and it is chemical.' },
@@ -214,7 +214,7 @@ export const TEARDOWNS = {
       {
         id: 'td5', tag: 'Teardown', title: 'The Screen You Are Touching',
         subtitle: 'Charge · Coordinates · Numbers',
-        requires: ['chem:ch3', 'cs:c5'],
+        requires: ['cs:c2'],
         pages: [
           { title: 'How does glass know where your finger is?', blocks: [
             { type: 'text', text: 'The screen is sealed. Your finger never touches anything electrical. And yet it knows where you tapped, to within a millimetre, sixty times a second.' },
@@ -257,7 +257,7 @@ export const TEARDOWNS = {
       {
         id: 'td6', tag: 'Teardown', title: 'Water From the Tap',
         subtitle: 'The cycle · What is dissolved in it · Who pays',
-        requires: ['earth:es3', 'chem:ch9'],
+        requires: ['earth:es1'],
         pages: [
           { title: 'Where was this water last week?', blocks: [
             { type: 'text', text: 'It came out of a tap. Before that, a pipe. Before that — and this is the part worth sitting with — it was somewhere specific, and not long ago, and it has been through this before.' },

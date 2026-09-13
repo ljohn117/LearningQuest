@@ -716,3 +716,21 @@ export const MATH_DRILLS = [
       return { prompt: `For y = x²${c ? ' + ' + c : ''}, what is y when x = ${k}?`, answer: k * k + c,
         hint: 'Square the input first — a negative squared turns positive.' }; } },
 ];
+
+/* Which drill, if any, practises a given day.
+ *
+ * WHY THIS EXISTS
+ *
+ * The first look at his real progress showed he had finished 35 days and
+ * played ZERO duels. Twenty-two drills were unlocked and had never been
+ * opened. The practice engine was not weak — it was invisible, sitting below
+ * the lane list on a screen he scrolls past.
+ *
+ * Nine of those 35 days were finished under 60%, and six of the nine have a
+ * drill sitting right there that generates fresh questions on exactly the
+ * thing he missed. Nothing connected the two. This is that connection.
+ *
+ * Returns undefined when a day has no drill, which is still true for 88 of
+ * 131 days — the caller must handle that rather than assume one exists. */
+export const drillForDay = (subj, dayId) =>
+  [...MATH_DRILLS, ...EXTRA_DRILLS].find((d) => d.subj === subj && d.day === dayId);

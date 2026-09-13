@@ -245,6 +245,9 @@ export default function App() {
       {view.name === 'results' && (
         <ResultsView subj={view.subj} day={view.day} correct={view.correct} earned={view.earned} userName={profile.name}
           leveledTo={profile._leveledTo}
+          /* Straight into the matching duel. The offer is only shown when one
+             exists, so this never lands on a missing drill. */
+          onDrill={(drillId) => setView({ name: 'duel', drillId, allyKey: null })}
           sessionMinutes={view.from === 'daily' && sessionStart.current ? (Date.now() - sessionStart.current) / 60000 : 0}
           skipSpent={profile._skipSpent || 0}
           next={(() => {

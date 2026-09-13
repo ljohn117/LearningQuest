@@ -1,8 +1,10 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1 and 2 done. Phase 2b is PARTIAL — three of its four
-> targets met, one not. Finish 2b, or move to Phase 3; both are defensible.
-> See the outcome section under Phase 2b before choosing.**
+> **Status: Phases 1, 2 and 3 done. 2b partial (one target unmet, and now
+> deprioritised — the owner can steer the behaviour it was guarding against).
+> DIRECTION CHANGED after Phase 3: the remaining phases are re-ordered around
+> content depth beyond middle school, presentation, and new tracks. See
+> "Revised direction" below.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -230,6 +232,77 @@ least one day open given his real profile; `smoke` covers the offer path.
 **Guardrails.** Loosening `requires` can only unlock, never lock. Assert no
 day that was open becomes closed.
 
+### Outcome
+
+Teardowns went from **0 of 6 open to 6 of 6** on his real profile. Each day
+dropped from two prerequisites to one, and where a requirement was *replaced*
+rather than removed it was replaced by an **earlier day in the same lane** —
+since lanes unlock sequentially, anyone who satisfied the original
+necessarily satisfies the substitute, so the change can only unlock.
+
+The dashboard duel card now names his weakest finished day that has a
+generator, instead of saying "every skill you have unlocked". On his profile
+that reads *"Percent Change is a good one to try"* — the day he scored 1/4 on.
+
+After a day finishing under 60%, the results screen offers the matching drill
+by name. It never says he did badly, never says he should, and never gates
+Continue; a test strips code comments and asserts the visible words contain no
+scolding vocabulary. (The first version of that test failed on its own
+comment, which was the test measuring the wrong thing rather than a finding.)
+
+`suggestedDrill` lives in a plain `.js` module so the suite can import it —
+Node cannot parse JSX, a trap this project has hit before.
+
+---
+
+## Revised direction (2026-09-13)
+
+The owner can influence the behaviour Phase 3 was compensating for, so
+routing is no longer the constraint. The priority is now **content depth
+beyond middle school**, **presentation quality**, and **new tracks**. The
+phases below are reordered accordingly; 2b's remaining work is parked.
+
+**Where the content actually tops out today** — this is the case for the
+change:
+
+| lane | ceiling |
+|---|---|
+| Mathematics | intro quadratics, scaling — **no Algebra II, no trig, no functions beyond f(x)** |
+| Chemistry | reaction rates — **moles and stoichiometry deliberately omitted** |
+| Physical Science | waves, light, sound — **no equations of motion** |
+| Computer Science | loops and conditionals — **no functions, arrays or data structures** |
+| Biology | microbes, testing a claim — **no genetics beyond a single gene** |
+
+Measured reading level is **6.1 overall**, with Mathematics at **5.0 — below
+the target band**. That is the clearest single signal: the maths lane is
+written more simply than the child reads, while stopping well short of where
+he could go.
+
+### Phase 4 — Raise the maths ceiling
+Algebra II and precalculus: systems in three variables, polynomial factoring,
+rational expressions, exponentials and logs, sequences and series, right-angle
+trigonometry. Appended as new day ids — **never renumbered**. This is the lane
+he lives in (18 of 22 days done) and the one that gates everything else.
+
+### Phase 5 — Depth in the science lanes
+Moles and stoichiometry in Chemistry; equations of motion and energy
+calculations in Physical Science; inheritance beyond one gene in Biology.
+Each extends its lane rather than replacing it.
+
+### Phase 6 — Presentation
+Two new block types (`slider`, `order`), and visuals for the remaining
+**85 of 131 days without one**. Block mix today is 36% plain text, 22%
+callout, **5% visual** — the app is still mostly prose with boxes round it.
+
+### Phase 7 — New tracks
+In priority order: **How to notice you do not know something** (he finished a
+day at 25% and moved on); **Data & charts that lie**; **History**.
+
+### Parked
+- 2b remainder: 228 questions where the correct option is longest by one to
+  nine characters. Not visible to a reader; still countable. Nothing blocks
+  picking this up later.
+
 ---
 
 ## Phase 4 — Two new ways to learn
@@ -300,11 +373,12 @@ spatial.
 |---|---|---|
 | 1 — Make the invisible visible | **done** 2026-09-13 | days with no visual: **92 → 85**; his 9 weak days: 7 without a picture → **0** |
 | 2 — Retire the coin flip | not started | true/false: 116 → ? |
-| 3 — Route him to practice | not started | duels played: 0 → ? |
-| 4 — Two new ways to learn | not started | interactive block types: 1 → ? |
-| 5 — Practice where there is none | not started | coverage: 43/131 → ? |
-| 6 — Raise the ceiling | not started | MAX_LEVEL: 3 → ? |
-| 7 — The lanes that are missing | not started | lanes: 13 → ? |
+| 3 — Route him to practice | **done** 2026-09-13 | teardown days open to him: **0 → 6**; weakest-day drill now named on the dashboard and offered after a low score |
+| 4 — Raise the maths ceiling | not started | maths ceiling: **quadratics → precalculus** |
+| 5 — Depth in the science lanes | not started | chemistry ceiling: **rates → stoichiometry** |
+| 6 — Presentation | not started | days with no visual: **85 → ?**; interactive block types: **1 → 3** |
+| 7 — New tracks | not started | lanes: **13 → 16** |
+| — parked — | | 2b remainder; MAX_LEVEL 3 → 6; practice coverage 43/131 |
 
 ## Deferred
 
