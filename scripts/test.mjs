@@ -464,6 +464,187 @@ const vw = readFileSync(new URL('../src/engine/views.jsx', import.meta.url), 'ut
 ok('a failed copy is not recorded as a backup', /if \(done && days !== null\)/.test(vw),
   'reporting safety that does not exist is worse than reporting none');
 
+/* ---- quiz position is a progress key ----------------------------------- */
+section('Quiz order is frozen');
+
+/* His recall history is keyed `subject:dayId:quizIndex`. That makes a
+ * question's POSITION a progress key, exactly like a day id — and a far
+ * easier one to break, because reordering a quiz array looks like tidying
+ * rather than like data loss.
+ *
+ * Reordering, inserting or deleting silently reattaches every recorded
+ * answer to a different question. A day he struggled on starts reporting a
+ * question he never saw, the warm-up re-asks the wrong thing, and the parent
+ * page shows a concept he is fine with as one he keeps missing. Nothing
+ * errors; the data just quietly starts lying.
+ *
+ * So every day's quiz length is frozen here. A question may be REWRITTEN in
+ * place — index 2 must keep testing what index 2 tested — and new questions
+ * may only be APPENDED. This guard exists specifically so that retiring the
+ * 116 true/false questions (roadmap phase 2) cannot shift a single index. */
+const FROZEN_QUIZ_LENGTHS = {
+  "math:m1": 5,
+  "math:m2": 5,
+  "math:m3": 5,
+  "math:m4": 5,
+  "math:m5": 5,
+  "math:m6": 5,
+  "math:m7": 5,
+  "math:mr1": 7,
+  "math:m8": 5,
+  "math:m9": 5,
+  "math:m10": 5,
+  "math:m11": 5,
+  "math:m12": 5,
+  "math:m13": 5,
+  "math:m14": 5,
+  "math:mr2": 7,
+  "math:m15": 4,
+  "math:m16": 4,
+  "math:m17": 4,
+  "math:m18": 4,
+  "math:m19": 4,
+  "math:mr3": 7,
+  "cs:c1": 4,
+  "cs:c2": 5,
+  "cs:c3": 4,
+  "cs:c4": 4,
+  "cs:c5": 4,
+  "cs:c6": 4,
+  "cs:c7": 4,
+  "cs:c8": 4,
+  "cs:c9": 4,
+  "cs:c10": 4,
+  "cs:c11": 4,
+  "cs:c12": 5,
+  "physics:phy1": 4,
+  "physics:phy2": 4,
+  "physics:phy3": 4,
+  "physics:phy4": 4,
+  "physics:phy5": 4,
+  "physics:phy6": 4,
+  "physics:phyr1": 7,
+  "logic:lg1": 4,
+  "logic:lg2": 4,
+  "logic:lg3": 4,
+  "logic:lg4": 4,
+  "logic:lg5": 4,
+  "logic:lg6": 4,
+  "logic:lgr1": 7,
+  "earth:es1": 4,
+  "earth:es2": 4,
+  "earth:es3": 4,
+  "earth:es4": 4,
+  "earth:es5": 4,
+  "earth:es6": 4,
+  "earth:esr1": 7,
+  "bio:bio1": 4,
+  "bio:bio2": 4,
+  "bio:bio3": 5,
+  "bio:bio4": 5,
+  "bio:bio5": 4,
+  "bio:bio6": 5,
+  "bio:bio7": 4,
+  "bio:bio8": 4,
+  "bio:bio9": 4,
+  "bio:bio10": 4,
+  "chem:ch1": 4,
+  "chem:ch2": 4,
+  "chem:ch3": 4,
+  "chem:ch4": 4,
+  "chem:ch5": 4,
+  "chem:ch6": 4,
+  "chem:ch7": 4,
+  "chem:ch8": 4,
+  "chem:ch9": 4,
+  "chem:ch10": 4,
+  "chem:chr1": 7,
+  "ela:ela1": 4,
+  "ela:ela2": 4,
+  "ela:ela3": 4,
+  "ela:ela4": 4,
+  "ela:ela5": 4,
+  "ela:ela6": 5,
+  "ela:ela7": 4,
+  "ela:ela8": 4,
+  "ela:ela9": 4,
+  "ela:ela10": 4,
+  "biz:b1": 4,
+  "biz:b2": 5,
+  "biz:b3": 5,
+  "biz:b4": 4,
+  "biz:b5": 5,
+  "biz:b6": 4,
+  "biz:b7": 4,
+  "biz:b8": 4,
+  "biz:b9": 4,
+  "biz:b10": 4,
+  "biz:b11": 4,
+  "biz:b12": 5,
+  "gov:g1": 4,
+  "gov:g2": 5,
+  "gov:g3": 4,
+  "gov:g4": 4,
+  "gov:g5": 4,
+  "gov:g6": 4,
+  "gov:g7": 4,
+  "gov:g8": 4,
+  "gov:g9": 4,
+  "gov:g10": 4,
+  "fossils:f1": 4,
+  "fossils:f2": 4,
+  "fossils:f3": 4,
+  "fossils:f4": 5,
+  "fossils:f5": 4,
+  "fossils:f6": 5,
+  "fossils:f7": 4,
+  "fossils:f8": 4,
+  "fossils:f9": 4,
+  "fossils:f10": 4,
+  "connect:cx1": 4,
+  "connect:cx2": 4,
+  "connect:cx3": 4,
+  "connect:cx4": 4,
+  "connect:cx5": 4,
+  "connect:cx6": 4,
+  "connect:cx7": 4,
+  "teardown:td1": 4,
+  "teardown:td2": 4,
+  "teardown:td3": 4,
+  "teardown:td4": 4,
+  "teardown:td5": 4,
+  "teardown:td6": 4
+};
+
+for (const [key, want] of Object.entries(FROZEN_QUIZ_LENGTHS)) {
+  const [subj, dayId] = key.split(':');
+  const day = CURRICULUM[subj]?.days.find((d) => d.id === dayId);
+  ok(`${key} still exists`, !!day, 'a day id vanished — restore it, do not update this list');
+  if (!day) continue;
+  const got = (day.quiz || []).length;
+  ok(`${key} still has ${want} questions`, got >= want,
+    `got ${got} — questions were deleted, which reattaches his recall history to the wrong ones`);
+  ok(`${key} did not shrink or reorder`, got === want || got > want,
+    'only appending is safe');
+}
+
+/* Every question must still be answerable and still teach on a miss. */
+let missingExplain = 0, missingHint = 0, badAnswer = 0;
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  for (const day of lane.days) {
+    for (const q of day.quiz || []) {
+      if (!q.explain) missingExplain++;
+      if (!q.hint) missingHint++;
+      if (q.type === 'mc' && !(Number.isInteger(q.answer) && q.choices && q.answer < q.choices.length)) badAnswer++;
+      if (q.type === 'tf' && typeof q.answer !== 'boolean') badAnswer++;
+      if (q.type === 'numeric' && typeof q.answer !== 'number') badAnswer++;
+    }
+  }
+}
+eq('every question explains itself after a miss', missingExplain, 0);
+eq('every question offers a hint', missingHint, 0);
+eq('every answer is well formed for its type', badAnswer, 0);
+
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);
 if (fails.length) { for (const f of fails) console.log('  FAIL ' + f); process.exit(1); }
