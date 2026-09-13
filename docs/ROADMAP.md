@@ -1,8 +1,8 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1–6 done (2b partial and parked). Phase 7 (new tracks) is
-> next. Days without a visual are down to 73 of 145 — the remaining 73 are
-> the honest continuation of Phase 6 if presentation is still the priority.**
+> **Status: Phases 1–6 done, including 6b. 2b partial and parked.
+> EVERY DAY NOW HAS A VISUAL — 0 of 145 are prose-only, held there by a test.
+> Phase 7 (new tracks) is next.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -391,9 +391,37 @@ New tooling: `npm run interactive-check` drags a real slider, sorts a real
 sequence, and writes `slider.png` / `order.png`, because layout is not
 correctness.
 
-### Remaining
-73 days still have no visual. Block mix is still text-heavy. This is the
-honest continuation of Phase 6 whenever presentation is the priority again.
+### Phase 6b — finish the visuals — DONE
+
+At the owner's instruction, before any new tracks. **73 → 0.** Every one of
+the 145 days now carries at least one diagram, and a test fails the build if
+a new day is added without one, so the gap cannot quietly reopen.
+
+Three more primitives, chosen because they unlock clusters the existing set
+could not reach:
+
+- **`layers`** — a cross-section, stacked or concentric. Earth's interior, a
+  pencil, a battery, a touchscreen, how a fossil forms. "What is inside what"
+  is a picture, not a sentence.
+- **`codeshape`** — code with its parts named. A `for` loop packs three jobs
+  into one line, and pointing at them beats describing them. Serves six
+  Computer Science days, which was the second-worst lane.
+- **`spectrum`** — a line with named zones, for things that are not true or
+  false but somewhere along a range: the electromagnetic spectrum, formality
+  of tone, how protected a kind of speech is.
+
+Block mix moved from 5% visual / 36% plain text to roughly 15% / 30%, and
+both thresholds are now asserted.
+
+**Two things caught by looking, not by testing.** `codeshape` right-anchored
+its annotations on the same row as the code, so a normal-length line ran
+straight into its own label — every assertion passed. And the palest zone of
+a `spectrum` had dark text on a nearly dark band.
+
+New shape guards: a `layers` with no items, a `codeshape` line too long for
+the viewBox, a `spectrum` label long enough to overlap its neighbour, and a
+`grid` row shorter than its header all now fail the suite. The last three
+each caught a real instance on their first run.
 
 ### Phase 7 — New tracks
 In priority order: **How to notice you do not know something** (he finished a

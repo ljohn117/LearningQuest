@@ -539,5 +539,118 @@ export function Visual({ v, accent }) {
     </>, 158);
   }
 
+  /* ---- primitives added to close the prose-only gap ---------------------
+     73 days still had no picture. These three unlock the clusters the
+     existing set could not reach: layered objects, code, and spectrums. */
+
+  /* A layered object, either stacked or concentric. Earth's interior, a
+     pencil, a battery, a touchscreen — all of them are "what is inside what",
+     which is a cross-section and not a sentence. */
+  if (v.kind === 'layers') {
+    const items = v.items || [];
+    const concentric = v.shape === 'concentric';
+    const h = concentric ? 190 : 34 + items.length * 30 + (v.caption ? 24 : 8);
+    if (concentric) {
+      const cx = 84, cy = 92, rMax = 66;
+      return wrap(<>
+        {items.map((it, i) => {
+          const r = rMax * (1 - i / items.length);
+          return <circle key={i} cx={cx} cy={cy} r={r} fill={it.color || '#2a2f3d'}
+                         stroke="#0c0e16" strokeWidth="1.5" />;
+        })}
+        {items.map((it, i) => {
+          const y = 34 + i * 26;
+          return (
+            <g key={'l' + i}>
+              <rect x={168} y={y - 9} width={11} height={11} rx={2} fill={it.color || '#2a2f3d'} />
+              <text x={185} y={y} fill="#e7e9f0" fontSize="11" fontFamily="JetBrains Mono, monospace">{it.name}</text>
+              {it.note && <text x={185} y={y + 11} fill="#8b91a3" fontSize="9" fontFamily="JetBrains Mono, monospace">{it.note}</text>}
+            </g>
+          );
+        })}
+        {v.caption && <text x="160" y={178} textAnchor="middle" fill="#8b91a3" fontSize="10"
+              fontFamily="JetBrains Mono, monospace">{v.caption}</text>}
+      </>, h);
+    }
+    return wrap(<>
+      {items.map((it, i) => {
+        const y = 14 + i * 30;
+        return (
+          <g key={i}>
+            <rect x={14} y={y} width={92} height={24} rx={5} fill={it.color || '#2a2f3d'} stroke="#0c0e16" strokeWidth="1.5" />
+            <text x={116} y={y + 12} fill="#e7e9f0" fontSize="11.5" fontFamily="JetBrains Mono, monospace">{it.name}</text>
+            {it.note && <text x={116} y={y + 23} fill="#8b91a3" fontSize="9.5" fontFamily="JetBrains Mono, monospace">{it.note}</text>}
+          </g>
+        );
+      })}
+      {v.caption && <text x="160" y={h - 8} textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">{v.caption}</text>}
+    </>, h);
+  }
+
+  /* Code with its parts named. A for loop has three jobs packed into one
+     line, and pointing at them is worth more than describing them. */
+  if (v.kind === 'codeshape') {
+    const lines = v.lines || [];
+    /* Tags sit on their own row UNDER the line they annotate. The first
+       version right-anchored them on the same row, where a normal-length
+       line of code ran straight into them — caught by looking at it, not by
+       any assertion. */
+    const rows = [];
+    for (const l of lines) {
+      const text = typeof l === 'string' ? l : l.t;
+      const tag = typeof l === 'string' ? null : l.tag;
+      rows.push({ text, tag: null });
+      if (tag) rows.push({ text: null, tag });
+    }
+    const rowH = 19;
+    const boxH = rows.length * rowH + 12;
+    const h = 16 + boxH + (v.caption ? 22 : 6);
+    return wrap(<>
+      <rect x={10} y={8} width={300} height={boxH} rx={8} fill="#0c0e16" stroke="#1f2433" />
+      {rows.map((r, i) => {
+        const y = 26 + i * rowH;
+        if (r.tag) {
+          return (
+            <text key={i} x={30} y={y} fill="#8b91a3" fontSize="9.5"
+                  fontFamily="JetBrains Mono, monospace">{'↳ ' + r.tag}</text>
+          );
+        }
+        return (
+          <text key={i} x={20} y={y} fill="#c9cee0" fontSize="11.5"
+                fontFamily="JetBrains Mono, monospace" xmlSpace="preserve">{r.text}</text>
+        );
+      })}
+      {v.caption && <text x="160" y={h - 7} textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">{v.caption}</text>}
+    </>, h);
+  }
+
+  /* A line with named zones. Tone, formality, confidence — things that are
+     not true or false but somewhere along a range. */
+  if (v.kind === 'spectrum') {
+    const zones = v.zones || [];
+    const x0 = 20, x1 = 300, w = x1 - x0;
+    const seg = w / Math.max(1, zones.length);
+    return wrap(<>
+      {zones.map((z, i) => (
+        <rect key={i} x={x0 + i * seg} y={40} width={seg - 2} height={22} rx={4}
+              fill={accent} opacity={0.5 + (i / Math.max(1, zones.length - 1)) * 0.5} />
+      ))}
+      {zones.map((z, i) => (
+        <text key={'t' + i} x={x0 + i * seg + seg / 2} y={55} textAnchor="middle" fill="#0c0e16"
+              fontSize="9.5" fontWeight="700" fontFamily="JetBrains Mono, monospace">{z.label}</text>
+      ))}
+      {zones.map((z, i) => z.note ? (
+        <text key={'n' + i} x={x0 + i * seg + seg / 2} y={78} textAnchor="middle" fill="#8b91a3"
+              fontSize="9" fontFamily="JetBrains Mono, monospace">{z.note}</text>
+      ) : null)}
+      <text x={x0} y={30} fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">{v.left || ''}</text>
+      <text x={x1} y={30} textAnchor="end" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">{v.right || ''}</text>
+      {v.caption && <text x="160" y={100} textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">{v.caption}</text>}
+    </>, 112);
+  }
+
   return null;
 }

@@ -1058,6 +1058,61 @@ ok('expr: junk yields NaN rather than throwing', Number.isNaN(evalExpr('wat', 1)
 eq('showNum trims noise', showNum(12.000000000000002), '12');
 eq('showNum shows a dash for NaN', showNum(NaN), '—');
 
+/* ---- every day has a picture -------------------------------------------- */
+section('No day is prose-only any more');
+
+/* This started at 92 of 131 days with no visual at all, and the nine days he
+ * was actually failing were almost all in that set. It is now zero, and this
+ * assertion is what keeps it there: a new day added without a diagram fails
+ * the build rather than quietly rejoining the old majority. */
+const prose = [];
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  for (const day of lane.days) {
+    if (!day.pages.some((p) => p.blocks.some((b) => b.type === 'visual'))) prose.push(`${subj}:${day.id}`);
+  }
+}
+eq('every day carries at least one visual', prose.length, 0);
+if (prose.length) ok('which days', false, prose.join(', '));
+
+/* The block mix should no longer be overwhelmingly plain text. */
+const mix = {};
+let blocks = 0;
+for (const lane of Object.values(CURRICULUM)) {
+  for (const day of lane.days) for (const p of day.pages) for (const b of p.blocks) { mix[b.type] = (mix[b.type] || 0) + 1; blocks++; }
+}
+ok('visuals are a real share of the app', (mix.visual || 0) / blocks >= 0.09,
+  `${Math.round((mix.visual || 0) / blocks * 100)}% of blocks are visual`);
+ok('plain text is no longer most of it', (mix.text || 0) / blocks <= 0.36,
+  `${Math.round((mix.text || 0) / blocks * 100)}% of blocks are plain text`);
+
+/* The three primitives added here need their own shape checks — a `layers`
+   entry with no items renders an empty box, silently. */
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  for (const day of lane.days) for (const p of day.pages) for (const b of p.blocks) {
+    if (b.type !== 'visual') continue;
+    if (b.kind === 'layers') {
+      ok(`${day.id}: layers has items`, Array.isArray(b.items) && b.items.length >= 2, 'an empty stack draws nothing');
+      ok(`${day.id}: every layer is named`, (b.items || []).every((x) => x && x.name));
+    }
+    if (b.kind === 'codeshape') {
+      ok(`${day.id}: codeshape has lines`, Array.isArray(b.lines) && b.lines.length >= 1);
+      ok(`${day.id}: code lines are short enough to fit`,
+        (b.lines || []).every((l) => String(typeof l === 'string' ? l : l.t).length <= 42),
+        'a long line runs off the viewBox');
+    }
+    if (b.kind === 'spectrum') {
+      ok(`${day.id}: spectrum has zones`, Array.isArray(b.zones) && b.zones.length >= 2);
+      ok(`${day.id}: zone labels are short`, (b.zones || []).every((z) => String(z.label).length <= 10),
+        'zone labels overlap when long');
+    }
+    if (b.kind === 'grid') {
+      ok(`${day.id}: every grid row matches its columns`,
+        (b.rows || []).every((r) => r.length === (b.cols || []).length),
+        'a short row leaves a cell blank and shifts the rest');
+    }
+  }
+}
+
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);
 if (fails.length) { for (const f of fails) console.log('  FAIL ' + f); process.exit(1); }

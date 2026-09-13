@@ -293,4 +293,344 @@ export const VISUALS = {
   cx1: [{ page: 1, kind: 'curves', series: ['linear', 'exponential'],
     xMax: 8, m: 5, b: 0, base: 2, linearLabel: 'adding 5', expLabel: 'doubling',
     caption: 'binary, half-life and interest are this shape' }],
+
+  /* ---- phase 6b: closing the remaining gap ------------------------------
+     73 days still had no picture. Teardowns and Computer Science were the
+     two worst lanes and the two with the clearest right answer: an object
+     has a cross-section, and code has parts you can point at. */
+
+  es1: [{ page: 0, kind: 'layers', shape: 'concentric', items: [
+    { name: 'crust', note: 'thin, solid rock', color: '#8b6b4a' },
+    { name: 'mantle', note: 'hot, slowly flowing', color: '#c2703d' },
+    { name: 'outer core', note: 'liquid iron', color: '#e0913f' },
+    { name: 'inner core', note: 'solid, under pressure', color: '#f6d06b' },
+  ], caption: 'hottest at the centre, and still solid' }],
+
+  td1: [{ page: 1, kind: 'layers', shape: 'concentric', items: [
+    { name: 'paint', note: 'just the outside', color: '#f6b73c' },
+    { name: 'wood casing', note: 'two glued halves', color: '#b08046' },
+    { name: 'graphite core', note: 'carbon in sliding sheets', color: '#4a5060' },
+  ], caption: 'no lead anywhere in a pencil' }],
+
+  td2: [{ page: 1, kind: 'grid', cols: ['front teeth', 'back teeth', 'ratio', 'feels'],
+    rows: [['48', '12', '4.0', 'hard, fast'], ['48', '24', '2.0', 'middling'], ['48', '48', '1.0', 'easy, slow']],
+    caption: 'teeth ÷ teeth — a unit rate on a bike' }],
+
+  td3: [{ page: 1, kind: 'grid', cols: ['ingredient', 'what it does'],
+    rows: [['flour', 'gluten, the stretchy net'], ['water', 'wakes the yeast up'], ['yeast', 'living — gives off CO₂'], ['salt', 'slows the yeast down'], ['heat', 'kills yeast, sets the net']],
+    caption: 'the holes are gas from something alive' }],
+
+  td4: [{ page: 1, kind: 'layers', items: [
+    { name: 'anode (−)', note: 'gives electrons away', color: '#5aa9ff' },
+    { name: 'electrolyte', note: 'lets ions cross, not electrons', color: '#3a4154' },
+    { name: 'cathode (+)', note: 'accepts the electrons', color: '#f6b73c' },
+  ], caption: 'stores an arrangement, not electricity' }],
+
+  td5: [{ page: 1, kind: 'layers', items: [
+    { name: 'glass', note: 'what you actually touch', color: '#9fd4f0' },
+    { name: 'electrode grid', note: 'senses charge moving', color: '#5aa9ff' },
+    { name: 'display', note: 'makes the picture', color: '#6b5bd2' },
+    { name: 'backlight', note: 'supplies the light', color: '#f6d06b' },
+  ], caption: 'your finger is detected, not felt' }],
+
+  td6: [{ page: 1, kind: 'layers', items: [
+    { name: 'reservoir', note: 'rain that already fell', color: '#5aa9ff' },
+    { name: 'screening', note: 'removes the big things', color: '#4a7f9e' },
+    { name: 'treatment', note: 'settles and disinfects', color: '#3ddc97' },
+    { name: 'the tap', note: 'same water, older than dinosaurs', color: '#9fd4f0' },
+  ], caption: 'nothing here creates any water' }],
+
+  c1: [{ page: 1, kind: 'grid', cols: ['part', 'its one job'],
+    rows: [['input', 'gets data in'], ['processor', 'follows instructions'], ['memory', 'holds things for now'], ['storage', 'keeps things after power off'], ['output', 'shows the result']],
+    caption: 'each part does exactly one thing' }],
+
+  c4: [{ page: 1, kind: 'codeshape', lines: [
+    { t: 'for (let i = 0; i < 5; i++) {', tag: 'start · test · step' },
+    '  print(i)',
+    '}',
+  ], caption: 'three jobs packed into one line' }],
+
+  c5: [{ page: 1, kind: 'codeshape', lines: [
+    { t: 'let score = 0', tag: 'name gets a value' },
+    { t: 'score = score + 10', tag: 'same name, new value' },
+    'print(score)   // 10',
+  ], caption: 'the name stays, the contents change' }],
+
+  c7: [{ page: 1, kind: 'codeshape', lines: [
+    'PLAN:  if it is raining, take a coat',
+    { t: 'CODE:  if (raining) { takeCoat() }', tag: 'same idea, exact words' },
+  ], caption: 'a language is a plan written precisely' }],
+
+  c8: [{ page: 1, kind: 'codeshape', lines: [
+    { t: 'console.log("Hello")', tag: 'prints it out' },
+    { t: 'console.log(2 + 3)', tag: 'prints 5, not "2 + 3"' },
+  ], caption: 'it works out the inside first' }],
+
+  c9: [{ page: 1, kind: 'codeshape', lines: [
+    { t: 'let a = 4', tag: 'declare' },
+    { t: 'let b = a * 3', tag: 'use it' },
+    'console.log(b)   // 12',
+  ], caption: 'values flow from one line to the next' }],
+
+  c10: [{ page: 1, kind: 'codeshape', lines: [
+    'let name = "Sam"',
+    'let age = 12',
+    { t: 'console.log(name + " is " + age)', tag: 'joins text' },
+  ], caption: 'three lines is already a real program' }],
+
+  c11: [{ page: 1, kind: 'codeshape', lines: [
+    { t: 'if (score > 90) {', tag: 'only when true' },
+    '  print("great")',
+    { t: '} else {', tag: 'every other time' },
+    '  print("keep going")',
+    '}',
+  ], caption: 'exactly one branch ever runs' }],
+
+  c12: [{ page: 1, kind: 'codeshape', lines: [
+    { t: 'let i = 0', tag: 'start' },
+    { t: 'while (i < 3) {', tag: 'test' },
+    '  print(i)',
+    { t: '  i = i + 1', tag: 'step — forget this and it never ends' },
+    '}',
+  ], caption: 'no step means no ending' }],
+
+  /* ---- phase 6b batch 2: maths, physics, logic, biology, chemistry ------ */
+
+  mr1: [{ page: 0, kind: 'grid', cols: ['written as', 'example', 'really is'],
+    rows: [['ratio', '3 : 2', 'a comparison'], ['unit rate', '1.50 each', 'a ratio per one'], ['proportion', '3/2 = 9/6', 'two equal ratios'], ['slope', 'rise ÷ run', 'a rate on a graph']],
+    caption: 'four names, one underlying idea' }],
+
+  m11: [{ page: 1, kind: 'grid', cols: ['the two lines', 'meet at', 'means'],
+    rows: [['cross once', 'one point', 'one solution'], ['parallel', 'never', 'no solution'], ['same line', 'everywhere', 'infinitely many']],
+    caption: 'the solution is where both are true' }],
+
+  mr2: [{ page: 0, kind: 'grid', cols: ['operation', 'undone by'],
+    rows: [['squaring', 'square root'], ['×10 repeatedly', 'scientific notation'], ['adding to both sides', 'subtracting from both'], ['multiplying out', 'factoring']],
+    caption: 'every tool here comes with a reverse' }],
+
+  m17: [{ page: 1, kind: 'grid', cols: ['choices', 'ways', 'total'],
+    rows: [['2 shirts', '×', '2'], ['3 trousers', '×', '6'], ['4 hats', '×', '24'], ['2 coats', '×', '48']],
+    caption: 'independent choices multiply, never add' }],
+
+  m19: [{ page: 2, kind: 'grid', cols: ['side', 'area', 'volume'],
+    rows: [['1', '1', '1'], ['2', '4', '8'], ['3', '9', '27'], ['4', '16', '64']],
+    caption: 'one doubles, one quadruples, one ×8' }],
+
+  mr3: [{ page: 0, kind: 'grid', cols: ['the trap', 'what to ask'],
+    rows: [['percent change', 'percent OF what?'], ['averages', 'which average?'], ['counting', 'do these multiply?'], ['probability', 'does it remember?'], ['scaling', 'area or volume?']],
+    caption: 'compared to what, and did it stay still' }],
+
+  m21: [{ page: 2, kind: 'grid', cols: ['b² − 4ac', 'real solutions', 'the curve'],
+    rows: [['positive', '2', 'crosses twice'], ['zero', '1', 'just touches'], ['negative', '0', 'never reaches it']],
+    caption: 'the sign tells you before you finish' }],
+
+  m22: [{ page: 1, kind: 'grid', cols: ['expression', 'simplifies to', 'but x ≠'],
+    rows: [['(x²−9)/(x+3)', 'x − 3', '−3'], ['(2x+6)/2', 'x + 3', '—'], ['5/(x−4)', '5/(x−4)', '4']],
+    caption: 'simplifying does not permit a value' }],
+
+  mr4: [{ page: 0, kind: 'grid', cols: ['operation', 'its undo'],
+    rows: [['multiplying', 'factoring'], ['squaring', 'square root'], ['raising a base', 'logarithm'], ['a ratio in a triangle', 'inverse trig']],
+    caption: 'the undo is where the power sits' }],
+
+  phy3: [{ page: 1, kind: 'grid', cols: ['forces on it', 'what happens'],
+    rows: [['balanced', 'speed and direction stay'], ['unbalanced, forwards', 'speeds up'], ['unbalanced, backwards', 'slows down'], ['unbalanced, sideways', 'changes direction']],
+    caption: 'force changes motion, not causes it' }],
+
+  phy4: [{ page: 1, kind: 'grid', cols: ['stored as', 'becomes'],
+    rows: [['chemical (food)', 'movement and heat'], ['height (a raised ball)', 'movement as it falls'], ['movement', 'heat and sound on impact'], ['light from the Sun', 'sugar in a leaf']],
+    caption: 'never lost, only moved or changed form' }],
+
+  phy5: [{ page: 1, kind: 'grid', cols: ['', 'temperature', 'total heat'],
+    rows: [['a spark', 'very high', 'tiny'], ['warm bath', 'modest', 'enormous']],
+    caption: 'how fast, against how many' }],
+
+  phy6: [{ page: 1, kind: 'spectrum', left: 'long wave', right: 'short wave',
+    zones: [{ label: 'radio' }, { label: 'micro' }, { label: 'infra' }, { label: 'visible' }, { label: 'UV' }, { label: 'X-ray' }],
+    caption: 'one family — only the wavelength differs' }],
+
+  phy7: [{ page: 2, kind: 'numberline', min: -5, max: 5, at: 0, op: 'gte',
+    label: 'velocity: sign means direction' }],
+
+  phy8: [{ page: 2, kind: 'grid', cols: ['know', 'want', 'use'],
+    rows: [['m and a', 'F', 'F = m × a'], ['F and m', 'a', 'a = F ÷ m'], ['F and a', 'm', 'm = F ÷ a']],
+    caption: 'one equation, rearranged three ways' }],
+
+  lg5: [{ page: 1, kind: 'grid', cols: ['fallacy', 'sounds like'],
+    rows: [['circular', 'it is true because it is true'], ['false dilemma', 'either this or you hate X'], ['ad hominem', 'you would say that'], ['hasty generalisation', 'I met one, so they all are']],
+    caption: 'each one skips the actual argument' }],
+
+  lg6: [{ page: 1, kind: 'grid', cols: ['claim', 'one example', 'one counterexample'],
+    rows: [['all swans are white', 'supports it', 'destroys it'], ['some swans are white', 'proves it', 'cannot touch it']],
+    caption: 'all and some need opposite evidence' }],
+
+  bio1: [{ page: 1, kind: 'grid', cols: ['', 'cells', 'grows', 'reproduces'],
+    rows: [['a rabbit', 'yes', 'yes', 'yes'], ['a flame', 'no', 'yes', 'no'], ['a crystal', 'no', 'yes', 'no']],
+    caption: 'growing alone is not being alive' }],
+
+  bio3: [{ page: 1, kind: 'mapping',
+    inputs: ['CO₂', 'water', 'light'], outputs: ['sugar', 'oxygen'],
+    links: [[0, 0], [1, 0], [2, 0], [1, 1]],
+    inLabel: 'goes in', outLabel: 'comes out',
+    caption: 'respiration runs this exact arrow backwards' }],
+
+  bio7: [{ page: 1, kind: 'grid', cols: ['step', 'what happens'],
+    rows: [['variation', 'individuals already differ'], ['selection', 'some survive more often'], ['inheritance', 'their young inherit it'], ['time', 'the difference accumulates']],
+    caption: 'the variation has to come first' }],
+
+  bio9: [{ page: 1, kind: 'grid', cols: ['bacteria that', 'do this'],
+    rows: [['live in your gut', 'digest what you cannot'], ['live in soil', 'fix nitrogen for plants'], ['make food', 'yoghurt, cheese, bread'], ['cause disease', 'a small minority']],
+    caption: 'most are harmless or necessary' }],
+
+  bio10: [{ page: 1, kind: 'grid', cols: ['claim', 'testable?'],
+    rows: [['plants grow faster in light', 'yes — grow some in dark'], ['this plant is lucky', 'no — nothing could show it false'], ['heavier things fall faster', 'yes — and they do not']],
+    caption: 'if nothing could disprove it, it is idle' }],
+
+  ch7: [{ page: 1, kind: 'grid', cols: ['', 'bonds', 'feels'],
+    rows: [['exothermic', 'forming wins', 'hot'], ['endothermic', 'breaking wins', 'cold']],
+    caption: 'breaking costs energy, forming returns it' }],
+
+  ch9: [{ page: 1, kind: 'rearrange',
+    before: [['A', 'A'], ['B', 'B']],
+    after: [{ a: ['A'], dx: -14 }, { a: ['B'], dx: 8 }, { a: ['A'], dx: 22 }, { a: ['B'], dx: 36 }],
+    chemical: false,
+    caption: 'MIXTURE — together, not bonded',
+    note: 'a compound would be joined in a fixed ratio' }],
+
+  ch10: [{ page: 1, kind: 'grid', cols: ['increase', 'because'],
+    rows: [['temperature', 'faster, harder collisions'], ['concentration', 'more collisions happen'], ['surface area', 'more of it is exposed'], ['a catalyst', 'lowers the energy needed']],
+    caption: 'all four are about collisions' }],
+
+  ch11: [{ page: 1, kind: 'grid', cols: ['element', 'atomic mass', 'one mole weighs'],
+    rows: [['carbon', '12', '12 g'], ['oxygen', '16', '16 g'], ['sulfur', '32', '32 g'], ['calcium', '40', '40 g']],
+    caption: 'the table is also a weighing chart' }],
+
+  ch12: [{ page: 1, kind: 'grid', cols: ['formula', 'adds up as', 'g/mol'],
+    rows: [['H₂O', '2(1) + 16', '18'], ['CO₂', '12 + 2(16)', '44'], ['Ca(OH)₂', '40 + 2(17)', '74']],
+    caption: 'a bracket multiplies everything inside' }],
+
+  ch13: [{ page: 1, kind: 'grid', cols: ['2H₂', '+ O₂', '→ 2H₂O'],
+    rows: [['2 mol', '1 mol', '2 mol'], ['4 mol', '2 mol', '4 mol'], ['10 mol', '5 mol', '10 mol']],
+    caption: 'the ratio holds at every scale' }],
+
+  /* ---- phase 6b batch 3: the last of them -------------------------------
+     English, Business, Civics, Fossils. Several of these are ranges rather
+     than tables — tone and formality sit somewhere along a line, not in a
+     box — so `spectrum` does the work a grid would have flattened. */
+
+  ela1: [{ page: 1, kind: 'grid', cols: ['fragment', 'missing', 'complete'],
+    rows: [['The tall dog', 'a predicate', 'The tall dog barked'], ['Ran down the road', 'a subject', 'The fox ran down the road'], ['Because it rained', 'a main clause', 'We stayed in because it rained']],
+    caption: 'a sentence needs both halves' }],
+
+  ela2: [{ page: 1, kind: 'grid', cols: ['', 'example'],
+    rows: [['topic', 'sharks'], ['main idea', 'sharks are vital to oceans'], ['detail', 'they keep fish numbers in check'], ['evidence', 'reefs decline when sharks go']],
+    caption: 'the topic is not the point being made' }],
+
+  ela3: [{ page: 1, kind: 'grid', cols: ['device', 'example', 'literally?'],
+    rows: [['simile', 'brave as a lion', 'no'], ['metaphor', 'the city never sleeps', 'no'], ['hyperbole', 'a ton of homework', 'no'], ['literal', 'the city is busy', 'yes']],
+    caption: 'the reader does a little work — that is the point' }],
+
+  ela4: [{ page: 1, kind: 'spectrum', left: 'casual', right: 'formal',
+    zones: [{ label: 'text', note: 'a mate' }, { label: 'email', note: 'a teacher' }, { label: 'essay', note: 'a marker' }, { label: 'letter', note: 'a stranger' }],
+    caption: 'same facts, different reader, different tone' }],
+
+  ela8: [{ page: 1, kind: 'grid', cols: ['source', 'how they know', 'watch for'],
+    rows: [['a diary', 'was there', 'one point of view'], ['a historian', 'read many accounts', 'their argument'], ['a company', 'sells the thing', 'a motive'], ['a textbook', 'summarised others', 'age of the facts']],
+    caption: 'primary means closer, not correct' }],
+
+  ela9: [{ page: 1, kind: 'grid', cols: ['', 'changes'],
+    rows: [['revising', 'what it says, and its shape'], ['editing', 'sentences and word choice'], ['proofreading', 'spelling and punctuation']],
+    caption: 'proofreading first wastes the effort' }],
+
+  ela10: [{ page: 1, kind: 'spectrum', left: 'plain', right: 'distinctive',
+    zones: [{ label: 'facts' }, { label: 'words' }, { label: 'rhythm' }, { label: 'voice' }],
+    caption: 'voice is what is left when facts match' }],
+
+  b1: [{ page: 1, kind: 'grid', cols: ['', 'need', 'want'],
+    rows: [['water', 'yes', ''], ['a phone', '', 'yes'], ['shelter', 'yes', ''], ['a newer phone', '', 'yes']],
+    caption: 'scarcity is why the line matters at all' }],
+
+  b4: [{ page: 1, kind: 'grid', cols: ['question', 'a weak answer', 'a strong one'],
+    rows: [['what problem?', 'people like nice things', 'my street has no bike repair'], ['who for?', 'everyone', 'commuters on this road'], ['why you?', 'I want to', 'I already fix bikes']],
+    caption: 'specific beats ambitious, every time' }],
+
+  b5: [{ page: 1, kind: 'curves', series: ['linear', 'exponential'],
+    xMax: 30, m: 50, b: 1000, base: 1.05, expLabel: 'compound 5%', linearLabel: 'simple 5%',
+    caption: 'the gap only opens up with time' }],
+
+  b6: [{ page: 1, kind: 'grid', cols: ['', 'what it does'],
+    rows: [['marketing', 'tells people the value'], ['competition', 'forces the value up'], ['price', 'signals what it is worth'], ['brand', 'makes the promise repeatable']],
+    caption: 'none of these work without a real product' }],
+
+  b7: [{ page: 1, kind: 'grid', cols: ['noticed', 'could become'],
+    rows: [['nothing opens before 8', 'an early café'], ['bins overflow on Fridays', 'a collection round'], ['nobody fixes zips', 'a repair service']],
+    caption: 'annoyances are unpriced problems' }],
+
+  b8: [{ page: 1, kind: 'funnel' }],
+
+  b9: [{ page: 1, kind: 'grid', cols: ['', 'is the brand?'],
+    rows: [['the logo', 'no — just how you spot it'], ['the name', 'no — just a label'], ['the promise kept', 'yes'], ['the advert spend', 'no']],
+    caption: 'a brand is a promise people rely on' }],
+
+  b12: [{ page: 1, kind: 'grid', cols: ['sentence', 'says'],
+    rows: [['1', 'the problem, specifically'], ['2', 'who has it'], ['3', 'what you do about it'], ['4', 'why you, with a number']],
+    caption: 'no warm-up — start at the problem' }],
+
+  g1: [{ page: 1, kind: 'grid', cols: ['without it', 'with it'],
+    rows: [['anyone can take anything', 'property means something'], ['no shared roads', 'roads everyone uses'], ['disputes end in force', 'disputes end in court']],
+    caption: 'order, protection, shared things' }],
+
+  g4: [{ page: 1, kind: 'grid', cols: ['right', 'protects you from'],
+    rows: [['1st', 'being silenced by government'], ['4th', 'searches without cause'], ['5th', 'being made to accuse yourself'], ['8th', 'cruel punishment']],
+    caption: 'each one restrains the government' }],
+
+  g5: [{ page: 2, kind: 'grid', cols: ['stage', 'can it die here?'],
+    rows: [['introduced', 'yes — most do'], ['committee', 'yes'], ['House vote', 'yes'], ['Senate vote', 'yes'], ['President', 'yes — unless overridden']],
+    caption: 'stopping bills is the design, not a fault' }],
+
+  g7: [{ page: 1, kind: 'spectrum', left: 'fully protected', right: 'not protected',
+    zones: [{ label: 'opinion' }, { label: 'protest' }, { label: 'insult' }, { label: 'threat' }],
+    caption: 'a right ends where it overrides another' }],
+
+  g8: [{ page: 1, kind: 'grid', cols: ['', 'court does'],
+    rows: [['a new question', 'decides, and sets precedent'], ['a similar case', 'follows the earlier ruling'], ['a wrong precedent', 'can overturn it']],
+    caption: 'stability, but not permanence' }],
+
+  g10: [{ page: 1, kind: 'grid', cols: ['ask', 'about a claim'],
+    rows: [['who benefits?', 'everyone wants something'], ['what would disprove it?', 'if nothing, be wary'], ['compared to what?', 'numbers need a baseline'], ['who is left out?', 'of the group counted']],
+    caption: 'the same toolkit as the Logic lane' }],
+
+  f1: [{ page: 1, kind: 'grid', cols: ['is it a fossil?', ''],
+    rows: [['a bone turned to stone', 'yes'], ['a footprint in rock', 'yes — a trace fossil'], ['a bone from last year', 'no'], ['an oddly shaped rock', 'no']],
+    caption: 'evidence of ancient life, not just old' }],
+
+  f2: [{ page: 1, kind: 'layers', items: [
+    { name: 'the animal dies', note: 'and must be buried fast', color: '#8b6b4a' },
+    { name: 'sediment covers it', note: 'soft parts decay away', color: '#b08046' },
+    { name: 'minerals seep in', note: 'replacing the hard parts', color: '#c2703d' },
+    { name: 'uplift and erosion', note: 'brings it back to the surface', color: '#e0913f' },
+  ], caption: 'each step has to go right, and rarely does' }],
+
+  f6: [{ page: 1, kind: 'grid', cols: ['extinction', 'roughly', 'what went'],
+    rows: [['Permian', '252 mya', 'about 90% of species'], ['Triassic', '201 mya', 'many big reptiles'], ['Cretaceous', '66 mya', 'the non-bird dinosaurs']],
+    caption: 'birds are the branch that survived' }],
+
+  f7: [{ page: 1, kind: 'grid', cols: ['matching by', 'works?'],
+    rows: [['rock type', 'no — sandstone forms everywhere'], ['colour', 'no'], ['an index fossil', 'yes — if it was brief and widespread'], ['radiometric age', 'yes']],
+    caption: 'the rock cannot date itself' }],
+
+  f8: [{ page: 1, kind: 'grid', cols: ['preserved', 'almost never'],
+    rows: [['bones and shells', 'jellyfish'], ['teeth', 'worms'], ['buried fast', 'anything left in the open'], ['sea floors', 'mountain tops']],
+    caption: 'absence of evidence is not absence' }],
+
+  f9: [{ page: 1, kind: 'grid', cols: ['trace fossil', 'tells you'],
+    rows: [['footprints', 'how it moved, and how fast'], ['burrows', 'where it lived'], ['coprolites', 'what it ate'], ['nests', 'whether it cared for young']],
+    caption: 'behaviour, which bones cannot record' }],
+
+  f10: [{ page: 1, kind: 'grid', cols: ['method', 'gives', 'alone?'],
+    rows: [['superposition', 'the order', 'no years'], ['index fossils', 'matching layers', 'no years'], ['radiometric', 'years', 'needs the right rock']],
+    caption: 'together they give order AND years' }],
+
+  cx5: [{ page: 1, kind: 'grid', cols: ['seems to vanish', 'actually'],
+    rows: [['energy', 'became heat and sound'], ['water', 'evaporated, will rain'], ['matter in a fire', 'left as gas'], ['money spent', 'someone else has it']],
+    caption: 'ask where it went, never whether it did' }],
 };
