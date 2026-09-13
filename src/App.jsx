@@ -182,6 +182,10 @@ export default function App() {
             setSaveFailed(false);
             setView({ name: 'dash' });
           }}
+          /* Deliberately narrow: a backup changes when he last made one and
+             nothing else. It must never touch xp, completed, practice,
+             streak or skips. */
+          onBackedUp={() => updateProfile((p) => ({ ...p, lastBackup: todayStr() }))}
           onSwitch={exitToProfiles} isDemo={!!demo} />
       )}
       {view.name === 'ladder' && (

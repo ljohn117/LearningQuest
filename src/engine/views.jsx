@@ -111,7 +111,7 @@ export function SoundToggle() {
   );
 }
 
-export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onLadder, onReset, onRestore, onSetName, onSwitch, isDemo }) {
+export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, onParent, onLadder, onReset, onRestore, onSetName, onSwitch, onBackedUp, isDemo }) {
   const [confirm, setConfirm] = useState(false);
   const [editing, setEditing] = useState(false);
   const [backing, setBacking] = useState(false);
@@ -218,7 +218,7 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
           </div>
         )}
       </div>
-      {backing && <BackupPanel onClose={() => setBacking(false)} />}
+      {backing && <BackupPanel onClose={() => setBacking(false)} onBackedUp={onBackedUp} />}
       {restoring && <RestorePanel onRestore={onRestore} onClose={() => setRestoring(false)} />}
     </div>
   );
@@ -293,7 +293,7 @@ export function RestorePanel({ onRestore, onClose }) {
   );
 }
 
-export function BackupPanel({ onClose }) {
+export function BackupPanel({ onClose, onBackedUp }) {
   const [txt, setTxt] = useState('Reading...');
   const ta = useRef(null);
   useEffect(() => { (() => {
@@ -307,16 +307,22 @@ export function BackupPanel({ onClose }) {
   })(); }, []);
   let days = null;
   try { days = JSON.parse(txt).data.profiles.reduce((n, p) => n + Object.keys(p.completed || {}).length, 0); } catch {}
+  const [copied, setCopied] = useState(false);
   const copy = async () => {
-    try { await navigator.clipboard.writeText(txt); }
-    catch { try { ta.current.select(); document.execCommand('copy'); } catch {} }
+    /* Only count it as a backup if the text actually reached the clipboard.
+       Recording one that failed would be worse than recording none — it would
+       report safety that does not exist. */
+    let done = false;
+    try { await navigator.clipboard.writeText(txt); done = true; }
+    catch { try { done = ta.current.select() !== false && document.execCommand('copy'); } catch { done = false; } }
+    if (done && days !== null) { setCopied(true); onBackedUp && onBackedUp(); }
   };
   return (
     <div style={S.backupBox}>
       <div style={S.muted}>Copy this and save it somewhere safe.{days !== null ? ' ' + days + ' finished days found.' : ''}</div>
       <textarea ref={ta} readOnly value={txt} style={S.backupTa} onFocus={(e) => e.target.select()} />
       <div style={S.confirmRow}>
-        <button className="lq-tap" style={S.ghostBtn} onClick={copy}>Copy</button>
+        <button className="lq-tap" style={S.ghostBtn} onClick={copy}>{copied ? 'Copied' : 'Copy'}</button>
         <button className="lq-tap" style={S.ghostBtn} onClick={onClose}>Done</button>
       </div>
     </div>

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { S } from './styles.jsx';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
-import { levelInfo } from './progress.js';
+import { levelInfo, daysBetween, todayStr } from './progress.js';
 import { EXTRA_DRILLS, MATH_DRILLS } from './drills.js';
 
 const ALL_DRILLS = [...MATH_DRILLS, ...EXTRA_DRILLS];
@@ -46,9 +46,11 @@ const WRITE_INDEX = (() => {
 })();
 
 export function ParentView({ profile, onBack }) {
+  const backupAge = profile.lastBackup ? daysBetween(profile.lastBackup, todayStr()) : null;
   const data = useMemo(() => {
     const completed = profile.completed || {};
     const review = profile.review || {};
+    const cal0 = profile.calibration || {};
 
     const lanes = SUBJECT_ORDER.map((subj) => {
       const s = CURRICULUM[subj];
@@ -102,10 +104,35 @@ export function ParentView({ profile, onBack }) {
       })
       .sort((a, b) => (b.at || '').localeCompare(a.at || ''));
 
+    /* Days he FINISHED but did not actually get.
+     *
+     * Finishing a day is not gated on scoring well, and that is deliberate —
+     * a kid who already assumes he is going to fail does not need a locked
+     * door. The cost is that a day scored 1 out of 4 looks exactly like a day
+     * scored 4 out of 4 everywhere else in the app, so a real hole can sit
+     * there for weeks looking like progress. This is the one place that says
+     * so out loud, and it is on the parent's page rather than his.
+     *
+     * Sorted worst first. The threshold is 60% — below that he was guessing
+     * more than he was answering. */
+    const shaky = Object.entries(completed)
+      .map(([key, rec]) => {
+        if (!rec || !rec.total) return null;
+        const pct = Math.round((rec.best / rec.total) * 100);
+        if (pct >= 60) return null;
+        const [subj, dayId] = key.split(':');
+        const day = CURRICULUM[subj]?.days.find((d) => d.id === dayId);
+        if (!day) return null;
+        return { key, lane: CURRICULUM[subj]?.name, day: day.title, pct,
+                 best: rec.best, total: rec.total, said: cal0[key]?.level };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.pct - b.pct);
+
     /* What he said about difficulty, tapped once at the end of a day.
        This is the closest thing to a direct answer to the question the whole
        curriculum has been guessing at: is the level right? */
-    const cal = profile.calibration || {};
+    const cal = cal0;
     const calCounts = { easy: 0, right: 0, hard: 0 };
     const byLane = {};
     const calRecent = [];
@@ -130,7 +157,7 @@ export function ParentView({ profile, onBack }) {
     const totalDone = Object.keys(completed).length;
     const totalDays = SUBJECT_ORDER.reduce((n, s) => n + (CURRICULUM[s]?.days.length || 0), 0);
 
-    return { lanes, sticking, writing, reviewed, drills, totalDone, totalDays, overall: accuracy(completed),
+    return { lanes, sticking, shaky, writing, reviewed, drills, totalDone, totalDays, overall: accuracy(completed),
       calCounts, calTotal, calRecent, calLanes };
   }, [profile]);
 
@@ -148,6 +175,19 @@ export function ParentView({ profile, onBack }) {
         <div style={S.muted}>
           {data.totalDone} of {data.totalDays} days · {profile.xp || 0} XP · {lvl.rank}
           {data.overall.pct !== null && ` · ${data.overall.pct}% best score`}
+        </div>
+        {/* His whole history lives in one browser's storage on one device.
+            There is no server and no second copy, so the only thing standing
+            between him and losing all of it is somebody having pressed Back
+            up recently. Stated here rather than on his dashboard: it is the
+            parent's job, and it is not something he should be made to worry
+            about. */}
+        <div style={{ ...S.mono, fontSize: 12, marginTop: 7,
+                      color: backupAge === null ? '#f6b73c' : backupAge > 14 ? '#f6b73c' : '#5b6275' }}>
+          {backupAge === null
+            ? 'Never backed up — one tap on Back up, kept anywhere safe, is the only copy that exists.'
+            : backupAge === 0 ? 'Backed up today.'
+            : `Backed up ${backupAge} day${backupAge === 1 ? '' : 's'} ago.`}
         </div>
       </div>
 
@@ -209,6 +249,36 @@ export function ParentView({ profile, onBack }) {
           )}
           <div style={{ ...S.muted, fontSize: 12.5, marginTop: 10 }}>
             Most recent: {data.calRecent.slice(0, 3).map((r) => `${r.day} (${r.level === 'right' ? 'good stretch' : r.level === 'easy' ? 'breezed' : 'rough'})`).join(' · ')}
+          </div>
+        </>
+      )}
+
+      <div style={S.sectionLabel}>Finished, but shaky</div>
+      {data.shaky.length === 0 ? (
+        <div style={{ ...S.muted, fontSize: 14 }}>
+          Nothing here — every day he has finished, he scored at least 60% on.
+        </div>
+      ) : (
+        <>
+          <div style={{ ...S.muted, fontSize: 13.5, marginBottom: 9, lineHeight: 1.55 }}>
+            He finished these and moved on, but the score says the idea did not land.
+            Days are never locked behind a score, so these look like progress
+            everywhere else in the app. Any of them can simply be opened again.
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+            {data.shaky.map((d) => (
+              <div key={d.key} style={S.pCard}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
+                  <span style={{ fontSize: 14, color: '#e7e9f0' }}>{d.day}</span>
+                  <span style={{ ...S.mono, fontSize: 12, color: d.pct < 50 ? '#ff6b6b' : '#f6b73c', flexShrink: 0 }}>
+                    {d.best}/{d.total}
+                  </span>
+                </div>
+                <div style={{ ...S.mono, fontSize: 11, color: '#8b91a3', marginTop: 4 }}>
+                  {d.lane}{d.said ? ` · he called it ${d.said}` : ''}
+                </div>
+              </div>
+            ))}
           </div>
         </>
       )}

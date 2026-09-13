@@ -435,6 +435,35 @@ ok('the parent view resolves write keys by index, not by splitting them',
   /WRITE_INDEX\.get\(key\)/.test(parentSrc), 'split() silently yields an undefined lane for w: keys');
 ok('the parent view shows him the prompt, not just the answer', /w\.task/.test(parentSrc));
 
+/* ---- finished but not learned ------------------------------------------ */
+section('Days finished without mastery are visible to the parent');
+
+const pvSrc = readFileSync(new URL('../src/engine/ParentView.jsx', import.meta.url), 'utf8');
+ok('the parent view computes a shaky list', /const shaky = /.test(pvSrc));
+ok('the threshold is a real score, not a guess', /pct >= 60/.test(pvSrc));
+ok('it is sorted worst first', /sort\(\(a, b\) => a\.pct - b\.pct\)/.test(pvSrc));
+ok('it is on the parent page, not his dashboard',
+  !/Finished, but shaky/.test(readFileSync(new URL('../src/engine/views.jsx', import.meta.url), 'utf8')),
+  'a kid who already expects to fail does not need this on his home screen');
+
+/* Completion must stay ungated. The shaky list exists precisely BECAUSE a low
+   score still finishes a day, and that trade is deliberate. */
+const appSrc2 = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8');
+const fd = appSrc2.slice(appSrc2.indexOf('const finishDay'), appSrc2.indexOf('const finishDay') + 900);
+ok('finishing a day is never gated on the score', !/(best|correct)\s*[<>]=?\s*\d/.test(fd), 'a score gate appeared in finishDay');
+
+/* ---- backup age --------------------------------------------------------- */
+section('The parent can see how long since a backup');
+
+const st = readFileSync(new URL('../src/store.js', import.meta.url), 'utf8');
+ok('lastBackup is normalised', /lastBackup: typeof p\.lastBackup === 'string'/.test(st));
+ok('recording a backup touches nothing else',
+  /onBackedUp=\{\(\) => updateProfile\(\(p\) => \(\{ \.\.\.p, lastBackup: todayStr\(\) \}\)\)\}/.test(appSrc2),
+  'it must not write xp, completed, practice, streak or skips');
+const vw = readFileSync(new URL('../src/engine/views.jsx', import.meta.url), 'utf8');
+ok('a failed copy is not recorded as a backup', /if \(done && days !== null\)/.test(vw),
+  'reporting safety that does not exist is worse than reporting none');
+
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);
 if (fails.length) { for (const f of fails) console.log('  FAIL ' + f); process.exit(1); }

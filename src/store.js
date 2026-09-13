@@ -47,7 +47,7 @@ export function migrateWriting(writing) {
    older schema can't crash a newer read path. */
 function normalize(p) {
   return {
-    xp: 0, completed: {}, practice: {}, review: {}, writing: {}, calibration: {}, streak: { count: 0, last: null }, skips: 0, name: '',
+    xp: 0, completed: {}, practice: {}, review: {}, writing: {}, calibration: {}, streak: { count: 0, last: null }, skips: 0, name: '', lastBackup: null,
     ...p,
     completed: p.completed && typeof p.completed === 'object' ? p.completed : {},
     practice: p.practice && typeof p.practice === 'object' ? p.practice : {},
@@ -56,6 +56,7 @@ function normalize(p) {
     calibration: p.calibration && typeof p.calibration === 'object' ? p.calibration : {},
     streak: p.streak && typeof p.streak === 'object' ? p.streak : { count: 0, last: null },
     skips: Number.isFinite(p.skips) ? Math.max(0, Math.min(2, p.skips)) : 0,
+    lastBackup: typeof p.lastBackup === 'string' ? p.lastBackup : null,
   };
 }
 
