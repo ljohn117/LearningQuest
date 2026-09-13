@@ -47,7 +47,7 @@ export const ELA_EXTRA = [
     quiz: [
       { type: 'mc', prompt: 'The root "port" means:', choices: ['carry', 'write', 'break', 'see'], answer: 0, hint: 'Think transport, portable, export.', explain: 'Carry — which is why all three of those words involve moving something.' },
       { type: 'mc', prompt: '"Unbreakable" breaks into:', choices: ['un + breakable + e', 'unbreak + able', 'un + break + able', 'unb + reak + able'], answer: 2, hint: 'Find the prefix, the root, then the suffix.', explain: 'un (not) + break + able (can be) — not able to be broken.' },
-      { type: 'tf', prompt: 'A suffix usually changes what kind of word something is.', answer: true, hint: 'Compare "act" with "action" and "active".', explain: 'Suffixes commonly turn verbs into nouns or adjectives.' },
+      { type: 'mc', prompt: 'Going from “act” to “action”, the suffix has changed:', choices: ['the meaning entirely', 'what kind of word it is', 'nothing but the spelling', 'the tense'], answer: 1, hint: 'One is something you do; the other is a thing.', explain: 'A verb became a noun. Suffixes usually change a word’s job in the sentence rather than its core meaning.' },
       { type: 'mc', prompt: 'If "bene" means good, "benefit" most likely involves:', choices: ['something fast', 'something old', 'something harmful', 'something good'], answer: 3, hint: 'Use the root even though you know the word already.', explain: 'Good. Roots let you predict meaning before you look anything up.' },
     ],
   },
@@ -78,7 +78,7 @@ export const ELA_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'A photograph taken during an event is a:', choices: ['secondary source', 'primary source', 'summary', 'an opinion piece'], answer: 1, hint: 'Was the camera there?', explain: 'Primary — it records the event directly.' },
-      { type: 'tf', prompt: 'Secondary sources are always less reliable than primary ones.', answer: false, hint: 'Think about a historian who read a thousand letters.', explain: 'They trade immediacy for breadth. Different, not worse.' },
+      { type: 'mc', prompt: 'Compared with a primary source, a secondary source is:', choices: ['always less reliable', 'not automatically worse — it may be better checked', 'always more reliable', 'never worth using'], answer: 1, hint: 'Think about a historian with access to a hundred letters.', explain: 'A witness can be mistaken or lying; a careful historian comparing many accounts may be nearer the truth. Primary means closer, not correct.' },
       { type: 'mc', prompt: 'The most useful question about a source is:', choices: ['is it long', 'how would I check it', 'is it recent', 'is it popular'], answer: 1, hint: 'Which question leads somewhere?', explain: 'Checkability. It turns a judgement into an investigation.' },
       { type: 'mc', prompt: 'A company describing its own product is:', choices: ['a source with a motive worth knowing', 'a primary source only', 'never useful', 'always lying'], answer: 0, hint: 'Motive is not the same as dishonesty.', explain: 'It may be accurate, but it has reasons to emphasise some things. Know where to check.' },
     ],
@@ -110,7 +110,7 @@ export const ELA_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'Revising differs from proofreading because revising:', choices: ['is only for long pieces', 'fixes spelling', 'changes what the piece says and how it is built', 'is done last'], answer: 2, hint: 'One is surface, one is substance.', explain: 'Revision re-sees the piece. Proofreading tidies it.' },
-      { type: 'tf', prompt: 'A rough first draft means you are writing badly.', answer: false, hint: 'What is a draft for?', explain: 'It is what drafts are for. Getting the thinking visible comes before making it good.' },
+      { type: 'mc', prompt: 'A first draft that reads badly usually means:', choices: ['you are a poor writer', 'the draft is doing its job — getting the material down', 'you should start over', 'you should stop writing'], answer: 1, hint: 'What is a draft actually for?', explain: 'A draft exists to be revised. Expecting the first one to be good is the belief that stops most people writing at all.' },
       { type: 'mc', prompt: 'The fastest improvement in most writing is:', choices: ['using longer words', 'adding a conclusion', 'adding more detail', 'cutting what does not earn its space'], answer: 3, hint: 'Think about the padded sentence example.', explain: 'Deletion. Most drafts are carrying weight that does nothing.' },
       { type: 'mc', prompt: '"In my personal opinion I think it was actually quite good" is weak mainly because it:', choices: ['uses no evidence', 'is in past tense', 'is too short', 'repeats the same idea several ways'], answer: 3, hint: 'Count how many times it hedges.', explain: 'Opinion, think, actually and quite all do the same job. Pick one.' },
     ],
@@ -142,7 +142,7 @@ export const ELA_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'Voice in writing comes mainly from:', choices: ['the facts included', 'choices in words and rhythm', 'the length of the piece', 'the topic'], answer: 1, hint: 'Two writers, same facts, different result.', explain: 'The choices, not the content.' },
-      { type: 'tf', prompt: 'Writing to a friend and writing to a principal should sound the same.', answer: false, hint: 'Think about what each situation expects.', explain: 'Register matches audience. Neither is wrong; using the wrong one is.' },
+      { type: 'mc', prompt: 'The same message to a friend and to a head teacher should:', choices: ['sound identical', 'change in tone while keeping the same facts', 'change the facts to suit the reader', 'be shorter for the head teacher'], answer: 1, hint: 'What stays fixed and what moves?', explain: 'The facts do not move. How formally you put them does, because you are writing for a different reader.' },
       { type: 'mc', prompt: 'A short sentence after several long ones tends to feel:', choices: ['unfinished', 'weaker', 'emphatic', 'confusing'], answer: 2, hint: 'What does contrast do?', explain: 'It lands hard, because the long ones set it up.' },
       { type: 'mc', prompt: 'Voice is like branding because both depend on:', choices: ['consistency people can recognise', 'being loud', 'being formal', 'spending money'], answer: 0, hint: 'What makes something recognisable?', explain: 'Keeping the same promise until people know it on sight.' },
     ],
@@ -177,7 +177,7 @@ export const BIO_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'Natural selection acts on:', choices: ['variation that already exists', 'a species’ plan', 'only large animals', 'individuals choosing to change'], answer: 0, hint: 'Where does the raw material come from?', explain: 'It works on differences already present. Nothing is chosen.' },
-      { type: 'tf', prompt: 'Species change because individuals decide to adapt.', answer: false, hint: 'Can a rabbit choose to be faster?', explain: 'Individuals do not change. The proportions in the population do.' },
+      { type: 'mc', prompt: 'A species becomes faster over generations because:', choices: ['individuals decided to run faster', 'faster individuals already existed and survived more often', 'running stretched their legs, and their young inherited that', 'the environment forced each animal to change'], answer: 1, hint: 'Can a rabbit choose to be born faster?', explain: 'The variation has to already be there. Selection keeps what works; it cannot order up a new trait on demand.' },
       { type: 'mc', prompt: 'Evolution needs enormous time because:', choices: ['DNA is complicated', 'change is fast', 'tiny advantages take many generations to compound', 'fossils are rare'], answer: 2, hint: 'How big is a one percent advantage in one generation?', explain: 'Small effects need many repetitions — the same compounding as interest.' },
       { type: 'mc', prompt: 'A trait becomes more common when its owners:', choices: ['are stronger', 'are larger', 'live longer only', 'leave more offspring'], answer: 3, hint: 'What actually passes a trait on?', explain: 'Reproduction is the mechanism. Survival matters because it enables it.' },
     ],
@@ -209,7 +209,7 @@ export const BIO_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'The correct order from smallest is:', choices: ['organ, tissue, cell, system', 'cell, tissue, organ, system', 'tissue, cell, system, organ', 'system, organ, cell, tissue'], answer: 1, hint: 'Start with the smallest living unit.', explain: 'Cell, tissue, organ, system — each built from the one before.' },
-      { type: 'tf', prompt: 'The circulatory system could do its job without the respiratory system.', answer: false, hint: 'What is the blood carrying?', explain: 'It moves oxygen that breathing collected. Remove one and the other is pointless.' },
+      { type: 'mc', prompt: 'Without the respiratory system, the circulatory system would:', choices: ['work normally', 'have nothing useful to carry', 'pump faster to compensate', 'be unaffected for days'], answer: 1, hint: 'What is the blood actually carrying?', explain: 'Blood delivers oxygen. With nothing collecting oxygen, circulation is a delivery service with an empty van.' },
       { type: 'mc', prompt: 'The shared purpose of organ systems is best described as:', choices: ['fighting disease only', 'growing larger', 'keeping internal conditions steady', 'producing energy only'], answer: 2, hint: 'One word from Day 1.', explain: 'Homeostasis — holding conditions within a narrow band.' },
       { type: 'mc', prompt: 'A body resembles a well-built program because both:', choices: ['combine small parts each doing one job', 'never fail', 'are fast', 'are written down'], answer: 0, hint: 'Think about decomposition.', explain: 'Small specialised pieces combining into something larger.' },
     ],
@@ -241,7 +241,7 @@ export const BIO_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'A virus cannot be clearly called alive because it:', choices: ['has no DNA', 'does not move', 'is too small', 'cannot reproduce without a host cell'], answer: 3, hint: 'Check it against the Day 1 list.', explain: 'It fails several checklist items, reproduction most obviously.' },
-      { type: 'tf', prompt: 'Most bacteria cause disease.', answer: false, hint: 'Think about your gut.', explain: 'Only a small minority do. Many are essential to you.' },
+      { type: 'mc', prompt: 'Of all bacteria species, the proportion that cause disease in humans is:', choices: ['most of them', 'about half', 'a small minority', 'none'], answer: 2, hint: 'Think about what is in your gut right now.', explain: 'A small minority. Most are harmless, and a great many are doing work you could not live without.' },
       { type: 'mc', prompt: 'Decomposers matter because they:', choices: ['produce oxygen', 'return nutrients so they can be reused', 'eat live animals', 'make soil harder'], answer: 1, hint: 'What would pile up without them?', explain: 'They close the loop and keep the cycle turning.' },
       { type: 'mc', prompt: 'Without decomposers a food web would be:', choices: ['faster', 'unchanged', 'a cycle', 'a one-way line ending in waste'], answer: 3, hint: 'Nothing would come back.', explain: 'Nutrients would lock up permanently in dead material.' },
     ],
@@ -273,7 +273,7 @@ export const BIO_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'A hypothesis is useful only if:', choices: ['it is already known', 'it is popular', 'some possible result could show it wrong', 'it is complicated'], answer: 2, hint: 'What would count as evidence against it?', explain: 'It must be able to fail. Otherwise the test tells you nothing.' },
-      { type: 'tf', prompt: 'Changing several variables at once makes an experiment stronger.', answer: false, hint: 'Which one caused the result?', explain: 'You cannot tell which change mattered. Vary one thing.' },
+      { type: 'mc', prompt: 'Changing several variables at once in an experiment means:', choices: ['you get results faster and better', 'you cannot tell which change caused the result', 'the experiment is more realistic', 'you need fewer trials'], answer: 1, hint: 'Which one caused the effect?', explain: 'If three things changed and the result moved, you have learned nothing about which was responsible.' },
       { type: 'mc', prompt: 'The control group is there to:', choices: ['give a baseline for comparison', 'confirm the hypothesis', 'save time', 'make the experiment bigger'], answer: 0, hint: 'Compared against what?', explain: 'Without a baseline, a result has no meaning.' },
       { type: 'mc', prompt: 'Why is a hypothesis never called "proved"?', choices: ['scientists are cautious by habit', 'no number of confirming results rules out a future counterexample', 'proof is only for math', 'it is a translation error'], answer: 1, hint: 'Remember the swans.', explain: 'Examples support but never prove a universal claim — straight from Logic.' },
     ],

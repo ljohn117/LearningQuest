@@ -735,6 +735,74 @@ for (const lane of Object.values(CURRICULUM)) {
 }
 ok('no diagram caption is wide enough to clip', tooWide.length === 0, tooWide.join(', '));
 
+/* ---- the coin flip is retired ------------------------------------------ */
+section('No question can be answered by guessing heads or tails');
+
+/* 116 of 572 questions were true/false. A 50/50 guess reads as knowledge,
+ * which inflates every score and corrupts the "Finished, but shaky" list the
+ * parent page now uses to decide what he redoes. Seven of his nine weakest
+ * days contained one.
+ *
+ * They were converted IN PLACE — same index, same idea tested — because
+ * recall history is keyed by quiz position. */
+let tfLeft = 0;
+for (const lane of Object.values(CURRICULUM)) {
+  for (const day of lane.days) for (const q of day.quiz || []) if (q.type === 'tf') tfLeft++;
+}
+eq('no true/false questions remain', tfLeft, 0);
+
+/* Every multiple choice question must actually offer a choice worth making. */
+let thin = 0, dupeChoices = 0, badIndex = 0, noHint = 0, noExplain = 0;
+for (const lane of Object.values(CURRICULUM)) {
+  for (const day of lane.days) for (const q of day.quiz || []) {
+    if (q.type !== 'mc') continue;
+    if (!Array.isArray(q.choices) || q.choices.length < 3) { thin++; continue; }
+    const seen = new Set(q.choices.map((x) => String(x).trim().toLowerCase()));
+    if (seen.size !== q.choices.length) dupeChoices++;
+    if (!(Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.choices.length)) badIndex++;
+    if (!q.hint) noHint++;
+    if (!q.explain) noExplain++;
+  }
+}
+eq('every choice question offers at least 3 options', thin, 0);
+eq('no question repeats an option', dupeChoices, 0);
+eq('every answer index points at a real option', badIndex, 0);
+eq('every choice question has a hint', noHint, 0);
+eq('every choice question explains itself', noExplain, 0);
+
+/* ---- the tells --------------------------------------------------------- */
+section('Scores cannot be gamed by test-taking tricks');
+
+/* Retiring true/false removed one way to score without knowing anything.
+ * Measuring afterwards found two more, both pre-existing and both made
+ * slightly worse by the conversion:
+ *
+ *   1. WHERE the answer sits. If one slot is disproportionately correct,
+ *      "when in doubt pick B" beats guessing.
+ *   2. HOW LONG the answer is. The oldest test-taking heuristic there is:
+ *      pick the longest, most qualified option. At 60% that is worth far
+ *      more than a coin flip was.
+ *
+ * These caps are set at the CURRENT measured level, not at an ideal. They
+ * exist to stop drift while roadmap phase 2b brings the numbers down. */
+const mcs = [];
+for (const lane of Object.values(CURRICULUM)) {
+  for (const day of lane.days) for (const q of day.quiz || []) {
+    if (q.type === 'mc' && Array.isArray(q.choices)) mcs.push(q);
+  }
+}
+const atPos = [0, 1, 2, 3].map((i) => mcs.filter((q) => q.answer === i).length);
+const worstSlot = Math.max(...atPos) / mcs.length;
+ok('no answer slot is overwhelmingly the right one',
+  worstSlot <= 0.40, `slot distribution ${JSON.stringify(atPos)} — worst is ${Math.round(worstSlot * 100)}%`);
+
+const longestTell = mcs.filter((q) => {
+  const lens = q.choices.map((x) => String(x).length);
+  return lens[q.answer] > Math.max(...lens.filter((_, i) => i !== q.answer));
+}).length / mcs.length;
+ok('the longest option is not almost always the right one',
+  longestTell <= 0.62, `correct is longest in ${Math.round(longestTell * 100)}% of questions — target is under 35%`);
+
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);
 if (fails.length) { for (const f of fails) console.log('  FAIL ' + f); process.exit(1); }

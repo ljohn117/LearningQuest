@@ -75,7 +75,7 @@ export const TEARDOWNS = {
         ],
         quiz: [
           { type: 'mc', prompt: 'Graphite marks paper because its carbon atoms are arranged in:', choices: ['sheets that slide off easily', 'a liquid', 'long single chains', 'a rigid 3D frame'], answer: 0, hint: 'What is different about graphite compared with diamond?', explain: 'Sheets strongly bonded within themselves and weakly to each other — so they slide off onto the paper.' },
-          { type: 'tf', prompt: 'Pencil "lead" contains the element lead.', answer: false, hint: 'What element is it actually made of?', explain: 'It is graphite — pure carbon. The name is a several-hundred-year-old mistake that stuck.' },
+          { type: 'mc', prompt: 'Pencil “lead” is actually made of:', choices: ['lead', 'graphite — a form of carbon', 'iron', 'compressed clay only'], answer: 1, hint: 'What element is it really?', explain: 'Graphite, which is pure carbon in sliding sheets. The name is a centuries-old mistake that stuck.' },
           { type: 'mc', prompt: 'Diamond and graphite have wildly different properties because they differ in:', choices: ['their number of protons', 'their temperature', 'which element they contain', 'how the atoms are bonded'], answer: 3, hint: 'Check what each is made of first.', explain: 'Both are pure carbon. Only the bonding arrangement differs — straight from Chemistry day 4.' },
           { type: 'mc', prompt: 'Geologists can predict where to find graphite because:', choices: ['it glows', 'it floats to the surface', 'rock layers form in a readable order', 'it is magnetic'], answer: 2, hint: 'What did Fossils day 3 say about layers?', explain: 'Layers form in order, so depth predicts what kind of rock is there.' },
         ],
@@ -119,7 +119,7 @@ export const TEARDOWNS = {
         quiz: [
           { type: 'numeric', prompt: 'A bike has 48 teeth on the front gear and 12 on the back. How many wheel turns per pedal turn?', answer: 4, hint: 'Front teeth divided by back teeth.', explain: '48 ÷ 12 = 4. Four wheel turns for every turn of the pedals — a fast, hard gear.' },
           { type: 'mc', prompt: 'Changing to a lower gear makes pedalling easier because you:', choices: ['create extra force', 'trade distance for force', 'reduce the weight of the bike', 'lower the total energy needed'], answer: 1, hint: 'What happens to how far the pedals travel?', explain: 'More pedal turns for the same ground, each one easier. The energy total does not change.' },
-          { type: 'tf', prompt: 'A low gear reduces the total energy needed to climb a hill.', answer: false, hint: 'What did Physical Science say about totals?', explain: 'It spreads the same energy over more turns. Energy converts; it does not get discounted.' },
+          { type: 'mc', prompt: 'Riding up a hill in a low gear changes:', choices: ['the total energy needed', 'how hard each pedal stroke is, but not the total energy', 'the height of the hill', 'nothing at all'], answer: 1, hint: 'What did Physical Science say about energy?', explain: 'You trade force for distance — more turns, each easier. The energy to lift you up the hill is the same either way.' },
           { type: 'mc', prompt: 'A gear ratio is the same kind of thing as:', choices: ['a percentage increase', 'a unit rate', 'a square root', 'an exponent'], answer: 1, hint: 'How many of one thing per one of another?', explain: 'Wheel turns per one pedal turn — the unit rate from Mathematics day 1.' },
         ],
       },
@@ -162,7 +162,7 @@ export const TEARDOWNS = {
         quiz: [
           { type: 'mc', prompt: 'The holes in a slice of bread are:', choices: ['gaps left by flour', 'air whisked in', 'steam pockets', 'carbon dioxide given off by yeast'], answer: 3, hint: 'Something living produced them.', explain: 'Yeast consumes sugars and gives off CO2. Baking sets the dough around the bubbles.' },
           { type: 'mc', prompt: 'Yeast is:', choices: ['a chemical powder', 'a mineral', 'a single-celled fungus', 'a kind of flour'], answer: 2, hint: 'Is it alive?', explain: 'A living single-celled fungus — one of the microorganisms from Biology day 9.' },
-          { type: 'tf', prompt: 'Using boiling water instead of warm water would make bread rise faster.', answer: false, hint: 'What happens to an enzyme at high temperature?', explain: 'It destroys the enzymes and nothing rises. Faster is not always better with a catalyst.' },
+          { type: 'mc', prompt: 'Mixing bread dough with boiling water instead of warm water would:', choices: ['make it rise faster', 'kill the yeast so it does not rise at all', 'make no difference', 'make the bread denser but still rise'], answer: 1, hint: 'What is the yeast, exactly?', explain: 'Yeast is alive. Warm wakes it up; boiling kills it, and dead yeast produces no gas at all.' },
           { type: 'mc', prompt: 'Warm water speeds up rising because the particles:', choices: ['collide more often', 'change element', 'dissolve more', 'get heavier'], answer: 0, hint: 'What does temperature actually measure?', explain: 'Temperature is particle motion, so warmth means more collisions — Chemistry day 10 exactly.' },
         ],
       },
@@ -204,7 +204,7 @@ export const TEARDOWNS = {
         ],
         quiz: [
           { type: 'mc', prompt: 'A charged battery actually stores:', choices: ['heat', 'compressed air', 'electricity', 'chemical arrangement that can be released'], answer: 3, hint: 'Can you keep a push in a box?', explain: 'It stores a chemical setup ready to react. The electricity happens when you let it.' },
-          { type: 'tf', prompt: 'Charging a battery returns exactly as much energy as you later get out.', answer: false, hint: 'Why is a charging phone warm?', explain: 'Some always leaves as heat. Nothing is destroyed — but not all of it goes where you wanted.' },
+          { type: 'mc', prompt: 'Charging a battery and then draining it returns:', choices: ['exactly as much energy as went in', 'less than went in — some was lost as heat', 'more than went in', 'the same, if you charge it slowly'], answer: 1, hint: 'Why does a charger get warm?', explain: 'Some is always lost as heat. That warm charger is the missing energy, leaving where you can feel it.' },
           { type: 'mc', prompt: 'An electric current is:', choices: ['heat travelling', 'electrons moving', 'atoms splitting', 'light in a wire'], answer: 1, hint: 'Which part of the atom is free to move?', explain: 'Moving electrons — the outer ones, the same ones that do all the bonding.' },
           { type: 'mc', prompt: 'A phone gets warm while charging because:', choices: ['the battery is full', 'the screen is on', 'some energy is lost as heat', 'electrons weigh more'], answer: 2, hint: 'Where does the missing energy go?', explain: 'No conversion is perfect. The difference leaves as heat, exactly as Physical Science predicted.' },
         ],
@@ -247,7 +247,7 @@ export const TEARDOWNS = {
         ],
         quiz: [
           { type: 'mc', prompt: 'A phone screen detects your finger by sensing:', choices: ['a change in electrical charge', 'light being blocked', 'pressure', 'heat'], answer: 0, hint: 'Why does a pencil eraser fail even when you press hard?', explain: 'It reads charge. An eraser pushes just as hard and does not conduct, so nothing registers.' },
-          { type: 'tf', prompt: 'A touchscreen works through a thick glove because the glove still presses on it.', answer: false, hint: 'Is pressure what it is measuring?', explain: 'A glove does not conduct, so the charge never changes. Pressing harder does not help.' },
+          { type: 'mc', prompt: 'A phone screen ignores a thick glove because the screen senses:', choices: ['pressure, and the glove spreads it too thinly', 'electrical charge, which the glove blocks', 'heat, and the glove is too cold', 'movement, and the glove is too slow'], answer: 1, hint: 'Is it really pressing that it detects?', explain: 'It senses charge, not pressure — which is why a light touch of skin works and a firm press with a glove does not.' },
           { type: 'mc', prompt: 'Your finger affects the screen because your body is largely:', choices: ['conductive saltwater', 'metal', 'magnetic', 'warm'], answer: 0, hint: 'What did Chemistry day 9 say about salt in water?', explain: 'Dissolved salt spreads charged particles through water, and you are mostly that.' },
           { type: 'mc', prompt: 'Once the grid detects a touch, it hands the software:', choices: ['a sound', 'a pressure reading', 'a picture', 'a pair of coordinates'], answer: 3, hint: 'A row and a column are what, together?', explain: 'An x and a y, stored in variables. Everything after that is normal programming.' },
         ],
@@ -292,7 +292,7 @@ export const TEARDOWNS = {
           { type: 'mc', prompt: 'Rain is fresh even though it comes from salty oceans because:', choices: ['salt sinks', 'rain is filtered by clouds', 'evaporating water leaves dissolved salt behind', 'salt evaporates first'], answer: 2, hint: 'What stays in the pan when seawater dries out?', explain: 'Only the water evaporates. The salt cannot follow it up.' },
           { type: 'mc', prompt: '"Hard" water contains extra:', choices: ['chlorine', 'calcium and magnesium from rock', 'oxygen', 'salt from the sea'], answer: 1, hint: 'What does water pick up soaking through ground?', explain: 'Minerals dissolved out of the rock it passed through — which is why kettles fur up in some places.' },
           { type: 'numeric', prompt: 'How many times more acidic is water at pH 5 than water at pH 7?', answer: 100, hint: 'Two steps, and each step is ten times.', explain: '10 × 10 = 100. That is why a small pH change is worth testing for.' },
-          { type: 'tf', prompt: 'Most of the water on Earth is available for people to drink.', answer: false, hint: 'How much of the planet is ocean?', explain: 'About 97% is salt, most of the rest is ice or deep underground. The accessible fraction is tiny.' },
+          { type: 'mc', prompt: 'Of all the water on Earth, the fraction that is fresh and accessible to drink is:', choices: ['most of it', 'about a third', 'a very small fraction', 'roughly half'], answer: 2, hint: 'How much of the planet is ocean, and how much is locked in ice?', explain: 'Nearly all of it is salt water, and most of the fresh water is frozen or deep underground. What is actually drinkable is a sliver.' },
         ],
       },
     ],

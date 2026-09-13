@@ -39,7 +39,7 @@ export const CORE = {
           { type: 'numeric', prompt: 'A car travels 120 miles in 2 hours. What is its speed in miles per hour?', answer: 60, hint: 'Miles ÷ hours gives miles per ONE hour.', explain: '120 ÷ 2 = 60 mph.' },
           { type: 'mc', prompt: 'The ratio 6:8 in simplest form is:', choices: ['1:2', '2:3', '3:4', '4:6'], answer: 2, hint: 'What number divides evenly into both 6 and 8?', explain: 'Divide both by 2 → 3:4.' },
           { type: 'numeric', prompt: 'If 3 pencils cost $0.90, how much do 5 pencils cost, in dollars?', answer: 1.5, hint: 'Find the cost of ONE pencil first.', explain: 'Unit rate $0.30 × 5 = $1.50.' },
-          { type: 'mc', prompt: 'Which is the better deal?', choices: ['3 apples for $1.50', '5 apples for $2.75'], answer: 0, hint: 'Compare the price of one apple in each deal.', explain: '$0.50 each beats $0.55 each.' },
+          { type: 'mc', prompt: 'Which is the better deal?', choices: ['6 apples for $3.60', '3 apples for $1.50', '5 apples for $2.75', '2 apples for $1.10'], answer: 1, hint: 'Work out the price of ONE apple in each, then compare.', explain: 'Divide each total by its count: $0.60, $0.50, $0.55, $0.55. The three-apple deal wins — and the biggest pack is actually the worst, which is the trap.' },
         ],
       },
       {
@@ -136,7 +136,7 @@ export const CORE = {
           { type: 'mc', prompt: 'Distribute: 5(x + 2) =', choices: ['5x + 10', 'x + 10', '5x + 7', '5x + 2'], answer: 0, hint: 'The 5 must multiply BOTH terms inside.', explain: '5·x + 5·2 = 5x + 10.' },
           { type: 'mc', prompt: 'Simplify 2(x + 3) + 4x =', choices: ['8x + 6', '2x + 7', '6x + 6', '6x + 3'], answer: 2, hint: 'Distribute first, then gather the x terms.', explain: '2x + 6 + 4x = 6x + 6.' },
           { type: 'numeric', prompt: 'Simplify 7y − 2y = ?y.  What is the coefficient?', answer: 5, hint: 'Subtract the coefficients.', explain: '7y − 2y = 5y.' },
-          { type: 'tf', prompt: 'x and x² are like terms.', answer: false, hint: 'Same variable, but is it the same POWER of the variable?', explain: 'Different powers = different species. They never combine.' },
+          { type: 'mc', prompt: 'Which pair can be combined into a single term?', choices: ['2x and 2y', '3x and 5x', 'x and x²', '4 and 4x'], answer: 1, hint: 'Like terms need the same letter AND the same power of it.', explain: '3x and 5x make 8x. x and x² share a letter but not a power, so they never combine — that is the trap.' },
         ],
       },
       {
@@ -299,7 +299,7 @@ export const CORE = {
           { type: 'numeric', prompt: '0.0042 = 4.2 × 10ⁿ.  What is n?', answer: -3, hint: 'Tiny number — the exponent is negative.', explain: 'Decimal moves 3 right → −3.' },
           { type: 'mc', prompt: '3 × 10⁸ is the same as:', choices: ['3,000,000', '38', '300,000,000', '30,000,000'], answer: 2, hint: '10⁸ has eight zeros.', explain: '3 followed by 8 zeros.' },
           { type: 'numeric', prompt: '(2 × 10³) × (3 × 10⁴) = 6 × 10ⁿ.  What is n?', answer: 7, hint: 'Multiply fronts, add exponents.', explain: '3 + 4 = 7.' },
-          { type: 'tf', prompt: '10⁶ is one hundred thousand.', answer: false, hint: 'Count the zeros in a million.', explain: 'Count the zeros: 10⁶ is 1,000,000 — one million, not one hundred thousand.' },
+          { type: 'mc', prompt: '10⁶ equals:', choices: ['100,000', '60', '1,000,000', '10,000,000'], answer: 2, hint: 'The exponent counts the zeros after the 1.', explain: 'Six zeros after the 1 is 1,000,000. 100,000 is 10⁵ — one zero short, which is the usual slip.' },
         ],
       },
       {
@@ -366,7 +366,7 @@ export const CORE = {
           { type: 'numeric', prompt: 'Legs of 6 and 8. Find the hypotenuse.', answer: 10, hint: '36 + 64 = c².', explain: '100 → √100 = 10.' },
           { type: 'mc', prompt: 'The hypotenuse of a right triangle is:', choices: ['one of the legs', 'the shortest side', 'the longest side, opposite the right angle', 'always 5'], answer: 2, hint: 'Which side faces the 90° corner?', explain: 'It is the longest side, opposite the right angle.' },
           { type: 'numeric', prompt: 'Legs of 5 and 12. Find the hypotenuse.', answer: 13, hint: '25 + 144 = c².', explain: '169 → √169 = 13.' },
-          { type: 'tf', prompt: 'In a² + b² = c², the letter c stands for the hypotenuse.', answer: true, hint: 'c is the side you usually solve for.', explain: 'Yes — c is always the hypotenuse.' },
+          { type: 'mc', prompt: 'In a² + b² = c², the side c is always:', choices: ['the longest side', 'either of the two short sides', 'the right angle itself', 'the area of the triangle'], answer: 0, hint: 'Which side sits opposite the right angle?', explain: 'c is the hypotenuse — the longest side, opposite the right angle. a and b are the legs, and swapping c for a leg is the common error.' },
         ],
       },
       {
@@ -398,7 +398,7 @@ export const CORE = {
           { type: 'numeric', prompt: 'From x = 6 and x + y = 10, what is y?', answer: 4, hint: 'Substitute x = 6 back in.', explain: '6 + y = 10 → y = 4.' },
           { type: 'mc', prompt: 'The solution to a system of two lines is:', choices: ['the steeper line', 'the point where they cross', 'always (0,0)', 'the longer line'], answer: 1, hint: 'One point satisfies BOTH equations.', explain: 'It is the crossing point.' },
           { type: 'numeric', prompt: 'If y = 2x and x + y = 9, what is x?', answer: 3, hint: 'Replace y with 2x: x + 2x = 9.', explain: '3x = 9 → x = 3.' },
-          { type: 'tf', prompt: 'Two parallel lines cross at exactly one point.', answer: false, hint: 'Do parallel lines ever cross?', explain: 'Parallel lines never meet, so the system has no solution at all.' },
+          { type: 'mc', prompt: 'A system of two parallel lines has:', choices: ['exactly one solution', 'two solutions', 'infinitely many solutions', 'no solution'], answer: 3, hint: 'Do parallel lines ever meet?', explain: 'They never meet, so no point satisfies both. Infinitely many would mean the same line written twice.' },
         ],
       },
       {
@@ -429,7 +429,7 @@ export const CORE = {
         quiz: [
           { type: 'numeric', prompt: 'Solve x + 3 > 7. The answer is x greater than what number?', answer: 4, hint: 'Subtract 3 from both sides.', explain: 'x > 4.' },
           { type: 'mc', prompt: 'When you divide both sides of an inequality by a negative number, you must:', choices: ['flip the inequality sign', 'square both sides', 'do nothing special', 'add 1'], answer: 0, hint: 'It is the one twist from today.', explain: 'Dividing by a negative flips the sign.' },
-          { type: 'tf', prompt: 'x = 4 is a solution to x > 4.', answer: false, hint: 'Is 5 greater than 4?', explain: 'The sign is strictly greater than, so 4 itself does not count. 5 would.' },
+          { type: 'mc', prompt: 'Which value satisfies x > 4?', choices: ['4', '4.5', '3.9', '0'], answer: 1, hint: 'Strictly greater than means 4 itself is out.', explain: '4.5 is greater than 4. The number 4 is not greater than itself — you would need x ≥ 4 for that.' },
           { type: 'numeric', prompt: 'Solve 2x < 10. The answer is x less than what number?', answer: 5, hint: 'Divide both sides by 2 (positive, no flip).', explain: 'x < 5.' },
           { type: 'mc', prompt: 'The symbol ≥ means:', choices: ['less than', 'not equal', 'greater than only', 'greater than OR equal to'], answer: 3, hint: 'The line under > adds "or equal."', explain: '≥ is "greater than or equal to."' },
         ],
@@ -464,7 +464,7 @@ export const CORE = {
           { type: 'mc', prompt: 'A function gives each input how many outputs?', choices: ['as many as it wants', 'zero', 'exactly one', 'two'], answer: 2, hint: 'Same input, same single result.', explain: 'Exactly one output per input.' },
           { type: 'numeric', prompt: 'If f(x) = x², what is f(4)?', answer: 16, hint: 'Square the input.', explain: '4² = 16.' },
           { type: 'numeric', prompt: 'If f(x) = 3x, what is f(0)?', answer: 0, hint: 'Multiply 3 by 0.', explain: '3 × 0 = 0.' },
-          { type: 'tf', prompt: 'f(x) = 2x + 1 describes a function.', answer: true, hint: 'Does each x give exactly one answer?', explain: 'Yes — one output per input.' },
+          { type: 'mc', prompt: 'What makes f(x) = 2x + 1 a function?', choices: ['it is written using f(x)', 'each input gives exactly one output', 'its graph is a straight line', 'it contains the letter x'], answer: 1, hint: 'The test is about how many outputs one input is allowed.', explain: 'Put in any x and exactly one y comes out. The notation and the straight line are consequences, not the reason.' },
         ],
       },
       {
@@ -497,7 +497,7 @@ export const CORE = {
           { type: 'numeric', prompt: 'For y = x², what is y when x = 3?', answer: 9, hint: 'Square the input.', explain: '3² = 9.' },
           { type: 'mc', prompt: 'The graph of y = x² is a:', choices: ['straight line', 'parabola (U-shape)', 'circle', 'single point'], answer: 1, hint: 'Squaring bends the graph.', explain: 'It is a U-shaped parabola.' },
           { type: 'numeric', prompt: 'For y = x², what is y when x = −2?', answer: 4, hint: 'A negative squared becomes positive.', explain: '(−2)² = 4.' },
-          { type: 'tf', prompt: 'The graph of y = x² is a straight line.', answer: false, hint: 'Squaring changes its shape.', explain: 'It curves into a parabola.' },
+          { type: 'mc', prompt: 'The graph of y = x² is:', choices: ['a U-shaped curve', 'a straight line', 'a circle', 'two crossing lines'], answer: 0, hint: 'Plot x = -2, -1, 0, 1, 2 and look at the shape.', explain: 'Squaring turns negatives positive, so the graph comes down, turns at zero, and goes back up — a parabola.' },
           { type: 'numeric', prompt: 'For y = x² + 1, what is y when x = 2?', answer: 5, hint: 'Square first, then add 1.', explain: '4 + 1 = 5.' },
         ],
       },
@@ -574,7 +574,7 @@ export const CORE = {
           { type: 'mc', prompt: 'The four basic computer jobs are input, process, output, and:', choices: ['guessing', 'sleeping', 'storage', 'magic'], answer: 2, hint: 'Where does data get saved?', explain: 'Storage is the fourth job.' },
           { type: 'mc', prompt: 'Typing on a keyboard is an example of:', choices: ['output', 'storage', 'process', 'input'], answer: 3, hint: 'Information coming IN.', explain: 'Keyboard typing is input.' },
           { type: 'mc', prompt: 'A screen showing your results is:', choices: ['input', 'output', 'storage', 'a bug'], answer: 1, hint: 'Information going OUT.', explain: 'The display is output.' },
-          { type: 'tf', prompt: 'A computer uses common sense to fix instructions that are unclear.', answer: false, hint: 'That is why bugs happen.', explain: 'It has none. It does exactly what you wrote, including the mistakes.' },
+          { type: 'mc', prompt: 'Given an instruction that does not quite say what you meant, a computer will:', choices: ['guess what you meant', 'stop and ask you', 'do exactly what was written, wrong or not', 'fix it automatically'], answer: 2, hint: 'This is the reason bugs exist at all.', explain: 'It has no common sense to apply. It does exactly what was written, which is why one small slip produces a confidently wrong answer.' },
         ],
       },
       {
@@ -637,7 +637,7 @@ export const CORE = {
         quiz: [
           { type: 'mc', prompt: 'An algorithm is:', choices: ['a type of computer', 'a math symbol', 'a precise list of steps', 'a lucky guess'], answer: 2, hint: 'Think recipe.', explain: 'Exact, ordered steps.' },
           { type: 'mc', prompt: 'Pseudocode is:', choices: ['a password', 'plain-language steps before real code', 'a programming language', 'a kind of bug'], answer: 1, hint: 'A planning tool.', explain: 'It plans the algorithm in plain words.' },
-          { type: 'tf', prompt: 'The order of steps in an algorithm matters.', answer: true, hint: 'Try the steps out of order.', explain: 'Order is part of the instructions.' },
+          { type: 'mc', prompt: 'Swapping two steps in an algorithm:', choices: ['can change the result completely', 'never matters', 'only matters inside loops', 'only matters in long algorithms'], answer: 0, hint: 'Try putting your shoes on before your socks.', explain: 'Order is part of the instructions. Socks then shoes works; shoes then socks does not, with exactly the same two steps.' },
           { type: 'mc', prompt: 'A diagram that maps an algorithm’s steps is a:', choices: ['pixel', 'flowchart', 'spreadsheet', 'keyboard'], answer: 1, hint: 'Boxes and arrows.', explain: 'That is a flowchart.' },
         ],
       },
@@ -668,7 +668,7 @@ export const CORE = {
         quiz: [
           { type: 'mc', prompt: 'A loop is used to:', choices: ['repeat steps', 'make a single decision', 'store one value', 'turn off the computer'], answer: 0, hint: 'It handles repetition.', explain: 'Loops repeat steps.' },
           { type: 'mc', prompt: '"IF it is raining, THEN bring an umbrella" is a:', choices: ['variable', 'byte', 'conditional', 'loop'], answer: 2, hint: 'It is an IF/THEN decision.', explain: 'That is a conditional.' },
-          { type: 'tf', prompt: 'A loop means you must write out each repeated step separately.', answer: false, hint: 'Why else use one?', explain: 'The opposite — a loop is how you write the step once and repeat it.' },
+          { type: 'mc', prompt: 'A loop lets you:', choices: ['write each repeat out separately', 'skip steps you do not need', 'run steps in any order', 'write a step once and repeat it many times'], answer: 3, hint: 'What problem is a loop actually solving?', explain: 'Writing it once and repeating is the entire point — it is what saves you from typing the same line a hundred times.' },
           { type: 'mc', prompt: '"Repeat 10 times" describes a:', choices: ['conditional', 'bug', 'byte', 'loop'], answer: 3, hint: 'Repetition word.', explain: 'Repeating is a loop.' },
         ],
       },
@@ -700,7 +700,7 @@ export const CORE = {
           { type: 'mc', prompt: 'A variable in code is:', choices: ['a bug', 'a screen', 'a named container for data', 'a type of loop'], answer: 2, hint: 'It stores a value.', explain: 'A named container for data.' },
           { type: 'mc', prompt: 'Text data like "hello" is called a:', choices: ['integer', 'boolean', 'loop', 'string'], answer: 3, hint: 'A string of characters.', explain: 'Text is a string.' },
           { type: 'mc', prompt: 'A true/false value is a:', choices: ['pixel', 'boolean', 'string', 'number'], answer: 1, hint: 'Only two possible values.', explain: 'True/false is a boolean.' },
-          { type: 'tf', prompt: 'A variable’s value can change while a program runs.', answer: true, hint: 'Think of a score going up.', explain: 'Yes — that is the point of variables.' },
+          { type: 'mc', prompt: 'A variable is best described as:', choices: ['a named box whose contents can change', 'a number that never changes', 'a kind of loop', 'a message printed to the screen'], answer: 0, hint: 'Think of a score going up during a game.', explain: 'The name stays put; the value inside can change. That is what makes score = score + 1 possible at all.' },
         ],
       },
       {
@@ -730,7 +730,7 @@ export const CORE = {
         quiz: [
           { type: 'mc', prompt: 'A "bug" in code is:', choices: ['an error', 'a feature', 'a loop', 'a fast computer'], answer: 0, hint: 'Something gone wrong.', explain: 'A bug is an error.' },
           { type: 'mc', prompt: 'Breaking a big problem into smaller parts is called:', choices: ['debugging', 'looping', 'storage', 'decomposition'], answer: 3, hint: 'Divide and conquer.', explain: 'That is decomposition.' },
-          { type: 'tf', prompt: 'The fastest way to find a bug is to rewrite the whole program.', answer: false, hint: 'Rule out what works.', explain: 'Test small pieces instead. Rewriting hides the bug rather than finding it.' },
+          { type: 'mc', prompt: 'The fastest way to find a bug is usually to:', choices: ['rewrite the whole program', 'test small pieces to narrow down where it is', 'read it through once more', 'change things until it works'], answer: 1, hint: 'You want to rule out the parts that already work.', explain: 'Narrowing down finds it. Rewriting throws away working code and usually puts the same bug back.' },
           { type: 'mc', prompt: 'Debugging is most like:', choices: ['giving up', 'taking a nap', 'detective work and elimination', 'guessing randomly'], answer: 2, hint: 'Rule out the impossible.', explain: 'It is detective-style elimination.' },
         ],
       },
@@ -763,7 +763,7 @@ export const CORE = {
           { type: 'mc', prompt: 'A programming language is:', choices: ['precise words a computer understands', 'a kind of hardware', 'a type of mouse', 'a spreadsheet'], answer: 0, hint: 'It is how you give instructions.', explain: 'It lets you give exact instructions.' },
           { type: 'mc', prompt: 'Syntax means:', choices: ['a variable', 'the exact grammar rules of the language', 'a bug', 'a fast computer'], answer: 1, hint: 'Spelling and punctuation rules.', explain: 'Syntax is the language’s grammar.' },
           { type: 'mc', prompt: 'JavaScript mainly runs in:', choices: ['toasters', 'calculators only', 'printers', 'web browsers'], answer: 3, hint: 'Think websites.', explain: 'It runs in browsers.' },
-          { type: 'tf', prompt: 'Statements in code normally run in order from top to bottom.', answer: true, hint: 'Same as an algorithm.', explain: 'Yes — sequence matters.' },
+          { type: 'mc', prompt: 'Unless you say otherwise, code runs:', choices: ['all at once', 'in whatever order is fastest', 'top to bottom, in order', 'bottom to top'], answer: 2, hint: 'Same rule as an algorithm.', explain: 'Sequence is the default. Loops and conditionals are how you deliberately break out of it.' },
         ],
       },
       {
@@ -858,7 +858,7 @@ export const CORE = {
         quiz: [
           { type: 'mc', prompt: 'Which line prints Hello, world! exactly?', choices: ['print("Hello, world!")', 'log Hello, world!', 'console.log("Hello, world!");', 'console.log(Hello, world!);'], answer: 2, hint: 'Text needs quotes.', explain: 'Quotes make it a string.' },
           { type: 'numeric', prompt: 'let a = 5; let b = 4; console.log(a * b); What prints?', answer: 20, hint: 'Multiply the two values.', explain: '5 × 4 = 20.' },
-          { type: 'tf', prompt: 'Running broken code is safe — you can just fix it and run again.', answer: true, hint: 'Errors are normal in coding.', explain: 'Yes — errors are part of learning.' },
+          { type: 'mc', prompt: 'When your code stops with an error message, that message is:', choices: ['a sign you should start over', 'information telling you roughly where to look', 'something to ignore', 'a sign the computer is broken'], answer: 1, hint: 'Read what it actually says.', explain: 'An error usually names the line and the problem. It costs nothing to run code that breaks — that is how you find out what to fix.' },
           { type: 'mc', prompt: 'To print a variable’s value, you write its name:', choices: ['with quotes', 'in capitals', 'twice', 'without quotes'], answer: 3, hint: 'Quotes would print the name itself.', explain: 'No quotes prints the stored value.' },
         ],
       },
@@ -924,7 +924,7 @@ export const CORE = {
           { type: 'mc', prompt: 'What does i++ do?', choices: ['prints i', 'adds 1 to i', 'doubles i', 'deletes i'], answer: 1, hint: 'It is the step part of the loop.', explain: 'It increases i by 1.' },
           { type: 'numeric', prompt: 'for (let i = 1; i <= 5; i++) — how many times does the loop run?', answer: 5, hint: 'From 1 up to and including 5.', explain: 'It runs 5 times.' },
           { type: 'mc', prompt: 'To print 2, 4, 6, 8, 10 from i = 1 to 5, you log:', choices: ['i + 5', 'i', 'i * 2', 'i * 3'], answer: 2, hint: 'What turns 1 into 2 and 5 into 10?', explain: 'Multiplying by 2 gives the even numbers.' },
-          { type: 'tf', prompt: 'A loop with no step instruction could run forever.', answer: true, hint: 'Something must change each pass.', explain: 'Yes — it would never reach its end condition.' },
+          { type: 'mc', prompt: 'A loop whose counter never changes will:', choices: ['run exactly once', 'skip its body entirely', 'stop after ten passes', 'never reach its stopping condition'], answer: 3, hint: 'Something has to change on each pass.', explain: 'If nothing changes, the condition that would end it stays true forever — an infinite loop.' },
           { type: 'mc', prompt: 'The five core building blocks of programs are printing, variables, math, conditionals, and:', choices: ['loops', 'colors', 'fonts', 'mice'], answer: 0, hint: 'Repetition.', explain: 'Loops complete the toolkit.' },
         ],
       },

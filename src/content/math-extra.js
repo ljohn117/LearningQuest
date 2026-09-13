@@ -110,7 +110,7 @@ export const MATH_EXTRA = [
       { type: 'numeric', prompt: 'Find the mean of 4, 6, 6, 8, 11.', answer: 7, hint: 'Add them, then divide by how many there are.', explain: '4 + 6 + 6 + 8 + 11 = 35, and 35 ÷ 5 = 7.' },
       { type: 'numeric', prompt: 'Find the median of 4, 6, 6, 8, 11.', answer: 6, hint: 'They are already in order — take the middle one.', explain: 'The third of five values is 6.' },
       { type: 'mc', prompt: 'Four friends earn $20,000 each and a fifth earns $5,000,000. The better description of a typical income here is the:', choices: ['largest value', 'total', 'median, because extremes barely move it', 'mean, because it uses every value'], answer: 2, hint: 'Which number would describe the four of them?', explain: 'The median is $20,000. The mean is over a million and describes nobody in the group.' },
-      { type: 'tf', prompt: 'If the mean is much higher than the median, some values are probably far above the rest.', answer: true, hint: 'What is capable of dragging a mean upward?', explain: 'A few large values pull the mean up while leaving the middle value roughly where it was.' },
+      { type: 'mc', prompt: 'The mean of a group is much higher than the median. This usually means:', choices: ['a few values sit far above the rest', 'most values are above average', 'the data was recorded wrongly', 'the group is very large'], answer: 0, hint: 'Which average gets dragged by one enormous value?', explain: 'The mean uses every value, so one billionaire pulls it upward. The median just steps to the middle and barely notices.' },
     ],
   },
 
@@ -185,7 +185,7 @@ export const MATH_EXTRA = [
     quiz: [
       { type: 'numeric', prompt: 'Rolling one die, what is the probability of a 5? Type the bottom number: 1 over what?', answer: 6, hint: 'One outcome you want, out of how many possible?', explain: 'One face out of six, so 1/6.' },
       { type: 'numeric', prompt: 'Flipping three coins, how many equally likely results are there in total?', answer: 8, hint: 'Two choices, three times over.', explain: '2 × 2 × 2 = 8 — the counting rule from day 17 doing the work again.' },
-      { type: 'tf', prompt: 'After six heads in a row, tails is now more likely than heads.', answer: false, hint: 'Does the coin know what it did last time?', explain: 'Still one half. The coin has no memory — that is the gambler’s fallacy.' },
+      { type: 'mc', prompt: 'A fair coin lands heads six times in a row. The chance of heads on the next flip is:', choices: ['less than half — tails is due', 'exactly half', 'more than half — heads is on a run', 'impossible to say'], answer: 1, hint: 'Does the coin know what it did before?', explain: 'The coin has no memory and no way to store those six flips. Every flip is half, forever.' },
       { type: 'mc', prompt: 'Two coins are flipped. The probability of exactly one head is:', choices: ['1/4', '3/4', '1/3, since there are three outcomes', '1/2, because HT and TH both count'], answer: 3, hint: 'List all four results before you decide.', explain: 'HH, HT, TH, TT — two of the four have exactly one head, so 2/4 = 1/2.' },
     ],
   },
@@ -223,7 +223,7 @@ export const MATH_EXTRA = [
       { type: 'numeric', prompt: 'A cube’s sides are doubled. Its volume is multiplied by what?', answer: 8, hint: 'Volume depends on the side cubed.', explain: '2³ = 8.' },
       { type: 'numeric', prompt: 'That same cube’s surface area is multiplied by what?', answer: 4, hint: 'Area depends on the side squared.', explain: '2² = 4 — which is why the two do not keep pace.' },
       { type: 'mc', prompt: 'A mouse must eat almost constantly because it:', choices: ['cannot store food', 'has a large surface area for its volume', 'has a small stomach', 'moves quickly'], answer: 1, hint: 'Where does a small warm animal lose heat?', explain: 'Lots of surface for very little body, so heat escapes fast and has to be replaced.' },
-      { type: 'tf', prompt: 'An insect enlarged to the size of a dog would work the same way, only bigger.', answer: false, hint: 'Compare how weight grows with how leg cross-section grows.', explain: 'Weight grows cubed while supporting area grows squared, so its legs could not hold it.' },
+      { type: 'mc', prompt: 'An insect scaled up to the size of a dog would collapse mainly because:', choices: ['its legs would be too short', 'weight grows faster than the strength of its legs', 'it could not find enough food', 'its shell would be the wrong colour'], answer: 1, hint: 'Compare how area grows with how volume grows.', explain: 'Strength depends on cross-sectional area, which squares. Weight depends on volume, which cubes. Doubling in size makes it eight times heavier but only four times stronger.' },
     ],
   },
 
@@ -260,12 +260,12 @@ export const MATH_EXTRA = [
     ],
     quiz: [
       { type: 'mc', prompt: 'A 30% cut followed by a 30% rise leaves the price:', choices: ['below where it started', 'exactly where it started', 'above where it started', 'impossible to tell'], answer: 0, hint: 'The rise is calculated from a smaller number than the cut was.', explain: '$100 → $70 → $91. The base shrank, so the same percentage returns less.' },
-      { type: 'tf', prompt: 'An average can be entirely accurate and still describe nobody in the group.', answer: true, hint: 'Think of the room with the billionaire in it.', explain: 'The arithmetic is right; it is the word "typical" that the mean was never promising.' },
+      { type: 'mc', prompt: 'A correctly calculated average can still:', choices: ['describe nobody in the group', 'never mislead anyone', 'only be wrong if the maths is wrong', 'always name a real member of the group'], answer: 0, hint: 'Think of the average family with 2.4 children.', explain: 'No family has 2.4 children. The number is arithmetically perfect and describes no actual household.' },
       { type: 'numeric', prompt: 'Four coins are flipped. How many equally likely results in total?', answer: 16, hint: 'Two choices, four times over.', explain: '2⁴ = 16 — the counting rule again.' },
       { type: 'mc', prompt: 'After eight tails in a row, the chance the next flip is heads is:', choices: ['impossible to know', 'higher, because heads is due', 'one half', 'lower'], answer: 2, hint: 'What does independent mean?', explain: 'One half. The rarity of a long run is spent before it happens, not owed afterward.' },
       { type: 'mc', prompt: 'Doubling a cube’s side multiplies volume by 8 and area by 4 because:', choices: ['the exponents differ, 3 against 2', 'area is measured differently', 'volume is heavier', 'cubes are irregular'], answer: 0, hint: 'What is the only difference between the two formulas?', explain: 'One exponent. That single digit decides animal size and mountain height.' },
       { type: 'mc', prompt: 'The single question underneath all five days is:', choices: ['who calculated it', 'is the arithmetic correct', 'is this number large', 'compared to what, and did it stay still'], answer: 3, hint: 'Each trap involved a moving baseline.', explain: 'Every one of the five hid something changing that intuition assumed was fixed.' },
-      { type: 'tf', prompt: 'Support rising from 3% to 6% can honestly be called both "3 percentage points" and "a 100% increase".', answer: true, hint: 'One is the plain gap; one compares against the start.', explain: 'Both are true, and the choice of which to report shapes the impression entirely.' },
+      { type: 'mc', prompt: 'Support rises from 3% to 6%. Which description is honest?', choices: ['only “3 percentage points”', 'only “a 100% increase”', 'both — they measure different things', 'neither'], answer: 2, hint: 'One is the plain gap; one compares against the start.', explain: 'Both are true. One sounds trivial and one sounds enormous, and whoever reports it picks which impression you leave with.' },
     ],
   },
 ];

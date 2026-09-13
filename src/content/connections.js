@@ -55,7 +55,7 @@ export const CONNECTIONS = {
           { type: 'numeric', prompt: 'Each binary place is worth how many times the place to its right?', answer: 2, hint: 'Count the places: 1, 2, 4, 8, 16.', explain: 'Two. Every place doubles — that is why binary is powers of two.' },
           { type: 'mc', prompt: 'Half-life and compound interest are related because both:', choices: ['subtract a fixed amount each step', 'happen only in science', 'add a fixed amount each step', 'multiply by a fixed factor each step'], answer: 3, hint: 'Is the change an amount, or a factor?', explain: 'Both multiply by the same factor repeatedly. Only the factor differs.' },
           { type: 'numeric', prompt: 'A sample halves 3 times. What fraction of the original is left? (Type the bottom number: 1 over what?)', answer: 8, hint: 'Half, then half again, then half again.', explain: '1/2 × 1/2 × 1/2 = 1/8. Three halvings, so 2³ = 8.' },
-          { type: 'tf', prompt: 'Repeated multiplication by a fixed factor is what an exponent describes.', answer: true, hint: 'Think about what 2⁵ actually means.', explain: 'Exactly — that is the definition, whichever lane you meet it in.' },
+          { type: 'mc', prompt: 'Binary, half-life and compound interest share which mechanism?', choices: ['repeated addition of a fixed amount', 'repeated multiplication by a fixed factor', 'random variation', 'measuring against a starting value'], answer: 1, hint: 'What does an exponent actually count?', explain: 'All three multiply by the same factor over and over — 2 for binary, one half for decay, 1.05 or so for interest.' },
         ],
       },
       {
@@ -87,7 +87,7 @@ export const CONNECTIONS = {
         quiz: [
           { type: 'mc', prompt: 'A hypothesis that predicts a result which then does not happen is:', choices: ['shown false', 'unprovable', 'a converse', 'still true'], answer: 0, hint: 'Condition met, result absent.', explain: 'That is exactly how a conditional fails — and it is a real result.' },
           { type: 'mc', prompt: 'An if-statement in code is structurally the same as:', choices: ['a variable', 'a definition', 'a conditional in logic', 'a counterexample'], answer: 2, hint: 'Both check something, then act.', explain: 'Same structure, different uniform.' },
-          { type: 'tf', prompt: '"The game was cancelled, so it must have rained" confuses a conditional with its converse.', answer: true, hint: 'Could the game be cancelled for another reason?', explain: 'Yes — that is the converse error, and it appears in every one of these four subjects.' },
+          { type: 'mc', prompt: '“If it rains the game is cancelled. The game was cancelled, so it rained.” The flaw is that:', choices: ['the premises are false', 'it reverses the if-then, and other things also cancel games', 'it uses emotional language', 'it relies on too few examples'], answer: 1, hint: 'What else cancels a game?', explain: 'Rain guarantees cancellation; cancellation does not guarantee rain. Flu, a double booking, a broken pitch — reversing an if-then is a different claim.' },
           { type: 'mc', prompt: 'A conditional is broken when:', choices: ['both parts are true', 'the condition is true but the result is not', 'nobody checks it', 'the condition is false'], answer: 1, hint: 'There is only one failing case.', explain: 'Condition met, promised result absent. That is the only way.' },
         ],
       },
@@ -120,7 +120,7 @@ export const CONNECTIONS = {
         quiz: [
           { type: 'numeric', prompt: 'A 3:1 ratio means how many parts in total?', answer: 4, hint: 'Add the parts together, do not just take the larger one.', explain: '3 + 1 = 4. This is the trap in every subject ratios appear in.' },
           { type: 'mc', prompt: 'A unit rate is a ratio where the second quantity is:', choices: ['the same as the first', 'always money', 'zero', 'one'], answer: 3, hint: 'Think about "per ONE item".', explain: 'Per one — that is what makes it a unit rate.' },
-          { type: 'tf', prompt: 'Ratios only work when both quantities measure the same kind of thing.', answer: false, hint: 'Think about dollars per notebook.', explain: 'Dollars per item compares two different kinds entirely. That is why ratios travel so well.' },
+          { type: 'mc', prompt: 'A ratio comparing two DIFFERENT kinds of quantity, like dollars and hours, is:', choices: ['not a valid ratio', 'a rate — perfectly valid and extremely useful', 'only valid in science', 'the same as a percentage'], answer: 1, hint: 'Think about dollars per hour, or miles per gallon.', explain: 'Those are rates, and they are ratios doing their most useful work — miles per hour, price per gram, people per square mile.' },
           { type: 'numeric', prompt: 'If about 10% of energy passes to the next level of a food web, how much of 1000 units reaches it?', answer: 100, hint: '10% of 1000.', explain: '100 units. The other 90% is lost as heat — conservation of energy, from Physical Science.' },
         ],
       },
@@ -152,7 +152,7 @@ export const CONNECTIONS = {
         ],
         quiz: [
           { type: 'mc', prompt: 'What do fossil layers, text quotes and error messages have in common?', choices: ['they are always reliable', 'they are evidence left behind by something you cannot watch', 'they are opinions', 'they are only used in science'], answer: 1, hint: 'What can none of them let you do directly?', explain: 'None of them let you observe the event — you reconstruct it from traces.' },
-          { type: 'tf', prompt: '"I feel like the character is upset" is as strong as quoting what the character did.', answer: false, hint: 'Which one can someone else check?', explain: 'A quote is evidence. A feeling is not — same standard as citing a rock layer.' },
+          { type: 'mc', prompt: 'Which best supports a claim about a character?', choices: ['saying how the passage made you feel', 'quoting what the character actually said or did', 'saying most readers would agree', 'stating the claim more confidently'], answer: 1, hint: 'What can the reader check for themselves?', explain: 'Evidence is something on the page that anyone can go and look at. A feeling is not checkable, however genuine it is.' },
           { type: 'mc', prompt: 'A lower rock layer is generally:', choices: ['impossible to date', 'younger', 'older', 'the same age'], answer: 2, hint: 'Which went down first?', explain: 'Older — layers pile up over time, so the deepest was laid down first.' },
           { type: 'mc', prompt: 'The best first move when a program breaks is to:', choices: ['read what the error actually says', 'start over', 'rewrite it', 'guess what went wrong'], answer: 0, hint: 'It already left you evidence.', explain: 'Read the evidence first. Same discipline as every other lane here.' },
         ],
@@ -185,9 +185,9 @@ export const CONNECTIONS = {
         ],
         quiz: [
           { type: 'mc', prompt: 'A rolling ball slows and stops. The kinetic energy:', choices: ['was never there', 'turned into mass', 'was destroyed', 'became heat'], answer: 3, hint: 'What warms up when things rub?', explain: 'Friction converted it to heat. The total is unchanged.' },
-          { type: 'tf', prompt: 'A conservation law says the total is the same before and after.', answer: true, hint: 'It is the definition.', explain: 'Forms change; the total does not.' },
+          { type: 'mc', prompt: 'A conservation law states that:', choices: ['nothing ever moves', 'the total is unchanged before and after, though it may move or change form', 'the amount always increases', 'the law applies only to energy'], answer: 1, hint: 'Conserved does not mean frozen.', explain: 'Things move and change form freely; the total stays put. That is why “where did it go?” always has an answer.' },
           { type: 'mc', prompt: 'If your total changed during a calculation, the most useful conclusion is:', choices: ['start over from scratch', 'the law is wrong', 'you missed something', 'the total does not matter'], answer: 2, hint: 'Which conclusion helps you find the error?', explain: 'You missed something — and now you know to look, which is worth more than a wrong answer you trust.' },
-          { type: 'tf', prompt: 'Earth needs new water added regularly because water gets used up.', answer: false, hint: 'Think about the water cycle.', explain: 'It cycles. The same water has been here since long before the dinosaurs.' },
+          { type: 'mc', prompt: 'Water on Earth is:', choices: ['used up and replaced by rain', 'conserved — the same water cycles endlessly', 'created in the oceans', 'slowly disappearing into space'], answer: 1, hint: 'Where did the dinosaurs’ drinking water go?', explain: 'Nothing consumes it. Rain moves water, it does not manufacture it, which is why the glass you drank is genuinely ancient.' },
         ],
       },
       {
@@ -218,7 +218,7 @@ export const CONNECTIONS = {
         ],
         quiz: [
           { type: 'mc', prompt: 'Knowing everything about hydrogen and oxygen separately would NOT tell you:', choices: ['their atomic numbers', 'that water is wet', 'their masses', 'their proton counts'], answer: 1, hint: 'Which property belongs to the combination?', explain: 'New properties appear when parts combine.' },
-          { type: 'tf', prompt: 'Biology can be completely reduced to physics with nothing left over.', answer: false, hint: 'Think about what appears at each level.', explain: 'Nothing breaks the rules underneath, but new behaviour appears that the parts alone do not show.' },
+          { type: 'mc', prompt: 'Living things obey physics completely. Does that make biology unnecessary?', choices: ['yes — biology is just slow physics', 'no — larger patterns appear that physics alone does not describe', 'no, because life breaks physical laws', 'yes, once we have enough computing power'], answer: 1, hint: 'Think about what a heartbeat is, described purely in atoms.', explain: 'Nothing violates physics, but predation, inheritance and immunity are real patterns you would never spot in a list of particle positions.' },
           { type: 'mc', prompt: 'The pattern shared by atoms, cells and ecosystems is:', choices: ['specialised parts combining into something larger', 'they are all alive', 'they all contain carbon', 'they are all microscopic'], answer: 0, hint: 'What is true at every scale?', explain: 'Parts with jobs, combining into a whole.' },
           { type: 'mc', prompt: 'Faced with something too large to picture, the useful move is to ask:', choices: ['who discovered it', 'how far away is it', 'how old is it', 'what are the parts and what do they do together'], answer: 3, hint: 'The two questions from page one.', explain: 'Parts and their interaction — it works at every scale.' },
         ],
@@ -251,7 +251,7 @@ export const CONNECTIONS = {
         ],
         quiz: [
           { type: 'mc', prompt: 'What do homeostasis, supply and demand, and checks and balances share?', choices: ['a disturbance triggers its own correction', 'they never change', 'they require people', 'they are all biological'], answer: 0, hint: 'What happens when each is pushed?', explain: 'Each pushes back against being pushed. Same mechanism, three subjects.' },
-          { type: 'tf', prompt: 'A balanced system is one where nothing is changing.', answer: false, hint: 'Think about a thermostat.', explain: 'It wobbles constantly and corrects. Bounded, not still.' },
+          { type: 'mc', prompt: 'A system in balance is best described as one where:', choices: ['nothing is changing', 'changes are constantly happening and cancelling out', 'change has stopped permanently', 'all forces are zero'], answer: 1, hint: 'Think about a thermostat in a warm room.', explain: 'Your body temperature holds steady through constant activity, not stillness. Balance is a busy state, not a frozen one.' },
           { type: 'mc', prompt: 'A market with only one seller tends to stop correcting because:', choices: ['prices are fixed by law', 'the feedback from competition is removed', 'buyers disappear', 'costs fall'], answer: 1, hint: 'What normally pushes a price back down?', explain: 'Remove the feedback and the system stops self-correcting.' },
           { type: 'mc', prompt: 'Splitting government power across branches is most like:', choices: ['an exponent', 'a food chain', 'a body regulating its own temperature', 'a fossil record'], answer: 2, hint: 'Which one corrects its own drift?', explain: 'Both are feedback systems that resist runaway change.' },
         ],

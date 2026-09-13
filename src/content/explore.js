@@ -37,7 +37,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'Keeping stable internal conditions is called:', choices: ['photosynthesis', 'reproduction', 'erosion', 'homeostasis'], answer: 3, hint: 'Think of body temperature.', explain: 'That is homeostasis.' },
           { type: 'mc', prompt: 'All living things are made of:', choices: ['plastic', 'sand', 'cells', 'metal'], answer: 2, hint: 'The basic unit of life.', explain: 'Cells are the building block of life.' },
-          { type: 'tf', prompt: 'A flame is alive because it grows and uses energy.', answer: false, hint: 'Check the whole list, not one trait.', explain: 'It has no cells and cannot reproduce — not alive.' },
+          { type: 'mc', prompt: 'A flame grows, moves and uses energy. Why is it still not alive?', choices: ['it is not made of cells', 'it does not use energy', 'it does not grow', 'it is too hot'], answer: 0, hint: 'Check the whole list of traits, not just one.', explain: 'Living things are made of cells, respond, and reproduce. A flame manages two items on the list and none of the rest.' },
           { type: 'mc', prompt: 'Which is NOT on the list of traits of living things?', choices: ['being made of metal', 'using energy', 'reproducing', 'responding to surroundings'], answer: 0, hint: 'Three of these are real traits.', explain: 'Being metal is not a trait of life.' },
         ],
       },
@@ -71,7 +71,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'Which part is the cell’s control center?', choices: ['cell wall', 'nucleus', 'membrane', 'mitochondria'], answer: 1, hint: 'It holds the DNA.', explain: 'The nucleus controls the cell.' },
           { type: 'mc', prompt: 'Which part releases usable energy from food?', choices: ['mitochondria', 'nucleus', 'cell wall', 'chloroplast'], answer: 0, hint: 'Known as the powerhouse.', explain: 'Mitochondria release energy.' },
           { type: 'mc', prompt: 'Which is found in plant cells but NOT animal cells?', choices: ['nucleus', 'membrane', 'mitochondria', 'cell wall'], answer: 3, hint: 'It gives plants stiffness.', explain: 'Plant cells have one and animal cells do not. Bacteria and fungi have walls too — animals are the odd ones out here.' },
-          { type: 'tf', prompt: 'Cell theory says every cell comes from another cell.', answer: true, hint: 'Cells do not appear from nothing.', explain: 'Yes — cells come from pre-existing cells.' },
+          { type: 'mc', prompt: 'Cell theory says new cells come from:', choices: ['non-living matter', 'existing cells that divide', 'the nucleus alone', 'sunlight'], answer: 1, hint: 'Cells do not appear from nothing.', explain: 'Every cell came from a cell that divided — an unbroken chain back through the whole history of life.' },
         ],
       },
       {
@@ -103,7 +103,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'Photosynthesis takes in sunlight, water, and:', choices: ['sand', 'salt', 'carbon dioxide', 'oxygen'], answer: 2, hint: 'The gas you breathe out.', explain: 'Plants take in carbon dioxide.' },
           { type: 'mc', prompt: 'Photosynthesis releases:', choices: ['helium', 'oxygen', 'carbon dioxide', 'nitrogen'], answer: 1, hint: 'The gas you breathe in.', explain: 'It releases oxygen.' },
           { type: 'mc', prompt: 'Cellular respiration happens mainly in the:', choices: ['mitochondria', 'nucleus', 'cell wall', 'chloroplast'], answer: 0, hint: 'The powerhouse of the cell.', explain: 'Mitochondria carry out respiration.' },
-          { type: 'tf', prompt: 'Photosynthesis and cellular respiration are roughly opposite processes.', answer: true, hint: 'Compare the two formulas.', explain: 'Yes — one builds sugar, the other breaks it down.' },
+          { type: 'mc', prompt: 'Photosynthesis and cellular respiration are related how?', choices: ['they are roughly opposite — one stores energy, one releases it', 'they are the same process', 'both release energy', 'both happen only in plants'], answer: 0, hint: 'Compare what goes in with what comes out.', explain: 'One takes carbon dioxide, water and light and makes sugar and oxygen. The other runs that backwards to get the energy out.' },
           { type: 'mc', prompt: 'The original source of nearly all energy for life is:', choices: ['the Moon', 'soil', 'wind', 'the Sun'], answer: 3, hint: 'Photosynthesis starts with it.', explain: 'Energy traces back to the Sun.' },
         ],
       },
@@ -138,7 +138,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'A recessive trait appears only when:', choices: ['there is no DNA', 'both copies are recessive', 'one copy is recessive', 'it is dominant'], answer: 1, hint: 'Dominant wins whenever present.', explain: 'Both copies must be recessive.' },
           { type: 'numeric', prompt: 'In a 3 to 1 Punnett result, what percent show the recessive trait?', answer: 25, hint: 'One box out of four.', explain: '1 ÷ 4 = 25%.' },
           { type: 'numeric', prompt: 'How many copies of each gene do you inherit in total from your two parents?', answer: 2, hint: 'One from each parent.', explain: 'Two copies — one per parent.' },
-          { type: 'tf', prompt: 'DNA is stored mainly in the cell wall.', answer: false, hint: 'The control center.', explain: 'DNA sits in the nucleus. Plant cells have walls, but they hold no DNA.' },
+          { type: 'mc', prompt: 'In a plant cell, DNA is stored mainly in the:', choices: ['cell wall', 'nucleus', 'chloroplast', 'cell membrane'], answer: 1, hint: 'The control centre of the cell.', explain: 'The nucleus holds the DNA. The cell wall is structure — it is the outside, not the instructions.' },
         ],
       },
       {
@@ -169,7 +169,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'The science of naming and grouping organisms is:', choices: ['geology', 'economics', 'astronomy', 'taxonomy'], answer: 3, hint: 'It creates the classification system.', explain: 'That is taxonomy.' },
           { type: 'mc', prompt: 'Which is the MOST specific level?', choices: ['phylum', 'class', 'species', 'kingdom'], answer: 2, hint: 'Run down the taxonomy order — kingdom, phylum, class, order, family, genus, species. The narrowest is at the end.', explain: 'Species is the most specific level.' },
           { type: 'mc', prompt: 'Which is the BROADEST level listed?', choices: ['kingdom', 'species', 'genus', 'family'], answer: 0, hint: 'Run down the taxonomy order — kingdom, phylum, class, order, family, genus, species. The widest is at the start.', explain: 'Kingdom is the broadest level.' },
-          { type: 'tf', prompt: 'A scientific name is made of the kingdom and phylum.', answer: false, hint: 'Like Homo sapiens.', explain: 'It is genus then species — the two narrowest levels, not the two broadest.' },
+          { type: 'mc', prompt: 'A scientific name such as Homo sapiens is made of:', choices: ['kingdom and phylum', 'genus and species', 'family and order', 'class and genus'], answer: 1, hint: 'It is the last two ranks — the most specific ones.', explain: 'Genus then species. Homo is the genus, sapiens the species. Kingdom and phylum are far broader.' },
         ],
       },
       {
@@ -202,7 +202,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'Plants that make their own food are called:', choices: ['predators', 'producers', 'consumers', 'decomposers'], answer: 1, hint: 'They produce food from sunlight.', explain: 'Plants are producers.' },
           { type: 'mc', prompt: 'Organisms that break down dead material are:', choices: ['consumers', 'fossils', 'decomposers', 'producers'], answer: 2, hint: 'They recycle nutrients.', explain: 'Those are decomposers.' },
           { type: 'numeric', prompt: 'About what percent of energy passes to the next level of a food chain?', answer: 10, hint: 'Roughly one tenth.', explain: 'About 10% moves up.' },
-          { type: 'tf', prompt: 'Energy flows one way while matter is recycled.', answer: true, hint: 'Decomposers return the matter.', explain: 'Yes — energy flows, matter cycles.' },
+          { type: 'mc', prompt: 'In an ecosystem:', choices: ['both energy and matter are recycled', 'energy flows one way, matter is recycled', 'matter flows one way, energy is recycled', 'neither is recycled'], answer: 1, hint: 'What do decomposers actually return to the soil?', explain: 'Energy arrives as sunlight and leaves as heat — one way. Matter gets returned and used again and again.' },
           { type: 'mc', prompt: 'Food chains are usually short because:', choices: ['animals get bored', 'plants are rare', 'water is heavy', 'energy runs out at each level'], answer: 3, hint: 'Only 10% passes up.', explain: 'Energy loss limits chain length.' },
         ],
       },
@@ -240,7 +240,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'The part of a sentence telling what the subject does is the:', choices: ['title', 'predicate', 'subject', 'adjective'], answer: 1, hint: 'It carries the action.', explain: 'That is the predicate.' },
           { type: 'mc', prompt: 'Which can stand alone as a sentence?', choices: ['an independent clause', 'a dependent clause', 'a fragment', 'a phrase'], answer: 0, hint: 'The name is a hint.', explain: 'Independent clauses stand alone.' },
           { type: 'mc', prompt: '"Because the rain stopped" is a:', choices: ['complete sentence', 'paragraph', 'dependent clause', 'independent clause'], answer: 2, hint: 'Does it feel finished?', explain: 'It cannot stand alone — dependent.' },
-          { type: 'tf', prompt: 'A complete sentence needs only a subject.', answer: false, hint: 'Both parts are required.', explain: 'It needs both. A subject with nothing said about it is a fragment.' },
+          { type: 'mc', prompt: 'A complete sentence needs:', choices: ['a subject only', 'a verb only', 'a subject and a predicate', 'at least eight words'], answer: 2, hint: 'Who or what, and what they do.', explain: 'Both halves. “The dog” is not a sentence; “The dog barked” is.' },
         ],
       },
       {
@@ -271,7 +271,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'The main idea is:', choices: ['the last word', 'the central point the text makes', 'the longest sentence', 'the title only'], answer: 1, hint: 'It is a claim, not just a subject.', explain: 'It is the central point.' },
           { type: 'mc', prompt: 'Facts and examples that back up the main idea are:', choices: ['supporting evidence', 'the topic', 'a fragment', 'a predicate'], answer: 0, hint: 'They make it believable.', explain: 'That is supporting evidence.' },
           { type: 'mc', prompt: '"Sharks" is a topic. Which is a main idea?', choices: ['Sharks', 'Ocean animals', 'Fish', 'Sharks are misunderstood and vital to oceans'], answer: 3, hint: 'A main idea makes a claim.', explain: 'It states a point, not just a subject.' },
-          { type: 'tf', prompt: 'A strong summary retells every detail in order.', answer: false, hint: 'Think shorter and sharper.', explain: 'A strong summary gives the main idea and key evidence.' },
+          { type: 'mc', prompt: 'A strong summary:', choices: ['retells every detail in order', 'keeps the main idea and drops the rest', 'is always exactly one sentence', 'copies the best lines word for word'], answer: 1, hint: 'Shorter and sharper.', explain: 'If it keeps every detail it is not a summary — it is a retelling at the same length.' },
         ],
       },
       {
@@ -367,7 +367,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'The sentence stating a paragraph’s main idea is the:', choices: ['metaphor', 'predicate', 'topic sentence', 'conclusion'], answer: 2, hint: 'It usually comes first.', explain: 'That is the topic sentence.' },
           { type: 'mc', prompt: 'Explaining WHY your evidence supports your point is:', choices: ['analysis', 'evidence', 'tone', 'imagery'], answer: 0, hint: 'The step most writers skip.', explain: 'That is analysis.' },
-          { type: 'tf', prompt: 'A paragraph should generally cover one main idea.', answer: true, hint: 'New idea, new paragraph.', explain: 'Yes — one idea per paragraph.' },
+          { type: 'mc', prompt: 'When your writing moves to a new idea, you should:', choices: ['start a new paragraph', 'add a heading', 'keep going in the same paragraph', 'start a new page'], answer: 0, hint: 'One idea, one paragraph.', explain: 'New idea, new paragraph. It is what lets a reader follow where you are going.' },
           { type: 'mc', prompt: 'In an essay, the thesis plays the same role as a paragraph’s:', choices: ['evidence', 'simile', 'font', 'topic sentence'], answer: 3, hint: 'It states the big idea.', explain: 'The thesis is the essay-level topic sentence.' },
         ],
       },
@@ -400,7 +400,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'The position you ask a reader to accept is the:', choices: ['topic', 'claim', 'tone', 'simile'], answer: 1, hint: 'It must be arguable.', explain: 'That is the claim.' },
           { type: 'mc', prompt: 'Stating and answering the strongest objection is using a:', choices: ['metaphor', 'fragment', 'summary', 'counterargument'], answer: 3, hint: 'It addresses the other side.', explain: 'That is the counterargument.' },
-          { type: 'tf', prompt: 'Addressing the other side makes an argument weaker.', answer: false, hint: 'It shows confidence and thought.', explain: 'It makes the argument stronger.' },
+          { type: 'mc', prompt: 'Answering the strongest objection to your own claim:', choices: ['weakens your argument', 'strengthens it', 'makes no difference', 'is only worth doing in long essays'], answer: 1, hint: 'What does doing it show the reader?', explain: 'It shows you considered the objection and the claim survived. Ignoring it just leaves the objection standing unanswered.' },
           { type: 'mc', prompt: 'The three classic appeals are logic, emotion, and:', choices: ['credibility', 'volume', 'length', 'color'], answer: 0, hint: 'Why should you be trusted?', explain: 'Credibility completes the three.' },
           { type: 'mc', prompt: 'A strong claim should be:', choices: ['obvious to everyone', 'unrelated', 'arguable and specific', 'vague'], answer: 2, hint: 'It needs to be worth defending.', explain: 'Arguable and specific.' },
         ],
@@ -439,7 +439,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'Government mainly exists to:', choices: ['entertain people', 'provide order and shared services', 'make everyone rich', 'win every argument'], answer: 1, hint: 'Think roads, safety, courts.', explain: 'Order and shared services are its core purpose.' },
           { type: 'mc', prompt: 'The rule of law means:', choices: ['there are no laws', 'only kings make laws', 'leaders can ignore laws', 'even leaders must obey the law'], answer: 3, hint: 'Who is above the law?', explain: 'No one is above the law — not even leaders.' },
-          { type: 'tf', prompt: 'In a social contract, people trade some freedom for protection.', answer: true, hint: 'Think of why you follow traffic laws.', explain: 'That trade is the social contract.' },
+          { type: 'mc', prompt: 'The social contract idea says people:', choices: ['give up some freedom in exchange for protection', 'give up all their freedom', 'gain freedom with nothing given up', 'sign an actual written contract'], answer: 0, hint: 'Think about why you stop at a red light.', explain: 'You give up the freedom to drive straight through, and get roads where everyone else stops too.' },
           { type: 'mc', prompt: 'Which is a shared service governments provide?', choices: ['your haircut', 'your breakfast', 'roads and schools', 'your video games'], answer: 2, hint: 'Something too big to build alone.', explain: 'Roads and schools are public, shared services.' },
         ],
       },
@@ -472,7 +472,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'Which branch CARRIES OUT (enforces) laws?', choices: ['executive', 'judicial', 'local', 'legislative'], answer: 0, hint: 'The President leads it.', explain: 'The executive branch enforces laws.' },
           { type: 'mc', prompt: 'Which branch decides what laws MEAN?', choices: ['all of them', 'legislative', 'executive', 'judicial'], answer: 3, hint: 'The Supreme Court is its top.', explain: 'The judicial branch interprets laws.' },
           { type: 'mc', prompt: 'The President leads which branch?', choices: ['none', 'legislative', 'executive', 'judicial'], answer: 2, hint: 'The one that enforces.', explain: 'The President heads the executive branch.' },
-          { type: 'tf', prompt: 'Splitting power prevents one person from controlling everything.', answer: true, hint: 'That is the whole point.', explain: 'Separation of powers blocks a single ruler.' },
+          { type: 'mc', prompt: 'Power is split between three branches mainly in order to:', choices: ['make government faster', 'stop any one part controlling everything', 'save money', 'give each state its own branch'], answer: 1, hint: 'What would the alternative make possible?', explain: 'It is deliberately slower. Slow is the price; no single point of control is what that price buys.' },
         ],
       },
       {
@@ -502,7 +502,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'A President refusing to sign a bill is called a:', choices: ['law', 'veto', 'override', 'election'], answer: 1, hint: 'It blocks a bill from Congress.', explain: 'That refusal is a veto.' },
           { type: 'mc', prompt: 'Checks and balances exist to:', choices: ['stop any branch from getting too powerful', 'give the President all power', 'end elections', 'speed things up'], answer: 0, hint: 'It is about limiting power.', explain: 'They keep any one branch in check.' },
-          { type: 'tf', prompt: 'A President’s veto is final and cannot be overturned.', answer: false, hint: 'A check can meet a counter-check.', explain: 'Congress can override it with a two-thirds vote in both chambers.' },
+          { type: 'mc', prompt: 'A presidential veto can be overturned by:', choices: ['nobody — a veto is final', 'a two-thirds vote in both chambers of Congress', 'the Supreme Court on its own', 'a national referendum'], answer: 1, hint: 'A check can meet a counter-check.', explain: 'Congress can override with two-thirds in both chambers — checks and balances running in both directions.' },
           { type: 'mc', prompt: 'The courts can declare a law:', choices: ['unconstitutional', 'permanent forever', 'secret', 'free'], answer: 0, hint: 'They check it against the Constitution.', explain: 'Courts can strike laws down as unconstitutional.' },
         ],
       },
@@ -535,7 +535,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'The Constitution is:', choices: ['a branch of government', 'a kind of election', 'the supreme law of the land', 'a type of tax'], answer: 2, hint: 'It outranks all other laws.', explain: 'It is the highest law in the country.' },
           { type: 'numeric', prompt: 'How many amendments make up the Bill of Rights?', answer: 10, hint: 'The FIRST ten amendments.', explain: 'The Bill of Rights is the first 10 amendments.' },
           { type: 'mc', prompt: 'Freedom of speech is protected by the:', choices: ['state flag', 'Bill of Rights', 'President alone', 'tax code'], answer: 1, hint: 'It is one of the first ten amendments.', explain: 'The Bill of Rights protects it.' },
-          { type: 'tf', prompt: 'The Constitution can be changed through amendments.', answer: true, hint: 'There are 27 of them.', explain: 'Amendments allow it to evolve.' },
+          { type: 'mc', prompt: 'The Constitution is changed by:', choices: ['amendment', 'presidential order', 'a Supreme Court ruling', 'a simple majority in the House'], answer: 0, hint: 'There have been 27 of them in total.', explain: 'Amendments — and deliberately hard ones to pass, which is why there are only 27 in over two centuries.' },
         ],
       },
       {
@@ -564,7 +564,7 @@ export const EXPLORE = {
         ],
         quiz: [
           { type: 'mc', prompt: 'A proposed law is called a:', choices: ['veto', 'branch', 'court', 'bill'], answer: 3, hint: 'It is not a law yet.', explain: 'A proposed law is a bill.' },
-          { type: 'tf', prompt: 'A bill only needs to pass the House to become law.', answer: false, hint: 'Both chambers of Congress.', explain: 'Both chambers must pass it before it reaches the President.' },
+          { type: 'mc', prompt: 'Before a bill can become law it must pass:', choices: ['the House only', 'the Senate only', 'both the House and the Senate', 'the Supreme Court'], answer: 2, hint: 'Congress has two chambers.', explain: 'Both chambers, and then the President signs — or Congress overrides a veto.' },
           { type: 'mc', prompt: 'After Congress passes a bill, it goes to the:', choices: ['voters directly', 'state governor', 'President', 'Supreme Court'], answer: 2, hint: 'The executive branch signs laws.', explain: 'The President signs or vetoes it.' },
           { type: 'mc', prompt: 'If the President vetoes a bill, Congress can:', choices: ['do nothing ever', 'go to jail', 'restart the country', 'override it with enough votes'], answer: 3, hint: 'A check meeting a counter-check.', explain: 'Congress can override the veto.' },
         ],
@@ -596,7 +596,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'Sharing power between national and state governments is called:', choices: ['an amendment', 'federalism', 'a veto', 'a monarchy'], answer: 1, hint: 'Power split by level.', explain: 'That sharing is federalism.' },
           { type: 'mc', prompt: 'Local government usually handles:', choices: ['trash and schools', 'printing money', 'foreign treaties', 'national defense'], answer: 0, hint: 'Think of your neighborhood.', explain: 'Local governments run trash, schools, and similar services.' },
-          { type: 'tf', prompt: 'Voting is how citizens choose their leaders in a democracy.', answer: true, hint: 'Your most direct civic power.', explain: 'Yes — voting selects leaders.' },
+          { type: 'mc', prompt: 'The most direct way a citizen decides who holds power is:', choices: ['voting', 'paying taxes', 'jury service', 'writing to a newspaper'], answer: 0, hint: 'Your most direct civic power.', explain: 'Voting. The others matter, but only one of them actually chooses who takes the office.' },
           { type: 'mc', prompt: 'A government where the people choose leaders is a:', choices: ['dictatorship', 'committee', 'democracy', 'monarchy'], answer: 2, hint: 'Power flows from the people.', explain: 'That is a democracy.' },
         ],
       },
@@ -634,7 +634,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'Scarcity means:', choices: ['everything is free', 'too much of everything', 'no one wants anything', 'limited resources but unlimited wants'], answer: 3, hint: 'It is a mismatch.', explain: 'Limited resources, unlimited wants.' },
           { type: 'mc', prompt: 'You pick a game over a book. The book is your:', choices: ['opportunity cost', 'profit', 'need', 'scarcity'], answer: 0, hint: 'What you gave up.', explain: 'The unchosen option is the opportunity cost.' },
           { type: 'mc', prompt: 'Which of these is a NEED?', choices: ['a vacation', 'food and water', 'a new video game', 'designer shoes'], answer: 1, hint: 'Required to live.', explain: 'Food and water are needs.' },
-          { type: 'tf', prompt: 'Because resources are limited, we must make choices.', answer: true, hint: 'That is what scarcity forces.', explain: 'Yes — scarcity forces choices.' },
+          { type: 'mc', prompt: 'Scarcity means:', choices: ['some things are expensive', 'wants exceed what is available, so choices must be made', 'there is not enough money in circulation', 'only poorer countries face shortages'], answer: 1, hint: 'It is about wants against resources, not about money.', explain: 'Unlimited wants, limited resources. Every choice therefore gives up something else — that is the core economic problem.' },
         ],
       },
       {
@@ -665,7 +665,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'When the price drops, demand usually:', choices: ['falls', 'disappears', 'stays frozen', 'rises'], answer: 3, hint: 'Bargains attract buyers.', explain: 'Lower price, more of it bought.' },
           { type: 'mc', prompt: 'The price where supply meets demand is the:', choices: ['surplus', 'equilibrium price', 'opportunity cost', 'profit'], answer: 1, hint: 'The balance point.', explain: 'That is the equilibrium price.' },
-          { type: 'tf', prompt: 'Higher prices usually encourage LESS supply.', answer: false, hint: 'Profit attracts sellers.', explain: 'Higher prices make selling more profitable, so suppliers produce more.' },
+          { type: 'mc', prompt: 'When the price of something rises, sellers usually:', choices: ['supply less of it', 'supply more of it', 'supply exactly the same amount', 'stop selling it'], answer: 1, hint: 'Profit attracts sellers.', explain: 'Higher prices make producing more worth doing, so supply rises. Demand is the one that falls — mixing the two up is the usual error.' },
           { type: 'mc', prompt: 'Too few goods for too many buyers is a:', choices: ['shortage', 'surplus', 'profit', 'tax'], answer: 0, hint: 'Demand outruns supply.', explain: 'That is a shortage.' },
           { type: 'mc', prompt: 'Lots of unsold leftover goods is a:', choices: ['need', 'bit', 'surplus', 'shortage'], answer: 2, hint: 'Supply outruns demand.', explain: 'That is a surplus.' },
         ],
@@ -728,7 +728,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'A value proposition is:', choices: ['a loop', 'the problem your business solves for customers', 'your total revenue', 'a kind of tax'], answer: 1, hint: 'Why customers need you.', explain: 'It is the problem you solve.' },
           { type: 'mc', prompt: 'Your price should at least cover your:', choices: ['costs', 'wishes', 'competitors’ dreams', 'homework'], answer: 0, hint: 'Remember profit = revenue − cost.', explain: 'Price must cover costs.' },
-          { type: 'tf', prompt: 'Knowing your specific customer helps a business succeed.', answer: true, hint: 'You cannot sell to "everyone."', explain: 'Yes — know who you serve.' },
+          { type: 'mc', prompt: 'Naming one specific customer helps mainly because:', choices: ['it makes your market bigger', 'you can make and say something that fits them exactly', 'it lowers your costs', 'investors insist on it'], answer: 1, hint: 'Imagine writing one advert that must work on everyone alive.', explain: 'A specific person lets you make specific choices. “Everyone” gives you nothing at all to aim at.' },
           { type: 'mc', prompt: 'Profit comes from charging more than your:', choices: ['address', 'costs', 'friends', 'age'], answer: 1, hint: 'The gap above cost.', explain: 'Profit lives above your costs.' },
         ],
       },
@@ -761,7 +761,7 @@ export const EXPLORE = {
           { type: 'numeric', prompt: 'What is the interest on $100 at 10% for one year, in dollars?', answer: 10, hint: '10% of 100.', explain: '0.10 × 100 = 10.' },
           { type: 'mc', prompt: 'Interest is usually:', choices: ['a random number', 'a kind of tax', 'a percent of the amount', 'always exactly $5'], answer: 2, hint: 'Tied to percents.', explain: 'It is a percent of the amount.' },
           { type: 'mc', prompt: 'Interest earned ON past interest is called:', choices: ['compound interest', 'simple interest', 'opportunity cost', 'a surplus'], answer: 0, hint: 'It snowballs.', explain: 'That is compound interest.' },
-          { type: 'tf', prompt: 'Simple interest grows faster than compound interest over time.', answer: false, hint: 'Interest on interest snowballs.', explain: 'Compound interest earns on the interest too, so it pulls ahead and keeps going.' },
+          { type: 'mc', prompt: 'Over many years, compound interest compared with simple interest:', choices: ['grows more slowly', 'grows at the same rate', 'grows faster', 'only differs for very large amounts'], answer: 2, hint: 'Interest earning interest snowballs.', explain: 'Compound pays interest on the interest already earned, so the gap between them widens every single year.' },
           { type: 'numeric', prompt: '$100 grows at 10% for one year. What is the total, in dollars?', answer: 110, hint: 'Original plus the interest.', explain: '100 + 10 = 110.' },
         ],
       },
@@ -792,7 +792,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'Marketing is mainly about:', choices: ['hiding your product', 'raising your costs', 'avoiding customers', 'communicating value to customers'], answer: 3, hint: 'Make people aware and interested.', explain: 'It communicates value.' },
           { type: 'mc', prompt: 'Standing out from competitors is called:', choices: ['break-even', 'storage', 'differentiation', 'scarcity'], answer: 2, hint: 'Give a reason to pick you.', explain: 'That is differentiation.' },
-          { type: 'tf', prompt: 'Competition pushes businesses to improve.', answer: true, hint: 'Rivals raise the bar.', explain: 'Yes — competition drives improvement.' },
+          { type: 'mc', prompt: 'Competition tends to push businesses to:', choices: ['improve, or lose customers', 'raise prices freely', 'stop innovating', 'merge immediately'], answer: 0, hint: 'What happens if a rival is both better and cheaper?', explain: 'If someone else is better, customers move. That pressure is what drives the improving.' },
           { type: 'mc', prompt: 'A "limited edition" item can charge more due to:', choices: ['higher costs only', 'lower demand', 'taxes', 'scarcity'], answer: 3, hint: 'Fewer made, more wanted.', explain: 'Scarcity raises demand and price.' },
         ],
       },
@@ -825,7 +825,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'A market gap is:', choices: ['a tax', 'an unmet need no one serves well', 'a type of loan', 'a store closing time'], answer: 1, hint: 'It is an opening in the market.', explain: 'It is a need nobody is serving well yet.' },
           { type: 'mc', prompt: 'Business ideas most often start from:', choices: ['noticing a real problem', 'guessing randomly', 'copying homework', 'picking a logo'], answer: 0, hint: 'Think about annoyances.', explain: 'Real problems spark real businesses.' },
           { type: 'mc', prompt: 'Which question separates a business from a hobby?', choices: ['Is it new?', 'Would people pay to fix it?', 'Is it fun?', 'Is it colorful?'], answer: 1, hint: 'Money must actually change hands.', explain: 'Willingness to pay makes it a business.' },
-          { type: 'tf', prompt: 'It is smart to test an idea before building the whole thing.', answer: true, hint: 'Cheaper to learn early.', explain: 'Yes — testing first saves time and money.' },
+          { type: 'mc', prompt: 'Testing a small version of an idea first mainly saves you:', choices: ['nothing — it just delays the launch', 'the cost of building the wrong thing', 'the need to find customers', 'the need for any plan'], answer: 1, hint: 'Cheaper to learn early.', explain: 'Finding out it is wrong after a week costs a week. Finding out after a year costs a year.' },
         ],
       },
       {
@@ -856,7 +856,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'A target market is:', choices: ['your total profit', 'a store shelf', 'the specific group you aim to serve', 'everyone alive'], answer: 2, hint: 'Specific beats broad.', explain: 'It is your specific customer group.' },
           { type: 'numeric', prompt: '30 out of 40 people surveyed would buy. What percent is that?', answer: 75, hint: 'Divide 30 by 40, then multiply by 100.', explain: '30 ÷ 40 = 0.75 = 75%.' },
           { type: 'mc', prompt: 'Market research means:', choices: ['guessing what people want', 'raising prices', 'hiring friends', 'gathering real customer information'], answer: 3, hint: 'Evidence, not assumption.', explain: 'It gathers real information.' },
-          { type: 'tf', prompt: 'Trying to sell to "everyone" usually works better than targeting a group.', answer: false, hint: 'Remember: everyone is nobody.', explain: 'Targeting a specific group works far better.' },
+          { type: 'mc', prompt: 'Aiming a product at “everyone” usually:', choices: ['works better than targeting a group', 'makes it hard to say anything specific enough to land', 'lowers your costs', 'guarantees a bigger market'], answer: 1, hint: 'Everyone is not a customer.', explain: 'You end up describing it so vaguely that no particular person feels it was made for them.' },
         ],
       },
       {
@@ -886,7 +886,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'A brand is mostly:', choices: ['the promise and reputation you keep', 'only a logo', 'your bank balance', 'a kind of tax'], answer: 0, hint: 'It lives in customers’ minds.', explain: 'It is the promise and reputation.' },
           { type: 'mc', prompt: 'Positioning answers:', choices: ['why pick us instead of them', 'how much cash we have', 'who our landlord is', 'what day it is'], answer: 0, hint: 'It is differentiation in words.', explain: 'It states who you serve and why you are different.' },
-          { type: 'tf', prompt: 'Keeping the same promise consistently builds a brand.', answer: true, hint: 'Trust comes from repetition.', explain: 'Yes — consistency is what builds trust.' },
+          { type: 'mc', prompt: 'A brand is built mainly by:', choices: ['a good logo', 'keeping the same promise every time', 'how much is spent on advertising', 'a clever name'], answer: 1, hint: 'Trust comes from repetition.', explain: 'A brand is a promise people have learned they can rely on. The logo is only how they recognise it.' },
           { type: 'mc', prompt: 'A trusted brand can usually:', choices: ['ignore its customers', 'skip making profit', 'avoid all competition', 'charge more and win customers faster'], answer: 3, hint: 'Trust reduces buyer risk.', explain: 'Trust lets a brand charge more.' },
         ],
       },
@@ -949,7 +949,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'The marketing funnel describes:', choices: ['stages from awareness to purchase', 'how to bake a cake', 'the profit formula', 'a rock layer'], answer: 0, hint: 'Wide at the top, narrow at the bottom.', explain: 'It maps awareness through to buying.' },
           { type: 'mc', prompt: 'The best marketing channel is usually:', choices: ['the loudest one', 'always television', 'wherever your target market already is', 'the most expensive one'], answer: 2, hint: 'Go where they already spend time.', explain: 'Meet customers where they already are.' },
-          { type: 'tf', prompt: 'Word of mouth is powerful because people trust friends more than ads.', answer: true, hint: 'Trust is the reason.', explain: 'Yes — personal trust beats advertising.' },
+          { type: 'mc', prompt: 'Word of mouth works mainly because:', choices: ['it costs nothing', 'people trust a friend more than an advert', 'it reaches more people', 'it travels faster'], answer: 1, hint: 'Trust is the reason, not the price.', explain: 'A friend has nothing to sell you. That is exactly what makes their recommendation worth more than an advert.' },
           { type: 'mc', prompt: 'Smart marketers decide where to spend by:', choices: ['flipping a coin', 'spending equally everywhere', 'never advertising', 'measuring which channel brings customers'], answer: 3, hint: 'Track the results.', explain: 'Measure, then invest where it works.' },
         ],
       },
@@ -982,7 +982,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'An elevator pitch is:', choices: ['a price tag', 'a short clear explanation of your business', 'a long report', 'a type of loan'], answer: 1, hint: 'It fits in an elevator ride.', explain: 'It is a fast, clear explanation.' },
           { type: 'mc', prompt: 'Which belongs in a business plan?', choices: ['your favorite color', 'the weather', 'your bedtime', 'costs, pricing, and expected profit'], answer: 3, hint: 'It covers how money works.', explain: 'Costs, pricing, and profit are core sections.' },
           { type: 'numeric', prompt: '30 customers pay $3 each. Cost is $1 each. What is the total profit, in dollars?', answer: 60, hint: 'Profit per item is $2.', explain: '30 × 2 = 60.' },
-          { type: 'tf', prompt: 'A pitch is stronger when it avoids specific numbers.', answer: false, hint: 'Evidence beats hope.', explain: 'Real numbers make a pitch concrete and much harder to wave away.' },
+          { type: 'mc', prompt: 'A pitch is stronger when it:', choices: ['avoids numbers so it sounds bigger', 'uses specific numbers you can back up', 'uses mostly adjectives', 'runs as long as possible'], answer: 1, hint: 'Evidence beats hope.', explain: 'Specific, checkable numbers are what separate a plan from a wish.' },
           { type: 'mc', prompt: 'A business plan is mostly built from:', choices: ['random guesses', 'song lyrics', 'things you already studied: market, pricing, profit', 'secret codes'], answer: 2, hint: 'It is your whole lane, written down.', explain: 'It assembles what you already learned.' },
         ],
       },
@@ -1020,7 +1020,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'A fossil is:', choices: ['a modern bone', 'preserved evidence of ancient life', 'any old rock', 'a living animal'], answer: 1, hint: 'It is a message from the past.', explain: 'Preserved evidence of ancient life.' },
           { type: 'mc', prompt: 'A dinosaur footprint is a:', choices: ['trace fossil', 'body fossil', 'mineral', 'mixture'], answer: 0, hint: 'Evidence of activity, not a body part.', explain: 'A footprint is a trace fossil.' },
           { type: 'mc', prompt: 'A preserved bone is a:', choices: ['burrow', 'trace fossil', 'body fossil', 'footprint'], answer: 2, hint: 'It is a part of the organism.', explain: 'A bone is a body fossil.' },
-          { type: 'tf', prompt: 'Most living things eventually become fossils.', answer: false, hint: 'Fossilization needs rare conditions.', explain: 'Fossilisation is rare. Almost everything decays and leaves nothing behind.' },
+          { type: 'mc', prompt: 'Of all the living things that have ever existed, the proportion that fossilised is:', choices: ['most of them', 'about half', 'a tiny fraction', 'all the ones with bones'], answer: 2, hint: 'Fossilising needs rare conditions.', explain: 'It needs rapid burial and usually hard parts. Almost everything decays instead — which is why the record has the gaps it does.' },
         ],
       },
       {
@@ -1051,7 +1051,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'The first key step in fossilizing is usually:', choices: ['rapid burial in sediment', 'being eaten', 'floating in the ocean forever', 'melting'], answer: 0, hint: 'Protect the remains fast.', explain: 'Quick burial protects the remains.' },
           { type: 'mc', prompt: 'Which parts fossilize most easily?', choices: ['fur only', 'bones and shells', 'skin and muscle', 'blood'], answer: 1, hint: 'The hard parts last.', explain: 'Hard parts survive; soft parts decay.' },
           { type: 'mc', prompt: 'Minerals replacing bone to make stone is called:', choices: ['melting', 'evaporation', 'erosion', 'permineralization'], answer: 3, hint: 'Mineral-rich water seeps in.', explain: 'That process is permineralization.' },
-          { type: 'tf', prompt: 'Fossil formation usually takes a very long time.', answer: true, hint: 'Think thousands to millions of years.', explain: 'Yes — deep time is required.' },
+          { type: 'mc', prompt: 'Fossil formation usually takes:', choices: ['a few years', 'thousands to millions of years', 'a few months', 'a single season'], answer: 1, hint: 'Think in geological time.', explain: 'Thousands to millions of years, as minerals gradually replace the original material.' },
         ],
       },
       {
@@ -1080,7 +1080,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'In undisturbed rock, the OLDEST layer is:', choices: ['impossible to tell', 'at the bottom', 'at the top', 'in the middle'], answer: 1, hint: 'Which was laid down first?', explain: 'The bottom layer formed first, so it is oldest.' },
           { type: 'mc', prompt: 'Layers of rock are called:', choices: ['strata', 'fossils', 'minerals', 'bytes'], answer: 0, hint: 'One layer is a stratum.', explain: 'Rock layers are strata.' },
-          { type: 'tf', prompt: 'A fossil in a lower layer is generally younger than one above it.', answer: false, hint: 'Deeper means earlier.', explain: 'Lower means older — layers pile up over time, so the deepest went down first.' },
+          { type: 'mc', prompt: 'A fossil found in a deeper rock layer is generally:', choices: ['younger than one above it', 'exactly the same age', 'older than one above it', 'impossible to date'], answer: 2, hint: 'Which layer had to be laid down first?', explain: 'Deeper means laid down earlier, so older. That is the law of superposition.' },
           { type: 'mc', prompt: '"Deeper means older" is the law of:', choices: ['supply and demand', 'motion', 'superposition', 'gravity'], answer: 2, hint: 'About stacked layers.', explain: 'That is the law of superposition.' },
         ],
       },
@@ -1114,7 +1114,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'Getting an actual age in years uses:', choices: ['fossil size', 'radioactive decay', 'pure guessing', 'rock color'], answer: 1, hint: 'A steady atomic clock.', explain: 'Radioactive decay enables absolute dating.' },
           { type: 'mc', prompt: 'A half-life is the time for ____ of a material to decay:', choices: ['all', 'none', 'a quarter', 'half'], answer: 3, hint: 'It is in the name.', explain: 'Half decays in one half-life.' },
           { type: 'numeric', prompt: 'After 2 half-lives, what fraction remains? (Enter as a decimal.)', answer: 0.25, hint: 'Half of a half.', explain: '1/2 × 1/2 = 1/4 = 0.25.' },
-          { type: 'tf', prompt: 'Radioactive decay is a reliable clock for dating very old rocks.', answer: true, hint: 'It decays at a steady rate.', explain: 'Yes — a dependable atomic clock.' },
+          { type: 'mc', prompt: 'Radioactive decay works as a clock because:', choices: ['it decays at a steady, known rate', 'it speeds up when the rock is heated', 'it stops after a million years', 'it happens only inside fossils'], answer: 0, hint: 'What makes any clock useful at all?', explain: 'A steady rate that ordinary conditions do not change. That is what makes counting what is left meaningful.' },
         ],
       },
       {
@@ -1143,7 +1143,7 @@ export const EXPLORE = {
         quiz: [
           { type: 'mc', prompt: 'Earth is about how old?', choices: ['1 million years', '100 years', '4.6 billion years', '6,000 years'], answer: 2, hint: 'Billions — written 4.6 × 10⁹.', explain: 'About 4.6 billion years.' },
           { type: 'mc', prompt: 'The age of the dinosaurs was the:', choices: ['Mesozoic era', 'Cenozoic era', 'Paleozoic era', 'Modern era'], answer: 0, hint: 'The "middle life" era.', explain: 'Dinosaurs ruled the Mesozoic.' },
-          { type: 'tf', prompt: 'Humans have existed for only a tiny fraction of Earth’s history.', answer: true, hint: 'The last 30 minutes of the "year."', explain: 'Yes — a blink at the very end.' },
+          { type: 'mc', prompt: 'If Earth’s whole history were squeezed into one 24-hour day, humans would appear:', choices: ['at breakfast', 'around midday', 'in the last minute or so', 'right at the start'], answer: 2, hint: '4.6 billion years against a couple of hundred thousand.', explain: 'In the last fraction of a minute. Nearly all of Earth’s history happened with nobody there to see it.' },
           { type: 'mc', prompt: 'The huge spans of Earth’s past are called:', choices: ['deep time', 'last week', 'recess', 'a half-life'], answer: 0, hint: 'Millions to billions of years.', explain: 'That is deep time.' },
         ],
       },
@@ -1175,7 +1175,7 @@ export const EXPLORE = {
           { type: 'mc', prompt: 'A mass extinction is when:', choices: ['a volcano sleeps', 'many species die out in a short time', 'one animal moves away', 'a new fossil forms'], answer: 1, hint: 'Large-scale loss of life.', explain: 'Many species die out quickly.' },
           { type: 'mc', prompt: 'Non-bird dinosaurs died out about:', choices: ['last century', '6,000 years ago', 'yesterday', '66 million years ago'], answer: 3, hint: 'Tens of millions of years.', explain: 'About 66 million years ago.' },
           { type: 'mc', prompt: 'Many scientists link that extinction to a(n):', choices: ['lack of food only', 'human hunters', 'asteroid impact', 'sudden snowball'], answer: 2, hint: 'A crater and rare metal are clues.', explain: 'Evidence points to an asteroid impact.' },
-          { type: 'tf', prompt: 'Birds are unrelated to dinosaurs.', answer: false, hint: 'Feathered fossils link them.', explain: 'Birds descend directly from theropod dinosaurs — they are living dinosaurs.' },
+          { type: 'mc', prompt: 'Birds are best described as:', choices: ['unrelated to dinosaurs', 'descended from dinosaurs', 'descended from mammals', 'descended from reptiles other than dinosaurs'], answer: 1, hint: 'Feathered fossils link them directly.', explain: 'Birds descend from theropod dinosaurs — so in the strict sense, dinosaurs are still here and some of them are at your bird feeder.' },
           { type: 'mc', prompt: 'The big lesson fossils teach is that life on Earth:', choices: ['changes over time', 'never changes', 'is only 100 years old', 'has no history'], answer: 0, hint: 'From the whole fossil story.', explain: 'Life is always changing.' },
         ],
       },

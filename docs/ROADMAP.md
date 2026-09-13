@@ -1,6 +1,6 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phase 1 is done. Phase 2 is next.**
+> **Status: Phases 1 and 2 done. Phase 2b is next — it was discovered by Phase 2 and is bigger than the problem Phase 2 fixed.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -125,6 +125,49 @@ distractor is justified in the commit.
 deleting anything is not. A test freezes every day's quiz length before this
 phase starts.
 
+### Outcome
+
+All 116 converted in place across 10 content files, plus one pre-existing
+**two-option** multiple choice (`math:m1[4]`, "Which is the better deal?")
+which was a coin flip wearing a different costume — and sits in his recall
+history. It now has four options and the trap is that the biggest pack is the
+worst value.
+
+No quiz array moved. The freeze test was run after every file.
+
+---
+
+## Phase 2b — Close the answer tells
+
+**Why.** Measuring after Phase 2 found two more ways to score without knowing
+anything. Both pre-existing; both made slightly worse by the conversion,
+because a carefully-worded correct answer tends to be longer than a wrong one.
+
+| tell | now | chance | target |
+|---|---|---|---|
+| correct option is the longest | **60%** | ~27% | under 35% |
+| correct option is longest by 10+ characters | **32%** | — | under 10% |
+| most-used answer slot | **37%** (index 1) | 25% | under 30% |
+
+The second row is the serious one. "Pick the longest, most qualified option"
+is the oldest test-taking heuristic there is, and at 60% it is worth more to
+him than the coin flip ever was. A child who learns it will score well on days
+he does not understand — which feeds the wrong days into the parent page's
+"Finished, but shaky" list and hides the real ones.
+
+**Build.** For every question where the correct option is conspicuously the
+longest, the fix is not to pad the distractors — it is to move the
+explanatory tail into `explain`, where it belongs, and leave four options of
+comparable weight. Then even out the answer slots by permuting choices (the
+choices array is not a progress key; only the question's index is).
+
+**Done when.** Correct-is-longest is under 35%, longest-by-10+ under 10%, no
+slot above 30%, and the caps in `scripts/test.mjs` are tightened to match.
+
+**Guardrails.** Same as Phase 2, and one more: permuting a question's choices
+must move `answer` with them. A test asserts every answer index still points
+at the option the `explain` text describes.
+
 ---
 
 ## Phase 3 — Route him to the practice that already exists
@@ -227,5 +270,8 @@ that found them. Add here rather than widening a phase.
 
 - Session shape does not match behaviour: he binges 3–10 lessons every few
   days; the app is designed around 12 minutes daily.
+- The audit script measures reading level and hint quality but has no notion
+  of whether a question is guessable. The tell checks live in the test suite
+  instead; they arguably belong in the audit output where they would be seen.
 - Git history still contains the school name and address (see `PRIVACY.md`).
   Owner's decision; making the repo private was chosen but not yet done.
