@@ -292,5 +292,214 @@ export function Visual({ v, accent }) {
     <text x="160" y="166" textAnchor="middle" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">answer the objection to get stronger</text>
   </>, 176);
 
+  /* ---- primitives added for the days he is actually failing -------------
+   *
+   * Every diagram below exists because his progress data showed a day scored
+   * under 60% whose idea is natively spatial and was being taught as
+   * paragraphs. They are built as general shapes rather than one-off pictures
+   * so the next lane that needs a number line or a grid does not get another
+   * bespoke SVG. */
+
+  /* A number line with a marked point and a shaded direction.
+     Inequalities are the textbook case of an idea that is nearly invisible in
+     prose and obvious in one picture: the open circle IS the difference
+     between < and <=, and no sentence makes that as clear as the hole. */
+  if (v.kind === 'numberline') {
+    const min = v.min ?? -5, max = v.max ?? 5, at = v.at ?? 0;
+    const x0 = 26, x1 = 294, span = max - min;
+    const px = (n) => x0 + ((n - min) / span) * (x1 - x0);
+    const ticks = [];
+    for (let n = min; n <= max; n++) ticks.push(n);
+    const op = v.op || 'gt';
+    const goesRight = op === 'gt' || op === 'gte';
+    const closed = op === 'gte' || op === 'lte';
+    const sym = { gt: '>', gte: '≥', lt: '<', lte: '≤' }[op];
+    return wrap(<>
+      {/* shaded solution region, drawn under the axis so the line stays crisp */}
+      <rect x={goesRight ? px(at) : x0} y={46} width={Math.max(0, goesRight ? x1 - px(at) : px(at) - x0)}
+            height={18} fill={accent} opacity={.18} />
+      <line x1={x0} y1={55} x2={x1} y2={55} stroke="#3a4154" strokeWidth="2" />
+      {ticks.map((n) => (
+        <g key={n}>
+          <line x1={px(n)} y1={49} x2={px(n)} y2={61} stroke="#3a4154" strokeWidth="1.5" />
+          <text x={px(n)} y={76} textAnchor="middle" fill="#8b91a3" fontSize="10"
+                fontFamily="JetBrains Mono, monospace">{n}</text>
+        </g>
+      ))}
+      {/* the arrow showing the region continues forever that way */}
+      <line x1={goesRight ? px(at) : px(at)} y1={55} x2={goesRight ? x1 - 4 : x0 + 4} y2={55}
+            stroke={accent} strokeWidth="3" markerEnd="url(#nlArrow)" />
+      <circle cx={px(at)} cy={55} r={6.5} fill={closed ? accent : '#10131d'} stroke={accent} strokeWidth="2.5" />
+      <text x="160" y="24" textAnchor="middle" fill="#e7e9f0" fontSize="13" fontWeight="700"
+            fontFamily="JetBrains Mono, monospace">{v.label || `x ${sym} ${at}`}</text>
+      <text x="160" y="100" textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">
+        {closed ? 'filled circle: ' + at + ' is included' : 'open circle: ' + at + ' is NOT included'}
+      </text>
+      <defs><marker id="nlArrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0,0 L9,4.5 L0,9 z" fill={accent} /></marker></defs>
+    </>, 112);
+  }
+
+  /* A labelled grid. Serves truth tables and any "who does what to whom"
+     matrix — the same shape answers both, so logic and civics share one
+     renderer instead of two bespoke ones. Cells reading T or F get coloured;
+     everything else renders as plain text. */
+  if (v.kind === 'grid') {
+    const cols = v.cols || [], rows = v.rows || [];
+    const x0 = 12, wTotal = 296;
+    const cw = wTotal / cols.length;
+    const headH = 24, rowH = v.rowH || 24;
+    const h = headH + rows.length * rowH + (v.caption ? 30 : 12);
+    const cell = (t, cx, cy, isHead) => {
+      const str = String(t);
+      const tf = str === 'T' || str === 'F';
+      return (
+        <text x={cx} y={cy} textAnchor="middle"
+              fill={isHead ? accent : tf ? (str === 'T' ? '#3ddc97' : '#ff6b6b') : '#e7e9f0'}
+              fontSize={isHead ? 10 : str.length > 9 ? 8 : 11}
+              fontWeight={isHead || tf ? 700 : 400}
+              fontFamily="JetBrains Mono, monospace">{str}</text>
+      );
+    };
+    return wrap(<>
+      <rect x={x0} y={8} width={wTotal} height={headH} fill={accent + '1a'} rx={5} />
+      {cols.map((c, i) => cell(c, x0 + cw * (i + .5), 24, true))}
+      {rows.map((r, ri) => (
+        <g key={ri}>
+          {ri % 2 === 1 && <rect x={x0} y={8 + headH + ri * rowH} width={wTotal} height={rowH} fill="#ffffff06" />}
+          {r.map((t, ci) => cell(t, x0 + cw * (ci + .5), 8 + headH + ri * rowH + rowH / 2 + 4, false))}
+        </g>
+      ))}
+      {cols.map((_, i) => i > 0 && (
+        <line key={'v' + i} x1={x0 + cw * i} y1={8} x2={x0 + cw * i} y2={8 + headH + rows.length * rowH}
+              stroke="#1f2433" strokeWidth="1" />
+      ))}
+      <line x1={x0} y1={8 + headH} x2={x0 + wTotal} y2={8 + headH} stroke="#3a4154" strokeWidth="1.5" />
+      {v.caption && (
+        <text x="160" y={h - 10} textAnchor="middle" fill="#8b91a3" fontSize="10"
+              fontFamily="JetBrains Mono, monospace">{v.caption}</text>
+      )}
+    </>, h);
+  }
+
+  /* Inputs on the left, outputs on the right, arrows between. The whole
+     definition of a function is a rule about these arrows — one out of each
+     input, never two — and that is a picture, not a sentence. `bad` draws the
+     case that breaks the rule so the two can be compared directly. */
+  if (v.kind === 'mapping') {
+    const ins = v.inputs || [], outs = v.outputs || [], links = v.links || [];
+    const top = 34, gap = v.gap || 26;
+    const iy = (i) => top + i * gap, oy = (i) => top + i * gap;
+    const h = top + Math.max(ins.length, outs.length) * gap + 34;
+    const bad = !!v.bad;
+    return wrap(<>
+      <text x="70" y="20" textAnchor="middle" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">{v.inLabel || 'input'}</text>
+      <text x="250" y="20" textAnchor="middle" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">{v.outLabel || 'output'}</text>
+      <ellipse cx="70" cy={top + (ins.length - 1) * gap / 2} rx="46" ry={ins.length * gap / 2 + 10}
+               fill="none" stroke="#2a2f3d" strokeWidth="1.3" />
+      <ellipse cx="250" cy={top + (outs.length - 1) * gap / 2} rx="46" ry={outs.length * gap / 2 + 10}
+               fill="none" stroke="#2a2f3d" strokeWidth="1.3" />
+      {links.map(([a, b], i) => {
+        const dup = links.filter((l) => l[0] === a).length > 1;
+        const col = bad && dup ? '#ff6b6b' : accent;
+        return <line key={i} x1={96} y1={iy(a)} x2={224} y2={oy(b)} stroke={col} strokeWidth="1.8"
+                     markerEnd={bad && dup ? 'url(#mapBad)' : 'url(#mapOk)'} opacity={.95} />;
+      })}
+      {ins.map((t, i) => (
+        <g key={'i' + i}>
+          <circle cx="70" cy={iy(i)} r="4" fill={accent} />
+          <text x="58" y={iy(i) + 4} textAnchor="end" fill="#e7e9f0" fontSize="11" fontFamily="JetBrains Mono, monospace">{t}</text>
+        </g>
+      ))}
+      {outs.map((t, i) => (
+        <g key={'o' + i}>
+          <circle cx="250" cy={oy(i)} r="4" fill="#5aa9ff" />
+          <text x="262" y={oy(i) + 4} fill="#e7e9f0" fontSize="11" fontFamily="JetBrains Mono, monospace">{t}</text>
+        </g>
+      ))}
+      <text x="160" y={h - 12} textAnchor="middle" fill={bad ? '#ff6b6b' : '#8b91a3'} fontSize="10"
+            fontFamily="JetBrains Mono, monospace">{v.caption || (bad ? 'two arrows from one input — NOT a function' : 'exactly one arrow out of each input')}</text>
+      <defs>
+        <marker id="mapOk" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill={accent} /></marker>
+        <marker id="mapBad" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#ff6b6b" /></marker>
+      </defs>
+    </>, h);
+  }
+
+  /* A quantity, then the same quantity after one or more percentage moves,
+     drawn to scale. The trap in percent change is that the SECOND percentage
+     is taken from a different number than the first, which is invisible in
+     symbols and unmissable when the bars are different lengths. */
+  if (v.kind === 'percentbar') {
+    const steps = v.steps || [];
+    let val = v.base ?? 100;
+    const seq = [{ val, note: v.baseLabel || 'start' }];
+    for (const st of steps) { val = val * (1 + st.pct / 100); seq.push({ val, note: st.label || `${st.pct > 0 ? '+' : ''}${st.pct}%`, from: seq[seq.length - 1].val, pct: st.pct }); }
+    const maxV = Math.max(...seq.map((x) => x.val));
+    const x0 = 14, wMax = 214, rowH = 34;
+    const h = 16 + seq.length * rowH + 26;
+    const money = (n) => (v.prefix || '$') + (Math.round(n * 100) / 100).toLocaleString();
+    return wrap(<>
+      {seq.map((st, i) => (
+        <g key={i}>
+          <rect x={x0} y={16 + i * rowH} width={Math.max(3, (st.val / maxV) * wMax)} height={20} rx={4}
+                fill={i === 0 ? accent : accent} opacity={i === 0 ? .95 : .55 + .15 * i} />
+          <text x={x0 + 6} y={16 + i * rowH + 14} fill="#0c0e16" fontSize="10" fontWeight="700"
+                fontFamily="JetBrains Mono, monospace">{money(st.val)}</text>
+          <text x={x0 + wMax + 12} y={16 + i * rowH + 14} fill="#8b91a3" fontSize="9.5"
+                fontFamily="JetBrains Mono, monospace">{st.note}</text>
+          {st.from !== undefined && (
+            <text x={x0 + wMax + 12} y={16 + i * rowH + 25} fill="#5b6275" fontSize="8"
+                  fontFamily="JetBrains Mono, monospace">of {money(st.from)}</text>
+          )}
+        </g>
+      ))}
+      <text x="160" y={h - 8} textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">{v.caption || 'each % is taken from the bar above it'}</text>
+    </>, h);
+  }
+
+  /* Atoms before and after. A physical change moves the same groupings
+     around; a chemical change breaks them and builds different ones. Said in
+     words those two sentences sound almost identical, which is exactly why
+     the day scored badly. Drawn, they are obviously different pictures. */
+  if (v.kind === 'rearrange') {
+    const COL = { A: accent, B: '#5aa9ff', C: '#f6b73c' };
+    /* A group is either a plain list of atoms or {a, dx, dy} so the physical
+       case can actually MOVE things. Drawing before and after identically
+       under the caption "same groupings, just moved" teaches the opposite of
+       the intended lesson — the picture has to show the motion the words
+       claim. */
+    const norm = (g) => (Array.isArray(g) ? { a: g, dx: 0, dy: 0 } : { dx: 0, dy: 0, ...g });
+    const mol = (g, cx, cy, k) => {
+      const { a, dx, dy } = norm(g);
+      return (
+        <g key={k}>
+          {a.map((at, i) => (
+            <circle key={i} cx={cx + dx + (i - (a.length - 1) / 2) * 13} cy={cy + dy} r="6.5"
+                    fill={COL[at] || accent} opacity={.92} stroke="#0c0e16" strokeWidth="1" />
+          ))}
+        </g>
+      );
+    };
+    const before = v.before || [], after = v.after || [];
+    const lay = (groups, y) => groups.map((g, i) => mol(g, 52 + i * 62, y, y + '-' + i));
+    return wrap(<>
+      <text x="16" y="22" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">BEFORE</text>
+      {lay(before, 46)}
+      <line x1="150" y1="70" x2="170" y2="70" stroke="#5b6275" strokeWidth="2" markerEnd="url(#reArrow)" />
+      <text x="16" y="100" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">AFTER</text>
+      {lay(after, 122)}
+      <text x="160" y={152} textAnchor="middle" fill={v.chemical ? '#f6b73c' : '#3ddc97'} fontSize="10"
+            fontWeight="700" fontFamily="JetBrains Mono, monospace">
+        {v.caption || (v.chemical ? 'CHEMICAL — atoms regrouped' : 'PHYSICAL — same groups, moved')}
+      </text>
+      <text x="160" y={168} textAnchor="middle" fill="#8b91a3" fontSize="9.5"
+            fontFamily="JetBrains Mono, monospace">{v.note || 'same atoms either way — count them'}</text>
+      <defs><marker id="reArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b6275" /></marker></defs>
+    </>, 180);
+  }
+
   return null;
 }

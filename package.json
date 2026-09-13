@@ -12,7 +12,10 @@
     "audit": "node scripts/audit-content.mjs",
     "test": "node scripts/test.mjs",
     "check": "npm run validate && npm run test && npm run audit",
-    "restore-check": "node scripts/restore-check.mjs"
+    "restore-check": "node scripts/restore-check.mjs",
+    "visual-check": "node scripts/visual-check.mjs",
+    "profile-check": "node scripts/profile-check.mjs",
+    "screenshot-visuals": "node scripts/screenshot-visuals.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.460.0",

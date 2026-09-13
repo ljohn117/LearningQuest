@@ -26,6 +26,7 @@ const { CURRICULUM, SUBJECT_ORDER } = await import('../src/content/index.js');
 const { COMPANIONS } = await import('../src/content/companions.js');
 const { SPIRAL, WRITING, SCALE } = await import('../src/content/spiral.js');
 const { EXPLAIN } = await import('../src/content/explain.js');
+const { VISUALS } = await import('../src/content/visuals.js');
 const { migrateWriting } = await import('../src/store.js');
 const { writeKeyFor } = await import('../src/engine/writekey.js');
 const { LADDERS, rungEarned } = await import('../src/content/ladder.js');
@@ -644,6 +645,95 @@ for (const [subj, lane] of Object.entries(CURRICULUM)) {
 eq('every question explains itself after a miss', missingExplain, 0);
 eq('every question offers a hint', missingHint, 0);
 eq('every answer is well formed for its type', badAnswer, 0);
+
+/* ---- the days he was failing now have pictures -------------------------- */
+section('Spatial ideas are taught with diagrams');
+
+/* Nine of his finished days scored under 60%. Seven had no visual at all, and
+ * every one of those teaches something natively spatial — a number line, a
+ * truth table, a mapping. This freezes the fix in place so a later content
+ * edit cannot quietly drop one and leave him reading paragraphs about shapes
+ * again. */
+const NEEDS_A_PICTURE = {
+  m12: 'numberline',   // inequalities — the open circle IS the point
+  lg1: 'grid',         // which sentences even have a truth value
+  lg2: 'grid',         // the canonical truth table
+  m13: 'mapping',      // one arrow out of each input, or it is not a function
+  g3:  'grid',         // six checks between three branches
+  m15: 'percentbar',   // the second % is taken from a shorter bar
+  m2:  'percentbar',   // it had a ratio diagram; the percent half had none
+  ch1: 'rearrange',    // "rearranged" vs "rebuilt" are different pictures
+};
+
+const visualsOn = (dayId) => {
+  for (const lane of Object.values(CURRICULUM)) {
+    const day = lane.days.find((d) => d.id === dayId);
+    if (day) return day.pages.flatMap((p) => p.blocks.filter((b) => b.type === 'visual'));
+  }
+  return null;
+};
+
+for (const [dayId, kind] of Object.entries(NEEDS_A_PICTURE)) {
+  const vis = visualsOn(dayId);
+  ok(`${dayId} still exists`, vis !== null);
+  if (!vis) continue;
+  ok(`${dayId} has a ${kind}`, vis.some((v) => v.kind === kind),
+    `has ${vis.map((v) => v.kind).join(',') || 'nothing'} — he scored under 60% here reading prose`);
+}
+
+/* A diagram appended after the closing callout explains nothing, so each one
+   declares the page it belongs on and that page must exist. */
+for (const [dayId, adds] of Object.entries(VISUALS)) {
+  let day = null;
+  for (const lane of Object.values(CURRICULUM)) { const d = lane.days.find((x) => x.id === dayId); if (d) day = d; }
+  ok(`VISUALS targets a real day: ${dayId}`, !!day);
+  if (!day) continue;
+  for (const a of adds) {
+    const pg = a.page ?? 0;
+    ok(`${dayId} page ${pg} exists`, pg < day.pages.length, `day has ${day.pages.length} pages`);
+    ok(`${dayId} page ${pg} is not the recap-only page`, pg < day.pages.length);
+  }
+}
+
+/* Every visual kind used anywhere must be one the renderer knows. A typo here
+   renders an empty box with no error, which is worse than a crash. */
+const visualSrc = readFileSync(new URL('../src/engine/Visual.jsx', import.meta.url), 'utf8');
+const known = new Set([...visualSrc.matchAll(/v\.kind === '([a-z]+)'/g)].map((m) => m[1]));
+const usedKinds = new Set();
+for (const lane of Object.values(CURRICULUM)) {
+  for (const day of lane.days) for (const p of day.pages) for (const b of p.blocks) {
+    if (b.type === 'visual') usedKinds.add(b.kind);
+  }
+}
+for (const k of usedKinds) {
+  ok(`the renderer knows the "${k}" diagram`, known.has(k), 'an unknown kind renders an empty box silently');
+}
+
+/* Adding diagrams must not have moved anything he is scored on. */
+let quizTouched = 0;
+for (const [key, want] of Object.entries(FROZEN_QUIZ_LENGTHS)) {
+  const [subj, dayId] = key.split(':');
+  const day = CURRICULUM[subj]?.days.find((d) => d.id === dayId);
+  if (day && (day.quiz || []).length !== want) quizTouched++;
+}
+eq('no quiz array moved while adding diagrams', quizTouched, 0);
+
+/* A caption wider than the 320-unit viewBox is silently clipped at both ends
+   — it does not wrap and it does not error, it just loses its first and last
+   words. Two of these shipped and were only caught by looking at a
+   screenshot. At 10px in the mono face, ~50 characters is the limit. */
+const CAPTION_MAX = 50;
+let tooWide = [];
+for (const lane of Object.values(CURRICULUM)) {
+  for (const day of lane.days) for (const p of day.pages) for (const b of p.blocks) {
+    if (b.type !== 'visual') continue;
+    for (const field of ['caption', 'note', 'label']) {
+      const t = b[field];
+      if (typeof t === 'string' && t.length > CAPTION_MAX) tooWide.push(`${day.id}.${field} (${t.length})`);
+    }
+  }
+}
+ok('no diagram caption is wide enough to clip', tooWide.length === 0, tooWide.join(', '));
 
 /* ---- report ------------------------------------------------------------ */
 console.log(`\n${pass} passed, ${fails.length} failed`);

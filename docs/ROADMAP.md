@@ -1,6 +1,6 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phase 1 is next.**
+> **Status: Phase 1 is done. Phase 2 is next.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -21,7 +21,7 @@ days) showed the remaining problems are structural, not incidental:
 | finding | evidence |
 |---|---|
 | He advances without understanding | **9 of 35** days finished under 60%; five under 50%; one at 25% |
-| Spatial ideas are taught as prose | **92 of 131** days have no visual at all; **8 of his 9 weak days** have none |
+| Spatial ideas are taught as prose | **92 of 131** days have no visual at all; **7 of his 9 weak days** have none |
 | Scores are inflated by coin flips | **116 true/false** questions; **7 of his 9 weak days** contain one |
 | The practice engine is invisible | **0 duels played.** 22 drills unlocked and never opened |
 | The best lane is unreachable | Teardowns is the only fully locked lane — all 6 days need chemistry he has not done |
@@ -81,6 +81,29 @@ the "days with no visual" count drops from 92.
 
 **Guardrails.** Adding a `visual` block to a page is safe — it has no progress
 key. Do **not** touch the `quiz` array of any of these days in this phase.
+
+### Outcome
+
+Shipped five reusable primitives in `src/engine/Visual.jsx` — `numberline`,
+`grid`, `mapping`, `percentbar`, `rearrange` — wired to 8 days via
+`src/content/visuals.js`, each landing on the page that introduces the idea
+rather than appended at the end.
+
+Two corrections to the plan above, both found by measuring rather than
+assuming:
+
+- It was **7** of his 9 weak days without a picture, not 8. Maths day 2 and
+  States of Matter both had one. Day 2's showed *ratio scaling* — the half of
+  the day he can already do — so it gained a percent diagram rather than a
+  first one. States of Matter already had the right diagram and was left alone.
+- The first `rearrange` drew the physical-change case with before and after
+  **identical** under the caption "same groupings, just moved". Caught by
+  screenshotting it rather than by any test. Groups now carry optional
+  `dx`/`dy` so the picture shows the motion the words claim.
+
+Also added: a caption-width guard. Text wider than the 320-unit viewBox is
+silently clipped at both ends — no wrap, no error. Two shipped that way and
+were only visible in a screenshot.
 
 ---
 
@@ -189,7 +212,7 @@ spatial.
 
 | phase | state | moved |
 |---|---|---|
-| 1 — Make the invisible visible | not started | days with no visual: 92 → ? |
+| 1 — Make the invisible visible | **done** 2026-09-13 | days with no visual: **92 → 85**; his 9 weak days: 7 without a picture → **0** |
 | 2 — Retire the coin flip | not started | true/false: 116 → ? |
 | 3 — Route him to practice | not started | duels played: 0 → ? |
 | 4 — Two new ways to learn | not started | interactive block types: 1 → ? |

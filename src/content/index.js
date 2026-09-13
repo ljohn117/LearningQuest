@@ -10,6 +10,7 @@ import { GOV_EXTRA, FOSSILS_EXTRA } from './depth-civics.js';
 import { CHECKPOINTS } from './checkpoints.js';
 import { SPIRAL, WRITING, SCALE } from './spiral.js';
 import { EXPLAIN } from './explain.js';
+import { VISUALS } from './visuals.js';
 
 /* Merged curriculum. Subject keys are distinct across all sources and every
    day id is unique, so the merge cannot collide.
@@ -50,6 +51,23 @@ for (const lane of Object.values(merged)) {
     ];
     const pages = day.pages.map((p, i) =>
       i === day.pages.length - 1 ? { ...p, blocks: [...p.blocks, ...extra] } : p);
+    return { ...day, pages };
+  });
+}
+
+/* Diagrams land on the page that introduces the idea, not at the end of the
+   day — a number line appended after the closing callout explains nothing.
+   Appending a block is safe: visuals carry no progress key, quiz arrays are
+   untouched, and write prompts are filed by id rather than by position. */
+for (const lane of Object.values(merged)) {
+  lane.days = lane.days.map((day) => {
+    const adds = VISUALS[day.id];
+    if (!adds) return day;
+    const pages = day.pages.map((p, i) => {
+      const mine = adds.filter((a) => (a.page ?? 0) === i);
+      if (!mine.length) return p;
+      return { ...p, blocks: [...p.blocks, ...mine.map(({ page, ...spec }) => ({ type: 'visual', ...spec }))] };
+    });
     return { ...day, pages };
   });
 }

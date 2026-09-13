@@ -84,16 +84,34 @@ repo.
 Run all four. They take about a minute together.
 
 ```bash
-npm run check          # validate + 1,535 unit assertions + content audit
+npm run check          # validate + 2,005 unit assertions + content audit
 npm run build && node scripts/build-singlefile.mjs
 npm run smoke          # real browser: dashboard, a duel, a write prompt
 npm run restore-check  # real browser: Back up -> Restore across origins
+npm run visual-check   # real browser: every diagram actually paints shapes
 ```
 
-`npm run check` alone is not enough. `smoke` and `restore-check` drive a real
-browser and catch the class of bug unit tests structurally cannot see — a
-block that renders nothing, a key that no longer resolves, a crash on a real
-click. Both have caught live bugs that `check` passed.
+`npm run check` alone is not enough. The browser checks catch the class of bug
+unit tests structurally cannot see — a block that renders nothing, a key that
+no longer resolves, a crash on a real click. All three have caught live bugs
+that `check` passed.
+
+Two more, for changes that warrant them:
+
+```bash
+npm run profile-check -- <backup.json>   # a REAL saved profile survives this build
+LQ_SHOT_DIR=<dir> npm run screenshot-visuals
+```
+
+`profile-check` loads an actual exported backup and asserts every field he
+would notice is still there. Run it before shipping anything touching content,
+storage or the merge. Keep real backups in the scratchpad, never in this repo.
+
+`screenshot-visuals` exists because **rendering is not the same as being
+right**. A diagram can paint every shape it was asked to and still teach the
+wrong thing — the first physical-change diagram drew "before" and "after"
+identically under a caption saying they differed, and passed everything. Look
+at the pictures.
 
 ---
 
