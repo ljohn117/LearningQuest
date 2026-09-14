@@ -650,6 +650,67 @@ advancing is fine; a fall I cause by shipping is not.*
 **Done when.** Appending days cannot lower a part-finished lane; his real
 profile renders with maths at 60% rather than 47%. Both met.
 
+## Phase 10 — Diagrams that drew the wrong thing  — **done**
+
+**Why.** Asked to make sure the visuals were built out fully, I found coverage
+was already 100% — every one of 153 days has a picture — and that this number
+was hiding the real state.
+
+**Half of all “visuals” are tables.** `grid` is 79 of 158. And the reason is
+structural, not lazy: **15 of 30 primitives read no data at all.** `flow`
+always drew the same flow; `strata` always drew the same layers. Each can
+only ever draw one picture, which is why they are used once or twice each.
+When an author needed a diagram for a new day, the only reusable thing in the
+box was a table.
+
+**Three real bugs, all passing every test.**
+
+1. **`flow` ignored its `steps`.** Four days passed correct, specific data and
+   got a hardcoded programming flowchart — START, do a step, done?, no → loop
+   back — instead:
+
+   | day | passed | drew |
+   |---|---|---|
+   | `earth:es3` The Water Cycle | Evaporate, Condense, Precipitate, Collect | a programming loop |
+   | `bio:bio8` Body systems | Digest, Absorb, Circulate, Use | the same |
+   | `earth:esr1` | Energy in, Motion, Transfer, Cycle | the same |
+   | `connect:cx2` If-Then | If P, then Q, not Q, so not P | the same |
+
+2. **`bars` drew half of every ratio.** `math:m2` says “2 : 3 is the same ratio
+   as 8 : 12” and passes all four numbers. The renderer drew `a` and `a2` only
+   — two blocks, then eight — and never drew `b` or `b2`. It also capped rows
+   at `Math.min(n, 8)`, which would have clipped the 12 anyway.
+
+3. **`earth:es2` Plate Tectonics borrowed `strata`** — flat sedimentary layers
+   captioned “deeper = older (law of superposition)”. That is a stratigraphy
+   idea from the Fossils lane. It rendered, it painted shapes, and it taught
+   the wrong subject.
+
+**What changed.** `flow` takes `steps` and an optional `cycle`; `bars` draws
+both parts of a ratio and shrinks the unit to fit instead of dropping blocks;
+`parabola` takes real coefficients and up to three panels; a new `plates`
+primitive for es2. `machine` was deleted — defined since the prototype merge,
+placed on zero days, covered by no test.
+
+**`math:m21` was the clearest case of the table problem.** The discriminant day
+had a grid whose third column was headed **“the curve”**, with cells reading
+“crosses twice”, “just touches”, “never reaches it” — three shapes described
+in words, in a grid, because the parabola renderer read no data. Now three
+parabolas with their roots marked and the algebra underneath.
+
+**The test that catches the class.** `scripts/test.mjs` now reads `Visual.jsx`,
+works out which props each renderer actually consults, and fails if any
+content block passes one the renderer never reads. It found `bars.a2` and
+`bars.b2` immediately. It cannot tell whether a diagram is ABOUT the right
+thing — only looking can, which is what the screenshot sweep is for.
+
+**My own test had the same bug it was hunting.** The first version used
+`/v\.([a-zA-Z]+)/`, which reads `v.a2` as the prop `a` — so it passed while
+`bars` really was discarding a2 and b2.
+
+**Done when.** No visual is handed a prop its renderer ignores; every kind in
+use has been looked at, not just asserted. Both met.
+
 ## Status
 
 | phase | state | moved |
@@ -663,6 +724,7 @@ profile renders with maths at 60% rather than 47%. Both met.
 | 7 — Statistics | **done** 2026-09-13 | maths days **30 → 38**; a named subject, not a new lane; drills **65 → 70** |
 | 8 — Every lane can be practised | **done** 2026-09-14 | lanes with no practice at all: **3 → 0**; days with a drill **62/153 → 85/153** (41% → 56%); drills **70 → 93**; assertions **3,012 → 3,723** |
 | 9 — The meter measured my output | **done** 2026-09-14 | his maths bar **47% → 60%** on identical progress; appending days can no longer lower a part-finished lane; headline is a count, not a fraction |
+| 10 — Diagrams that drew the wrong thing | **done** 2026-09-14 | 4 days had a programming flowchart for their subject; `math:m2` drew half of every ratio; `es2` taught stratigraphy. Kinds **30 → 30** (`machine` out, `plates` in); a test now catches ignored props |
 | — parked — | | 2b remainder (strictly-longest 47% vs 35% target); MAX_LEVEL 3 → 6 (coupled to MASTERY_STREAK); prose tightening (34% plain text) |
 
 ## Deferred
@@ -670,6 +732,15 @@ profile renders with maths at 60% rather than 47%. Both met.
 Things noticed while building that are real but out of scope for the phase
 that found them. Add here rather than widening a phase.
 
+- **The table problem is only half fixed.** `grid` is still 79 of 158 visuals.
+  Many are correct — a truth table is a table, and so are the exponent,
+  logarithm and molar-mass lookups — but the days whose idea is most spatial
+  still have one: `m11` systems of equations (“the two lines | meet at”),
+  `m16` mean vs median, `m19` the square-cube law, `m28` spread, `m33` margin
+  of error, `ch8` pH, `phy5` heat vs temperature, `f5` the geologic time scale,
+  `g5` how a bill becomes a law, `bio5` taxonomy, `m17` counting, `ch13`
+  stoichiometry. Most need an existing primitive parameterised first —
+  `strata`, `branches`, `funnel`, `particles` still read no data.
 - Session shape does not match behaviour: he binges 3–10 lessons every few
   days; the app is designed around 12 minutes daily.
 - The audit script measures reading level and hint quality but has no notion

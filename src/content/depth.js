@@ -192,7 +192,8 @@ export const BIO_EXTRA = [
       ]},
       { title: 'No system works alone', blocks: [
         { type: 'text', text: 'Your circulatory system moves blood, but the blood is carrying oxygen the respiratory system collected and nutrients the digestive system extracted. Remove any one and the others fail.' },
-        { type: 'visual', kind: 'flow', steps: ['Digest', 'Absorb', 'Circulate', 'Use'] },
+        { type: 'visual', kind: 'flow', steps: ['Digest', 'Absorb', 'Circulate', 'Use'],
+          caption: 'four systems, one job \u2014 each hands on to the next' },
       ]},
       { title: 'Staying steady is the point', blocks: [
         { type: 'text', text: 'Together they hold conditions inside a narrow band — temperature, water, sugar, oxygen. Systems exist mostly to keep things from drifting.' },

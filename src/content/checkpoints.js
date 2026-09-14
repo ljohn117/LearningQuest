@@ -104,7 +104,8 @@ export const CHECKPOINTS = {
         ]},
         { title: 'Energy in, motion out', blocks: [
           { type: 'text', text: 'Heat from the core drives plates. Heat from the sun drives evaporation, wind and weather. Both are energy entering a system and coming out as movement.' },
-          { type: 'visual', kind: 'flow', steps: ['Energy in', 'Motion', 'Transfer', 'Cycle'] },
+          { type: 'visual', kind: 'flow', steps: ['Energy in', 'Motion', 'Transfer', 'Cycle'], cycle: true,
+            cycleLabel: 'the same energy, moved \u2014 never spent' },
         ]},
         { title: 'Matter goes around, not away', blocks: [
           { type: 'text', text: 'Water cycles. Rock cycles — layers form, get buried, melt, and return. Nothing leaves the planet. Every system you studied is a loop rather than a line.' },

@@ -420,9 +420,22 @@ export const VISUALS = {
     rows: [['percent change', 'percent OF what?'], ['averages', 'which average?'], ['counting', 'do these multiply?'], ['probability', 'does it remember?'], ['scaling', 'area or volume?']],
     caption: 'compared to what, and did it stay still' }],
 
-  m21: [{ page: 2, kind: 'grid', cols: ['b² − 4ac', 'real solutions', 'the curve'],
-    rows: [['positive', '2', 'crosses twice'], ['zero', '1', 'just touches'], ['negative', '0', 'never reaches it']],
-    caption: 'the sign tells you before you finish' }],
+  /* m21 The discriminant. This was a TABLE whose third column was headed
+     "the curve", with cells reading "crosses twice", "just touches", "never
+     reaches it" — three shapes described in words, next to each other, in a
+     grid. They fit side by side in one picture, and the whole point of the
+     day is which shape you get. The parabola renderer read no data at all
+     until now, which is why a table was the only option available. */
+  m21: [{ page: 2, kind: 'parabola',
+    panels: [
+      /* The label carries the algebra; the picture carries the shape. Spelling
+         out "crosses twice" under a curve that visibly crosses twice is both
+         redundant and too wide for a third of a 320-unit viewBox. */
+      { a: 1, b: 0, c: -4, label: 'b²−4ac > 0' },
+      { a: 1, b: 0, c: 0, label: 'b²−4ac = 0' },
+      { a: 1, b: 0, c: 3, label: 'b²−4ac < 0' },
+    ],
+    caption: 'b² − 4ac tells you which one you have' }],
 
   m22: [{ page: 1, kind: 'grid', cols: ['expression', 'simplifies to', 'but x ≠'],
     rows: [['(x²−9)/(x+3)', 'x − 3', '−3'], ['(2x+6)/2', 'x + 3', '—'], ['5/(x−4)', '5/(x−4)', '4']],

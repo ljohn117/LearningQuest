@@ -1000,6 +1000,91 @@ for (const q of mcs) {
     `answer ${q.answer} is "${q.choices[q.answer]}" — a permutation moved choices without moving answer`);
 }
 
+/* ---- a diagram must actually use what it is given ------------------------ */
+section('No visual silently throws away its data');
+
+/* THE BUG THIS EXISTS TO PREVENT.
+ *
+ * `flow` drew one hardcoded programming flowchart — START, do a step, done?,
+ * no → loop back — whatever it was handed. Four days were passing correct,
+ * specific steps and getting that picture anyway:
+ *
+ *   earth:es3   Evaporate, Condense, Precipitate, Collect   (the water cycle)
+ *   bio:bio8    Digest, Absorb, Circulate, Use
+ *   earth:esr1  Energy in, Motion, Transfer, Cycle
+ *   connect:cx2 If P, then Q, not Q, so not P
+ *
+ * So the water cycle was taught with a diagram from a programming lesson.
+ * Every check passed. The block rendered, it painted real shapes, no day was
+ * prose-only, and visual-check confirmed it drew something. Nothing compared
+ * what the content offered against what the renderer reads.
+ *
+ * This reads Visual.jsx and does exactly that comparison. It cannot tell
+ * whether a diagram is ABOUT the right thing — only a person looking at the
+ * picture can, which is what screenshot-visuals is for — but it does catch
+ * the case where the author already wrote the right data and the renderer
+ * ignored it. */
+{
+  const src = readFileSync(new URL('../src/engine/Visual.jsx', import.meta.url), 'utf8');
+  const marks = [...src.matchAll(/if \(v\.kind === '([a-z]+)'\)/g)];
+  const reads = {};
+  for (let i = 0; i < marks.length; i++) {
+    const body = src.slice(marks[i].index, i + 1 < marks.length ? marks[i + 1].index : src.length);
+    /* The digits matter: /v\.([a-zA-Z]+)/ reads `v.a2` as the prop `a`, which
+       is how the first version of this test passed while `bars` really was
+       throwing a2 and b2 away. */
+    reads[marks[i][1]] = new Set([...body.matchAll(/v\.([a-zA-Z][a-zA-Z0-9]*)/g)].map((m) => m[1]));
+  }
+  const known = new Set(Object.keys(reads));
+
+  let unknownKind = 0, ignored = [];
+  for (const [subj, lane] of Object.entries(CURRICULUM)) {
+    for (const day of lane.days) {
+      for (const page of day.pages || []) {
+        for (const b of page.blocks || []) {
+          if (b.type !== 'visual') continue;
+          if (!known.has(b.kind)) { unknownKind++; continue; }
+          for (const prop of Object.keys(b)) {
+            if (prop === 'type' || prop === 'kind') continue;
+            if (!reads[b.kind].has(prop)) ignored.push(`${subj}:${day.id} ${b.kind}.${prop}`);
+          }
+        }
+      }
+    }
+  }
+  eq('every visual kind used in content exists in Visual.jsx', unknownKind, 0);
+  eq('no visual is handed a prop its renderer never reads', ignored.length, 0, ignored.join(', '));
+
+  /* The other half of the same problem: a renderer that reads nothing can
+     only ever draw one picture, so the day it does not suit gets it anyway.
+     That is not a failure on its own — a Punnett square is a Punnett square —
+     but a kind used on SEVERAL days while reading no data is drawing the same
+     diagram next to different ideas, and is worth looking at. */
+  const uses = {};
+  for (const [subj, lane] of Object.entries(CURRICULUM)) {
+    for (const day of lane.days) {
+      for (const page of day.pages || []) {
+        for (const b of page.blocks || []) {
+          if (b.type === 'visual') (uses[b.kind] = uses[b.kind] || []).push(`${subj}:${day.id}`);
+        }
+      }
+    }
+  }
+  const FIXED_ON_PURPOSE = new Set([
+    'rtriangle',     // m10, m26 — both are right-angle triangles
+    'supplydemand',  // b2, cx7 — cx7 is explicitly the same curve in another costume
+    'argument',      // ela6, lg4, lgr1 — one shape of argument, taught three times
+    'punnett',       // bio4, bio11, cx3 — a Punnett square is a Punnett square
+    'particles',     // phy1, phyr1 — states of matter, and its own checkpoint
+    'strata',        // f3, es2, cx4 — see Deferred in docs/ROADMAP.md
+    'funnel',        // b8, b11 — same customer funnel
+  ]);
+  const spread = Object.entries(uses)
+    .filter(([k, days]) => days.length > 1 && reads[k] && reads[k].size === 0 && !FIXED_ON_PURPOSE.has(k))
+    .map(([k, days]) => `${k} on ${days.join(', ')}`);
+  eq('no fixed illustration is reused across unrelated days', spread.length, 0, spread.join(' | '));
+}
+
 /* ---- what he SEES may never go backwards -------------------------------- */
 section('Adding content never shrinks his progress');
 

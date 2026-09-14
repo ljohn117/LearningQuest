@@ -8,22 +8,54 @@ export function Visual({ v, accent }) {
     <div style={S.vizBox}><svg viewBox={`0 0 320 ${h}`} width="100%" style={{ display: 'block' }}>{children}</svg></div>
   );
   if (v.kind === 'bars') {
-    const unit = 30, y1 = v.scaled ? 28 : 44, y2 = v.scaled ? 88 : 96;
-    const Row = ({ y, n, color, label, max }) => (
+    /* SCALED MODE USED TO DRAW HALF THE RATIO.
+     *
+     * math:m2 says "2 : 3 is the same ratio as 8 : 12" and passes all four
+     * numbers. The renderer drew `a` and `a2` only — two blocks, then eight —
+     * and never drew b or b2 at all, so the picture for equivalent ratios
+     * showed one side of each. It also capped every row at Math.min(n, 8),
+     * which would have clipped the 12 even if it had been drawn.
+     *
+     * Both parts now appear, in two colours, and the unit shrinks to fit
+     * whatever the largest row needs instead of silently dropping blocks. */
+    const unit0 = 30;
+    if (v.scaled) {
+      const rows = [[v.a, v.b, v.labelA], [v.a2, v.b2, v.labelB]];
+      const maxTotal = Math.max(...rows.map(([x, y]) => (x || 0) + (y || 0)), 1);
+      const mid = 10, avail = 292 - mid;
+      const unit = Math.max(4, Math.min(unit0, Math.floor(avail / maxTotal) - 2));
+      const g = unit > 18 ? 4 : 2;
+      const Group = (n, x, y, color) => Array.from({ length: n }).map((_, i) => (
+        <rect key={color + i} x={x + i * (unit + g)} y={y} width={unit} height={24} rx={Math.min(5, unit / 2)}
+              fill={color} opacity={.9} />
+      ));
+      return wrap(<>
+        {rows.map(([x, y, label], r) => {
+          const top = 32 + r * 58;
+          const xB = 14 + (x || 0) * (unit + g) + mid;
+          return (
+            <g key={r}>
+              <text x={14} y={top - 8} fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">
+                {r === 1 ? `${label} — same ratio, scaled up` : label}
+              </text>
+              {Group(x || 0, 14, top, accent)}
+              {Group(y || 0, xB, top, '#5aa9ff')}
+            </g>
+          );
+        })}
+      </>, 148);
+    }
+    const Row = ({ y, n, color, label }) => (
       <g>
         {Array.from({ length: n }).map((_, i) => (
-          <rect key={i} x={14 + i * (unit + 4)} y={y} width={unit} height={26} rx={6} fill={color} opacity={.9} />
+          <rect key={i} x={14 + i * (unit0 + 4)} y={y} width={unit0} height={26} rx={6} fill={color} opacity={.9} />
         ))}
         <text x={14} y={y - 8} fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">{label}</text>
       </g>
     );
-    if (v.scaled) return wrap(<>
-      <Row y={y1} n={Math.min(v.a, 8)} color={accent} label={v.labelA} />
-      <Row y={y2} n={Math.min(v.a2, 8)} color={accent + '88'} label={`${v.labelB} — same ratio, scaled up`} />
-    </>, 130);
     return wrap(<>
-      <Row y={y1} n={v.a} color={accent} label={v.labelA} />
-      <Row y={y2} n={v.b} color="#5aa9ff" label={v.labelB} />
+      <Row y={44} n={v.a} color={accent} label={v.labelA} />
+      <Row y={96} n={v.b} color="#5aa9ff" label={v.labelB} />
     </>, 140);
   }
   if (v.kind === 'scale') return wrap(<>
@@ -96,16 +128,65 @@ export function Visual({ v, accent }) {
     <text x="166" y="74" fill={accent} fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">c</text>
     <text x="160" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">a² + b² = c²</text>
   </>, 156);
+  /* Parabolas, from real coefficients.
+   *
+   * This drew a fixed y = x² and read no data at all, which is why it was
+   * used exactly once. math:m21 teaches the discriminant and had to make do
+   * with a TABLE whose third column was literally headed "the curve", with
+   * cells reading "crosses twice", "touches once", "misses" — words standing
+   * in for three shapes that fit side by side in one picture. */
   if (v.kind === 'parabola') {
-    const pts = [-3, -2, -1, 0, 1, 2, 3].map((x) => [160 + x * 38, 122 - x * x * 11]);
-    const d = pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ');
+    const panels = v.panels || [{ a: v.a ?? 1, b: v.b ?? 0, c: v.c ?? 0, label: v.label }];
+    const n = panels.length;
+    const pad = 8, gap = n > 1 ? 10 : 0;
+    const pw = (320 - pad * 2 - gap * (n - 1)) / n;
+    const hasLabels = panels.some((q) => q.label);
+    const h = hasLabels ? 176 : 156;
+    const plot = (q, ox) => {
+      const a = q.a ?? 1, b = q.b ?? 0, c = q.c ?? 0;
+      const xv = -b / (2 * a);                       // vertex, so the curve is centred on what matters
+      const span = n > 1 ? 3.2 : 3.6;
+      const xs = Array.from({ length: 48 }, (_, i) => xv - span + (i / 47) * span * 2);
+      const ys = xs.map((x) => a * x * x + b * x + c);
+      const yLo = Math.min(...ys, 0), yHi = Math.max(...ys, 0);
+      const padY = (yHi - yLo) * 0.12 || 1;
+      const top = 16, bot = hasLabels ? 128 : 134;
+      const px = (x) => ox + ((x - (xv - span)) / (span * 2)) * pw;
+      const py = (y) => bot - ((y - (yLo - padY)) / ((yHi + padY) - (yLo - padY))) * (bot - top);
+      const d = xs.map((x, i) => `${i ? 'L' : 'M'}${px(x).toFixed(1)},${py(ys[i]).toFixed(1)}`).join(' ');
+      /* Real roots, marked where they really are. */
+      const disc = b * b - 4 * a * c;
+      const roots = disc > 1e-9 ? [(-b - Math.sqrt(disc)) / (2 * a), (-b + Math.sqrt(disc)) / (2 * a)]
+        : Math.abs(disc) <= 1e-9 ? [xv] : [];
+      return (
+        <g key={ox}>
+          <line x1={ox} y1={py(0)} x2={ox + pw} y2={py(0)} stroke="#3a4154" strokeWidth="1.5" />
+          <line x1={px(xv)} y1={top - 2} x2={px(xv)} y2={bot} stroke="#2a2f3d" strokeWidth="1" />
+          <path d={d} fill="none" stroke={accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {roots.filter((r) => r >= xv - span && r <= xv + span).map((r, i) => (
+            <circle key={i} cx={px(r)} cy={py(0)} r="4.5" fill="#3ddc97" stroke="#0c0e16" strokeWidth="1.5" />
+          ))}
+          {q.label && (
+            /* Monospace is ~0.6em wide, so a label may only be as long as its
+               own panel. The first three-panel version ran the labels into
+               each other and off both edges: "ositive - crosses twiceZero -
+               just touchesnegative". Shrink to fit, then clip. */
+            <text x={ox + pw / 2} y={148} textAnchor="middle" fill="#8b91a3"
+                  fontSize={Math.max(7, Math.min(10, (pw - 6) / (String(q.label).length * 0.62)))}
+                  fontFamily="JetBrains Mono, monospace">
+              {String(q.label).slice(0, Math.floor((pw - 6) / 4.4))}
+            </text>
+          )}
+        </g>
+      );
+    };
     return wrap(<>
-      <line x1="34" y1="122" x2="286" y2="122" stroke="#3a4154" strokeWidth="2" />
-      <line x1="160" y1="14" x2="160" y2="134" stroke="#3a4154" strokeWidth="2" />
-      <path d={d} fill="none" stroke={accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="160" cy="122" r="5" fill={accent} stroke="#0c0e16" strokeWidth="2" />
-      <text x="160" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">y = x² — a parabola, not a line</text>
-    </>, 156);
+      {panels.map((q, i) => plot(q, pad + i * (pw + gap)))}
+      <text x="160" y={h - 6} textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">
+        {v.caption || 'y = x\u00b2 \u2014 a parabola, not a line'}
+      </text>
+    </>, h);
   }
   if (v.kind === 'branches') {
     const Box = (x, label, sub) => (
@@ -128,19 +209,86 @@ export function Visual({ v, accent }) {
       {Box(230, 'JUDIC.', 'interprets')}
     </>, 124);
   }
-  if (v.kind === 'flow') return wrap(<>
-    <ellipse cx="58" cy="38" rx="38" ry="17" fill={accent + '22'} stroke={accent} strokeWidth="1.5" />
-    <text x="58" y="42" textAnchor="middle" fill={accent} fontSize="10" fontWeight="700" fontFamily="JetBrains Mono, monospace">START</text>
-    <line x1="58" y1="55" x2="58" y2="72" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
-    <rect x="20" y="72" width="76" height="30" rx="6" fill="#161a28" stroke={accent} strokeWidth="1.5" />
-    <text x="58" y="91" textAnchor="middle" fill="#e7e9f0" fontSize="10" fontFamily="JetBrains Mono, monospace">do a step</text>
-    <line x1="96" y1="87" x2="148" y2="87" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
-    <polygon points="200,66 242,87 200,108 158,87" fill={accent + '18'} stroke={accent} strokeWidth="1.5" />
-    <text x="200" y="90" textAnchor="middle" fill={accent} fontSize="9.5" fontFamily="JetBrains Mono, monospace">done?</text>
-    <text x="250" y="90" fill="#3ddc97" fontSize="10" fontFamily="JetBrains Mono, monospace">yes</text>
-    <text x="200" y="128" textAnchor="middle" fill="#8b91a3" fontSize="9.5" fontFamily="JetBrains Mono, monospace">no → loop back</text>
-    <defs><marker id="fa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8b91a3" /></marker></defs>
-  </>, 138);
+  /* A chain of named steps, optionally closing into a cycle.
+   *
+   * THIS USED TO IGNORE ITS DATA. The renderer drew one hardcoded programming
+   * flowchart — START, do a step, done?, no → loop back — whatever it was
+   * given. Four days were passing correct, specific steps and getting that
+   * picture instead:
+   *
+   *   earth:es3   Evaporate, Condense, Precipitate, Collect   (the water cycle)
+   *   bio:bio8    Digest, Absorb, Circulate, Use
+   *   earth:esr1  Energy in, Motion, Transfer, Cycle
+   *   connect:cx2 If P, then Q, not Q, so not P
+   *
+   * So the water cycle day taught the water cycle with a picture of a loop
+   * from a programming lesson. Every test passed: the block rendered, it
+   * painted shapes, no day was prose-only. Nothing checks whether a diagram
+   * is about the thing it sits next to.
+   *
+   * With no `steps` it still draws the original flowchart, because that is
+   * what cs:c3 and cs:c6 are actually about. */
+  if (v.kind === 'flow') {
+    const steps = v.steps || [];
+    if (steps.length) {
+      const n = steps.length;
+      const pad = 10, gap = 11, usable = 320 - pad * 2 - gap * (n - 1);
+      const w = usable / n;
+      const yTop = 26, boxH = 38;
+      const longest = Math.max(...steps.map((t) => String(t.label || t).length));
+      /* Shrink to fit rather than clip: "Precipitate" must not run past its
+         own box, which is how the first caption guard got written too. */
+      const fs = longest > 12 ? 7.5 : longest > 9 ? 8.5 : 9.5;
+      const cx = (i) => pad + i * (w + gap) + w / 2;
+      const h = v.cycle ? 122 : 96;
+      return wrap(<>
+        {steps.map((t, i) => (
+          <g key={i}>
+            <rect x={pad + i * (w + gap)} y={yTop} width={w} height={boxH} rx={7}
+                  fill={accent + '1f'} stroke={accent} strokeWidth="1.5" />
+            <text x={cx(i)} y={yTop + boxH / 2 + 3} textAnchor="middle" fill="#e7e9f0"
+                  fontSize={fs} fontWeight="700" fontFamily="JetBrains Mono, monospace">
+              {t.label || t}
+            </text>
+            {i < n - 1 && (
+              <line x1={pad + i * (w + gap) + w + 1} y1={yTop + boxH / 2}
+                    x2={pad + (i + 1) * (w + gap) - 2} y2={yTop + boxH / 2}
+                    stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
+            )}
+          </g>
+        ))}
+        {/* A cycle returns. Drawn under the row so it cannot cross a label. */}
+        {v.cycle && (
+          <>
+            <path d={`M${cx(n - 1)} ${yTop + boxH} V ${yTop + boxH + 20} H ${cx(0)} V ${yTop + boxH + 3}`}
+                  fill="none" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
+            <text x="160" y={yTop + boxH + 34} textAnchor="middle" fill="#8b91a3"
+                  fontSize="9.5" fontFamily="JetBrains Mono, monospace">
+              {v.cycleLabel || 'and round again — nothing is used up'}
+            </text>
+          </>
+        )}
+        {v.caption && (
+          <text x="160" y={h - 8} textAnchor="middle" fill="#8b91a3" fontSize="10"
+                fontFamily="JetBrains Mono, monospace">{v.caption}</text>
+        )}
+        <defs><marker id="fa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8b91a3" /></marker></defs>
+      </>, h);
+    }
+    return wrap(<>
+      <ellipse cx="58" cy="38" rx="38" ry="17" fill={accent + '22'} stroke={accent} strokeWidth="1.5" />
+      <text x="58" y="42" textAnchor="middle" fill={accent} fontSize="10" fontWeight="700" fontFamily="JetBrains Mono, monospace">START</text>
+      <line x1="58" y1="55" x2="58" y2="72" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
+      <rect x="20" y="72" width="76" height="30" rx="6" fill="#161a28" stroke={accent} strokeWidth="1.5" />
+      <text x="58" y="91" textAnchor="middle" fill="#e7e9f0" fontSize="10" fontFamily="JetBrains Mono, monospace">do a step</text>
+      <line x1="96" y1="87" x2="148" y2="87" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
+      <polygon points="200,66 242,87 200,108 158,87" fill={accent + '18'} stroke={accent} strokeWidth="1.5" />
+      <text x="200" y="90" textAnchor="middle" fill={accent} fontSize="9.5" fontFamily="JetBrains Mono, monospace">done?</text>
+      <text x="250" y="90" fill="#3ddc97" fontSize="10" fontFamily="JetBrains Mono, monospace">yes</text>
+      <text x="200" y="128" textAnchor="middle" fill="#8b91a3" fontSize="9.5" fontFamily="JetBrains Mono, monospace">no → loop back</text>
+      <defs><marker id="fa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8b91a3" /></marker></defs>
+    </>, 138);
+  }
   if (v.kind === 'supplydemand') return wrap(<>
     <line x1="52" y1="120" x2="290" y2="120" stroke="#3a4154" strokeWidth="2" />
     <line x1="60" y1="20" x2="60" y2="130" stroke="#3a4154" strokeWidth="2" />
@@ -151,6 +299,75 @@ export function Visual({ v, accent }) {
     <text x="232" y="128" fill="#5aa9ff" fontSize="10" fontFamily="JetBrains Mono, monospace">demand</text>
     <text x="160" y="150" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">they cross at the equilibrium price</text>
   </>, 158);
+  /* Plate boundaries. es2 Plate Tectonics used to borrow `strata` — flat
+     sedimentary layers captioned "deeper = older (law of superposition)",
+     which is a stratigraphy idea from the Fossils lane and has nothing to do
+     with plates moving. It rendered, it painted shapes, and it taught the
+     wrong subject. Three boundaries, three panels, arrows showing which way
+     the plates actually go. */
+  if (v.kind === 'plates') {
+    /* Geometry pinned to the 320 viewBox: 6 + 3*96 + 2*10 = 314. The first
+       version used pad 8 and gap 16, which put the third panel's right plate
+       at x=328 and sliced it off the edge. */
+    const pw = 96, gap = 10, pad = 6, lw = 42, y = 46, bh = 24;
+    const P = [
+      { name: 'pull apart', kind: 'out', note: 'new crust' },
+      { name: 'push together', kind: 'in', note: 'mountains' },
+      { name: 'slide past', kind: 'shear', note: 'quakes' },
+    ];
+    return wrap(<>
+      {P.map((q, i) => {
+        const ox = pad + i * (pw + gap);
+        const mid = ox + pw / 2;
+        /* Apart: a gap with new crust in it. Together and sliding: touching,
+           because that is the whole difference between the three. */
+        const lx = q.kind === 'out' ? ox : mid - lw;
+        const rx = q.kind === 'out' ? ox + pw - lw : mid;
+        const lift = q.kind === 'in' ? 5 : 0;
+        return (
+          <g key={i}>
+            <text x={mid} y={30} textAnchor="middle" fill={accent} fontSize="9.5" fontWeight="700"
+                  fontFamily="JetBrains Mono, monospace">{q.name}</text>
+            {q.kind === 'out' && (
+              <rect x={lx + lw} y={y + 5} width={rx - lx - lw} height={bh - 10} fill={accent + '66'} />
+            )}
+            <rect x={lx} y={y - lift} width={lw} height={bh} rx={3} fill="#6b7689" stroke="#0c0e16" strokeWidth="1" />
+            <rect x={rx} y={y} width={lw} height={bh} rx={3} fill="#8b96a9" stroke="#0c0e16" strokeWidth="1" />
+            {/* Each arrow sits under its OWN plate, so it cannot wander into
+                the neighbouring panel. The first version drew the converging
+                left arrow from lx-16, which is outside this panel entirely:
+                it appeared at the end of "pull apart" as a second arrowhead. */}
+            {(() => {
+              const aL = lx + lw / 2, aR = rx + lw / 2, ay = y + bh + 13, r = 9;
+              if (q.kind === 'shear') return (
+                <>
+                  <line x1={aL} y1={ay + 4} x2={aL} y2={ay - 8} stroke={accent} strokeWidth="2" markerEnd="url(#pa)" />
+                  <line x1={aR} y1={ay - 8} x2={aR} y2={ay + 4} stroke={accent} strokeWidth="2" markerEnd="url(#pa)" />
+                </>
+              );
+              const outward = q.kind === 'out';
+              return (
+                <>
+                  <line x1={aL + (outward ? r : -r)} y1={ay} x2={aL + (outward ? -r : r)} y2={ay}
+                        stroke={accent} strokeWidth="2" markerEnd="url(#pa)" />
+                  <line x1={aR + (outward ? -r : r)} y1={ay} x2={aR + (outward ? r : -r)} y2={ay}
+                        stroke={accent} strokeWidth="2" markerEnd="url(#pa)" />
+                </>
+              );
+            })()}
+            <text x={mid} y={y + bh + 34} textAnchor="middle" fill="#8b91a3" fontSize="9"
+                  fontFamily="JetBrains Mono, monospace">{q.note}</text>
+          </g>
+        );
+      })}
+      <text x="160" y="128" textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">
+        {v.caption || 'a few centimetres a year \u2014 for millions of years'}
+      </text>
+      <defs><marker id="pa" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill={accent} /></marker></defs>
+    </>, 138);
+  }
+
   if (v.kind === 'strata') {
     const layers = [['#d3ab78', 30], ['#bf9568', 56], ['#a37f58', 82], ['#876a4c', 108]];
     return wrap(<>
@@ -162,17 +379,12 @@ export function Visual({ v, accent }) {
       <text x="160" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">deeper = older (law of superposition)</text>
     </>, 156);
   }
-  if (v.kind === 'machine') return wrap(<>
-    <rect x="104" y="34" width="112" height="64" rx="14" fill={accent + '22'} stroke={accent} strokeWidth="1.5" />
-    <text x="160" y="60" textAnchor="middle" fill={accent} fontSize="13" fontWeight="800" fontFamily="JetBrains Mono, monospace">RULE</text>
-    <text x="160" y="82" textAnchor="middle" fill="#e7e9f0" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">{v.rule}</text>
-    <text x="46" y="72" textAnchor="middle" fill="#5aa9ff" fontSize="20" fontWeight="800" fontFamily="JetBrains Mono, monospace">{v.inn}</text>
-    <text x="276" y="72" textAnchor="middle" fill="#3ddc97" fontSize="20" fontWeight="800" fontFamily="JetBrains Mono, monospace">{v.out}</text>
-    <path d={v.reverse ? 'M212 110 H 108' : 'M66 66 H 100'} stroke="#8b91a3" strokeWidth="2.5" markerEnd="url(#arr)" fill="none" />
-    <path d={v.reverse ? 'M104 110 H 96' : 'M220 66 H 254'} stroke="#8b91a3" strokeWidth="2.5" markerEnd="url(#arr)" fill="none" opacity={v.reverse ? 0 : 1} />
-    {v.reverse && <text x="160" y="128" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">run it backward: undo the rule</text>}
-    <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8b91a3" /></marker></defs>
-  </>, v.reverse ? 140 : 120);
+  /* `machine` lived here: a RULE box with an input and an output. It came in
+     with the prototype merge and was never placed on a single day — m13
+     teaches functions with `mapping`, which shows the whole input set at
+     once and is the better picture for it. Deleted rather than left as a
+     kind nobody can reach and no test covers. */
+
   if (v.kind === 'orbit') return wrap(<>
     <circle cx="160" cy="78" r="22" fill="#f6b73c" opacity=".95" />
     <circle cx="160" cy="78" r="30" fill="#f6b73c" opacity=".15" />

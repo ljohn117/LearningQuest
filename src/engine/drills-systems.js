@@ -99,7 +99,13 @@ const cx2 = { id: 'cx2a', subj: 'connect', day: 'cx2', name: 'If-Then',
          but it also means that option is right half the time, so it must not
          be the shortest thing on screen. Spelled out in full for that reason,
          not for emphasis. */
-      const nothing = 'Nothing follows for certain either way';
+      /* Length tuned, not guessed. This option is correct half the time — two
+         of the four observations really do tell you nothing — so if it is
+         also the shortest thing on screen it stops testing the idea. At 38
+         characters it was shortest 35% of the time against 25% by chance,
+         which put it close enough to the test's bar to fail at random. At 41
+         it measures 25% longest and 15% shortest. */
+      const nothing = 'Nothing you can rely on follows from this';
       const right = seen === 'p' ? `It must be that ${c.q}`
         : seen === 'nq' ? `It must be that ${c.np}` : nothing;
       return {

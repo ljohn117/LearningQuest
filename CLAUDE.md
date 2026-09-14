@@ -193,5 +193,13 @@ Same URL keeps the same origin, which is what keeps his progress.
   across phases he had not even opened). The catalogue total belongs in the
   parent view only. A fall he causes by advancing is fine; a fall caused by
   shipping is not.
+- **A diagram must use what it is given.** `src/engine/Visual.jsx`. A test
+  reads each renderer, works out which `v.*` props it consults, and fails if a
+  content block passes one that is ignored — `flow` drew a hardcoded
+  programming flowchart on the water cycle day while its correct `steps` sat
+  unread. That test cannot tell whether a picture is ABOUT the right thing, so
+  after any visual change run `screenshot-visuals` and LOOK. A renderer that
+  reads no props can only ever draw one picture; do not reuse one across days
+  that are not about the same thing.
 - **Storage** is `src/store.js`, key `lq_v3`. `normalize()` fills fields added
   after an old save was written and migrates legacy keys additively.

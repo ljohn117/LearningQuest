@@ -471,7 +471,7 @@ export const RESTORED = {
           ]},
           { title: 'The evidence stacked up', blocks: [
             { type: 'text', text: 'South America and Africa fit together like puzzle pieces. Matching fossils appear on both coasts. Matching rock layers line up. No single clue proved it, but together they were overwhelming.' },
-            { type: 'visual', kind: 'strata' },
+            { type: 'visual', kind: 'plates' },
           ]},
           { title: 'Where you have seen this before', blocks: [
             { type: 'callout', text: 'Matching fossils on two continents is exactly the reasoning from the Fossils lane. And it is Logic: several independent lines pointing the same way is far stronger than one.' },
@@ -499,7 +499,8 @@ export const RESTORED = {
           ]},
           { title: 'Up, across, and down again', blocks: [
             { type: 'text', text: 'The sun evaporates water from oceans and lakes. It rises, cools, and condenses into clouds. When droplets grow heavy enough, they fall as precipitation.' },
-            { type: 'visual', kind: 'flow', steps: ['Evaporate', 'Condense', 'Precipitate', 'Collect'] },
+            { type: 'visual', kind: 'flow', steps: ['Evaporate', 'Condense', 'Precipitate', 'Collect'], cycle: true,
+              cycleLabel: 'and round again \u2014 the same water, forever' },
           ]},
           { title: 'Nothing is added or lost', blocks: [
             { type: 'text', text: 'Earth has essentially the same water it had when dinosaurs drank it. It is not consumed — only moved and changed in form.' },
