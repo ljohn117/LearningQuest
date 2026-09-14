@@ -1000,6 +1000,84 @@ for (const q of mcs) {
     `answer ${q.answer} is "${q.choices[q.answer]}" — a permutation moved choices without moving answer`);
 }
 
+/* ---- what he SEES may never go backwards -------------------------------- */
+section('Adding content never shrinks his progress');
+
+/* THE BUG THIS EXISTS TO PREVENT, measured against his real backup:
+ *
+ *     headline      35 of 131  (26.7%)  ->  35 of 153  (22.9%)
+ *     Mathematics   18 of 22   (82%)    ->  18 of 38   (47%)
+ *
+ * Phases 4 through 8 appended 22 days. He lost nothing, finished nothing
+ * less, and every bar on his dashboard fell — because the denominator was
+ * the catalogue, and the catalogue is my output rather than his. For a kid
+ * the brief describes as assuming he will fail, an app that takes away
+ * progress he earned is the one thing rule 2 exists to prevent.
+ *
+ * So: the bar is a function of DONE alone. Appending days cannot lower it. */
+const { milestone, milestoneNote, STRIDE } = await import('../src/engine/meter.js');
+
+{
+  let mine = 0, exempt = 0, worst = null;
+  for (let done = 0; done <= 60; done++) {
+    for (let total = Math.max(done, 1); total <= 120; total += 3) {
+      const before = milestone(total, done);
+      /* Every way a phase has actually grown a lane. */
+      for (const grew of [1, 2, 5, 8, 16, 22, 40]) {
+        const after = milestone(total + grew, done);
+        if (after.done < before.done) { mine++; continue; }
+        if (after.pct >= before.pct - 1e-9) continue;
+        /* The one unavoidable case: he had finished the lane outright. */
+        if (before.complete) { exempt++; continue; }
+        mine++;
+        if (!worst) worst = `${done} done: ${total}d gave ${(before.pct * 100).toFixed(0)}%, ${total + grew}d gives ${(after.pct * 100).toFixed(0)}%`;
+      }
+    }
+  }
+  eq('appending days never lowers a part-finished lane', mine, 0, worst);
+  ok('the only exception is a lane he had already finished outright', exempt > 0,
+    'if this hits zero the exemption is dead code and should be deleted');
+}
+
+/* Finishing a day must never cost him anything. The bar empties when he
+   passes a milestone — that is the XP bar's behaviour too — but his count
+   must rise in the same moment, so the reset reads as a level-up and not as
+   something being taken back. */
+{
+  let lostGround = 0, stoodStill = 0;
+  for (let done = 0; done < 60; done++) {
+    const a = milestone(200, done), b = milestone(200, done + 1);
+    if (b.done <= a.done) lostGround++;
+    /* Either the bar moved, or he banked a milestone and started the next. */
+    if (b.pct <= a.pct && b.from <= a.from) stoodStill++;
+  }
+  eq('finishing a day always raises his finished count', lostGround, 0);
+  eq('and always either fills the bar or banks a milestone', stoodStill, 0);
+  ok('one day is worth a visible slice of the bar', 1 / STRIDE >= 0.2, `stride ${STRIDE}`);
+}
+
+/* His actual numbers, as the regression that started this. */
+{
+  const then = milestone(22, 18), now = milestone(38, 18);
+  eq('his maths bar survives the lane going 22 -> 38 days', now.pct, then.pct);
+  eq('and still reads 18 finished', now.done, 18);
+  ok('the old meter really did fall', 18 / 38 < 18 / 22 - 0.3,
+    'if this stops being true the premise of the fix has changed');
+}
+
+/* The copy is for a child who is watching for signs he is doing badly. It
+   must never state a catalogue total, and never leave him at zero with no
+   next step named. */
+{
+  const notes = new Set();
+  for (let total = 1; total <= 40; total++) {
+    for (let done = 0; done <= total; done++) notes.add(milestoneNote(milestone(total, done)));
+  }
+  const bad = [...notes].filter((n) => /\bof\b|\d+\s*\/\s*\d+|locked|only|behind|still/i.test(n));
+  eq('no milestone note quotes a total or reads as a shortfall', bad.length, 0, bad.join(' | '));
+  ok('a finished lane says so', notes.has('Every day finished'));
+}
+
 /* ---- no lane is left out of practice ------------------------------------ */
 section('Every lane has something to duel with');
 

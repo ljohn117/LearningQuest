@@ -110,7 +110,7 @@ repo.
 Run all four. They take about a minute together.
 
 ```bash
-npm run check             # validate + 3,723 unit assertions + content audit
+npm run check             # validate + 3,733 unit assertions + content audit
 npm run build && node scripts/build-singlefile.mjs
 npm run smoke             # real browser: dashboard, a numeric duel, an MC duel, a write prompt
 npm run restore-check     # real browser: Back up -> Restore across origins
@@ -187,5 +187,11 @@ Same URL keeps the same origin, which is what keeps his progress.
   of options. Fixing one direction tends to create the other; measure, do not
   reason about it. Minimum three choices, since a duel streak of six is what a
   readiness gate accepts as understanding.
+- **Progress he can see never goes backwards.** `src/engine/meter.js`. The
+  learner-facing bar is a function of days DONE alone, never of the catalogue
+  size — appending content used to shrink it (his maths lane fell 82% → 47%
+  across phases he had not even opened). The catalogue total belongs in the
+  parent view only. A fall he causes by advancing is fine; a fall caused by
+  shipping is not.
 - **Storage** is `src/store.js`, key `lq_v3`. `normalize()` fills fields added
   after an old save was written and migrates legacy keys additively.

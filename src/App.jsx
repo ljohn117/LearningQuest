@@ -14,6 +14,7 @@ import { DuelIntro, DuelSession, DuelWon } from './engine/Duel.jsx';
 import { ParentView } from './engine/ParentView.jsx';
 import { LadderView } from './engine/Ladder.jsx';
 import { recordReview, REVIEW_XP, pickLesson } from './engine/daily.js';
+import { milestone } from './engine/meter.js';
 import { isReady } from './engine/readiness.js';
 
 export default function App() {
@@ -76,10 +77,13 @@ export default function App() {
     if (!isReady(profile, day)) return false;
     return idx === 0 || isDayDone(subj, CURRICULUM[subj].days[idx - 1].id);
   };
+  /* `pct` is progress to his next milestone, NOT done/total. Appending days
+     to a lane must never shrink a bar he has already filled — see meter.js.
+     `total` is still returned for the parent view, which wants coverage. */
   function subjStats(subj) {
     const days = CURRICULUM[subj].days;
     const done = days.filter((d) => isDayDone(subj, d.id)).length;
-    return { done, total: days.length, pct: days.length ? done / days.length : 0 };
+    return { ...milestone(days.length, done), done, total: days.length };
   }
   function finishDay(subj, day, correctCount) {
     const earned = correctCount * XP_CORRECT + XP_BONUS;

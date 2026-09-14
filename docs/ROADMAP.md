@@ -1,10 +1,11 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1–8 done (2b partial and parked). Every lane can now be
-> practised: English, Connections and Teardowns had zero generated drills
-> between them because the duel could only ask for a number.
+> **Status: Phases 1–9 done (2b partial and parked). Phase 9 was a correction,
+> not a feature: every phase from 4 onwards had been shrinking his visible
+> progress, because the progress bar measured the catalogue rather than him.
 > NOTHING SINCE PHASE 1 HAS BEEN VALIDATED AGAINST THE LEARNER: he last did
-> a lesson on 2026-09-10 and all eight phases landed after it.**
+> a lesson on 2026-09-10 and all nine phases landed after it. More content is
+> not what this needs. Read Phase 9 before proposing another content phase.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -602,6 +603,53 @@ passed every test. Fixed, then re-shot.
 **Done when.** No lane has zero drills; an MC duel plays to a win in a real
 browser; his real profile survives. All met.
 
+## Phase 9 — The meter measured my output, not his  — **done**
+
+**Why.** Asked whether the app was finished, I rebuilt it as it stood on the
+last day he used it and rendered his real backup against both versions:
+
+```
+headline      35 of 131  (26.7%)  ->  35 of 153  (22.9%)
+Mathematics   18 of 22   (82%)    ->  18 of 38   (47%)
+Chemistry      1 of 11    (9%)    ->   1 of 14    (7%)
+Physical Sci   2 of 7    (29%)    ->   2 of 9    (22%)
+Biology        2 of 10   (20%)    ->   2 of 11   (18%)
+```
+
+Maths was his best lane and he was four days from finishing it. He lost no
+completed day and answered nothing wrong, and the bar still fell thirty-five
+points — because the denominator was the catalogue, and the catalogue is my
+output. Rule 2 exists so the app never confirms his belief that he is going to
+fail; taking away progress he earned, because somebody else added content,
+does exactly that. Every phase from 4 onwards made this worse.
+
+**What changed.** `src/engine/meter.js`. The learner-facing bar is now a
+function of DONE ALONE — progress toward his next five-day milestone — so
+appending days cannot move it. The dashboard headline is a count
+("35 missions complete"), lane cards show his finished count plus the next
+concrete step, and the catalogue total survives only in the parent view,
+where "how much is left" is the right question for the person choosing what
+to do next. It is the wrong question for the person doing the work.
+
+**Second-order win.** Against 153 days one lesson moved the bar 0.65%, which
+reads as nothing. Against a five-day milestone it moves 20%.
+
+**The exception, written down rather than hidden.** If he finishes a lane
+outright and days are later appended, he moves off "Every day finished" back
+onto a partial milestone. No honest display keeps him at 100% when the lane
+really did grow, and there is no stored history to say "3 new days" instead.
+A test pins this as the ONLY way appending content can lower his bar.
+
+**What the tests caught in my own design.** The first version regressed in two
+places: a finished lane fell 100% → 20% when grown, and the "never goes down"
+rule as first written also failed the milestone reset. The second was the test
+being wrong, not the code — the XP bar already empties at every level-up and
+reads as advancement. The rule is now stated properly: *a fall he causes by
+advancing is fine; a fall I cause by shipping is not.*
+
+**Done when.** Appending days cannot lower a part-finished lane; his real
+profile renders with maths at 60% rather than 47%. Both met.
+
 ## Status
 
 | phase | state | moved |
@@ -614,6 +662,7 @@ browser; his real profile survives. All met.
 | 6 — Presentation | **done** 2026-09-13 | days with no visual: **94 → 73**; interactive block types: **1 → 3** (`slider` 5 uses / 3 lanes, `order` 5 uses / 5 lanes) |
 | 7 — Statistics | **done** 2026-09-13 | maths days **30 → 38**; a named subject, not a new lane; drills **65 → 70** |
 | 8 — Every lane can be practised | **done** 2026-09-14 | lanes with no practice at all: **3 → 0**; days with a drill **62/153 → 85/153** (41% → 56%); drills **70 → 93**; assertions **3,012 → 3,723** |
+| 9 — The meter measured my output | **done** 2026-09-14 | his maths bar **47% → 60%** on identical progress; appending days can no longer lower a part-finished lane; headline is a count, not a fraction |
 | — parked — | | 2b remainder (strictly-longest 47% vs 35% target); MAX_LEVEL 3 → 6 (coupled to MASTERY_STREAK); prose tightening (34% plain text) |
 
 ## Deferred

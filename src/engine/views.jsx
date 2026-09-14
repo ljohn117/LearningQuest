@@ -4,6 +4,7 @@ import { S } from './styles.jsx';
 import { writeKeyFor } from './writekey.js';
 import { suggestedDrill } from './suggest.js';
 import { readinessNote } from './readiness.js';
+import { milestoneNote } from './meter.js';
 import { drillForDay } from './drills.js';
 import { SliderBlock, OrderBlock } from './Interactive.jsx';
 import { play, soundOn, setSound } from './sound.js';
@@ -123,13 +124,19 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
   const [restoring, setRestoring] = useState(false);
   const [nameVal, setNameVal] = useState(state.name);
   const totalDone = SUBJECT_ORDER.reduce((n, s) => n + subjStats(s).done, 0);
-  const totalDays = SUBJECT_ORDER.reduce((n, s) => n + subjStats(s).total, 0);
   return (
     <div>
       <div className="lq-rise" style={{ animationDelay: '.02s' }}>
         <div style={S.eyebrow}>Mission Control</div>
         <h1 style={S.h1}>Welcome back, {state.name}.</h1>
-        <div style={S.muted}>{totalDone} of {totalDays} missions complete</div>
+        {/* A COUNT, not a fraction. This used to read "35 of 131", which meant
+            his headline fell to "35 of 153" across phases he had not even
+            seen — the app quietly telling him he had gone backwards while he
+            was away. See meter.js. The catalogue total lives in the parent
+            view, where it answers a question somebody is actually asking. */}
+        <div style={S.muted}>
+          {totalDone === 1 ? '1 mission complete' : `${totalDone} missions complete`}
+        </div>
       </div>
 
       <button className="lq-tap lq-rise" style={{ ...S.dailyBtn, animationDelay: '.04s' }} onClick={onDaily}>
@@ -162,15 +169,16 @@ export function Dashboard({ lvl, state, subjStats, onOpen, onPractice, onDaily, 
           const s = CURRICULUM[id], st = subjStats(id), Icon = s.icon;
           return (
             <button key={id} type="button" className="lq-rise lq-tap lq-card"
-              aria-label={`${s.name}, ${st.done} of ${st.total} days complete`}
+              aria-label={`${s.name}, ${st.done} ${st.done === 1 ? 'day' : 'days'} complete. ${milestoneNote(st)}`}
               style={{ ...S.cardBtn, ...S.subjCard, animationDelay: `${.1 + i * .05}s` }} onClick={() => onOpen(id)}>
               <div style={{ ...S.subjIcon, background: s.accent + '22', border: `1px solid ${s.accent}55` }}><Icon size={22} color={s.accent} /></div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={S.subjName}>{s.name}</div>
                 <div style={S.subjBlurb}>{s.blurb}</div>
                 <div style={{ marginTop: 8 }}><Bar pct={st.pct} accent={s.accent} thin /></div>
+                <div style={{ ...S.muted, fontSize: 12, marginTop: 5 }}>{milestoneNote(st)}</div>
               </div>
-              <div style={S.subjMeta}><span style={{ ...S.mono, color: s.accent }}>{st.done}/{st.total}</span><ChevronRight size={18} color="#5b6275" /></div>
+              <div style={S.subjMeta}><span style={{ ...S.mono, color: s.accent }}>{st.done}</span><ChevronRight size={18} color="#5b6275" /></div>
             </button>
           );
         })}
@@ -349,7 +357,9 @@ export function SubjectView({ subj, isDayDone, isDayUnlocked, stats, onBack, onD
         <div style={{ ...S.subjIcon, background: s.accent + '22', border: `1px solid ${s.accent}55` }}><Icon size={22} color={s.accent} /></div>
         <div>
           <h1 style={{ ...S.h1, margin: 0, fontSize: 26 }}>{s.name}</h1>
-          <div style={S.subjBlurb}>{stats.done} of {stats.total} days complete</div>
+          <div style={S.subjBlurb}>
+            {stats.done} {stats.done === 1 ? 'day' : 'days'} complete · {milestoneNote(stats)}
+          </div>
         </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 18 }}>

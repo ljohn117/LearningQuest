@@ -35,16 +35,20 @@ ok('calibration kept',       Object.keys(after.calibration).length === Object.ke
 ok('recall history kept',    Object.keys(after.review).length === Object.keys(src.review).length);
 ok('his name kept',          after.name === src.name);
 
-/* Derive the totals rather than hardcoding them. The first version asserted
-   "35 of 131" and failed the moment eight maths days were appended — a stale
-   test reporting a content addition as progress loss, which is exactly the
-   kind of false alarm that trains people to ignore this check. */
-const { CURRICULUM, SUBJECT_ORDER } = await import('../src/content/index.js');
-const totalDays = SUBJECT_ORDER.reduce((n, s) => n + (CURRICULUM[s]?.days.length || 0), 0);
+/* The headline is a COUNT now, not a fraction.
+   This used to derive the catalogue total and assert "35 of 153", because an
+   earlier version hardcoded "35 of 131" and turned a content addition into a
+   false alarm about progress loss. The meter fix went further and removed the
+   denominator from his screen altogether, for the same reason at a larger
+   scale: appending days was quietly shrinking every bar he had filled.
+   What this still guards is the thing that matters — his real progress
+   rendered, not a blank or default profile. */
 const hisDays = Object.keys(src.completed).length;
 const dash = await p.evaluate(()=>document.body.innerText);
-ok('dashboard shows his real total', new RegExp(`${hisDays} of ${totalDays}`).test(dash),
-   `expected "${hisDays} of ${totalDays}" — ` + dash.split('\n').filter(Boolean).slice(0,4).join(' | '));
+ok('dashboard shows his real progress', new RegExp(`\\b${hisDays} missions? complete\\b`).test(dash),
+   `expected "${hisDays} missions complete" — ` + dash.split('\n').filter(Boolean).slice(0,4).join(' | '));
+ok('and no longer quotes a catalogue total at him', !/\d+\s+of\s+\d+\s+missions/.test(dash),
+   dash.split('\n').filter(Boolean).slice(0,4).join(' | '));
 
 /* The days that got a diagram must still be open and still scored as before. */
 for (const [lane,label,key] of [['Mathematics','Inequalities','math:m12'],['Logic','And, Or, Not','logic:lg2'],['Chemistry','Two Kinds','chem:ch1']]) {
