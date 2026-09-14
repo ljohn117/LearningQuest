@@ -1,6 +1,6 @@
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { todayStr, dayKey } from './progress.js';
-import { EXTRA_DRILLS, MATH_DRILLS, clampLevel, MAX_LEVEL } from './drills.js';
+import { EXTRA_DRILLS, MATH_DRILLS, clampLevel, MAX_LEVEL, asQuestion } from './drills.js';
 
 const ALL_DRILLS = [...MATH_DRILLS, ...EXTRA_DRILLS];
 
@@ -191,7 +191,7 @@ export function pickDrillReview(profile, n) {
   return head.slice(0, n).map(({ d }) => {
     const level = drillLevel(profile, d.id);
     return { drillId: d.id, subj: d.subj, level, name: d.name,
-      q: { ...d.gen(level), type: 'numeric' } };
+      q: asQuestion(d, level) };
   });
 }
 

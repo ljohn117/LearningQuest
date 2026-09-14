@@ -2,8 +2,12 @@
  *
  * The math lane already had fourteen of these. Everything else had none,
  * which meant duels only ever tested math. These extend the same contract —
- * { id, subj, day, name, gen } where gen() returns { prompt, answer, hint } —
- * to the lanes with something countable in them.
+ * { id, subj, day, name, gen } where gen() returns { prompt, answer, hint },
+ * or { prompt, choices, answer, hint } where answer is an index — to every
+ * other lane. It used to stop at "the lanes with something countable in
+ * them", which left English, Connections and Teardowns with nothing at all;
+ * see asQuestion at the bottom of this file for why that limit existed and
+ * drills-language.js / drills-systems.js for what filled the gap.
  *
  * Numbers are generated per call, so nothing here can be memorized.
  *
@@ -12,33 +16,14 @@
  * multiplication. That recognition is the point — he should keep running
  * into things he already knows wearing different clothes. */
 
-/* ---- difficulty ---------------------------------------------------------
- *
- * Every generator takes a level of 1, 2 or 3 and defaults to 1, so anything
- * that ignores the argument keeps behaving exactly as it did.
- *
- * The reason this exists: one generator at one difficulty does not teach a
- * concept, it teaches a shape. A kid who can solve 3x + 5 = 20 every time
- * has learned where the numbers go. Understanding shows up when the same
- * idea arrives wearing different clothes — bigger, inverted, or wrapped in a
- * sentence — so each level is a different SURFACE for the same idea rather
- * than simply larger numbers.
- *
- *   1  the plain form
- *   2  inverted, or one step longer
- *   3  the form that catches people out
- *
- * The duel raises the level as his run grows and drops it the moment he
- * misses. That fall is the important half: getting something wrong makes the
- * next question easier, never harder. It is support, not a penalty, and it
- * means practice keeps meeting him at the edge of what he can do instead of
- * either boring him or walling him off.
- */
-export const MAX_LEVEL = 3;
-export const clampLevel = (n) => Math.max(1, Math.min(MAX_LEVEL, Math.round(n) || 1));
-
-export const rnd = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
-export const pickOne = (a) => a[Math.floor(Math.random() * a.length)];
+/* Difficulty levels, the RNG and the multiple-choice builder now live in
+ * drill-kit.js so the per-lane drill files can use them without importing
+ * this one back. Re-exported here because every existing caller imports them
+ * from drills.js. */
+import { MAX_LEVEL, clampLevel, rnd, pickOne, mc, shuffled, sample } from './drill-kit.js';
+import { LANGUAGE_DRILLS } from './drills-language.js';
+import { SYSTEMS_DRILLS } from './drills-systems.js';
+export { MAX_LEVEL, clampLevel, rnd, pickOne, mc, shuffled, sample };
 
 const money = (n) => Math.round(n * 100) / 100;
 
@@ -803,6 +788,12 @@ export const EXTRA_DRILLS = [
       return { prompt: `One side polls ${a}% and the other ${a - gap}%, margin of error ${m} points. How many points wide is the whole uncertainty, counting both directions?`,
         answer: m * 2, hint: 'The range runs from minus the margin to plus it.' } },
   },
+
+  /* The three lanes that had no practice at all until the duel learned to
+     ask something other than a number. Kept in their own files because they
+     carry banks of prose rather than arithmetic. */
+  ...LANGUAGE_DRILLS,
+  ...SYSTEMS_DRILLS,
 ];
 
 /* ---- Mathematics, days 1-14 --------------------------------------------
@@ -968,3 +959,29 @@ export const MATH_DRILLS = [
  * 131 days — the caller must handle that rather than assume one exists. */
 export const drillForDay = (subj, dayId) =>
   [...MATH_DRILLS, ...EXTRA_DRILLS].find((d) => d.subj === subj && d.day === dayId);
+
+/* ---- turning a generator's output into a question ------------------------
+ *
+ * Every call site used to write `{ ...d.gen(level), type: 'numeric' }` by
+ * hand — four of them, in Duel.jsx and daily.js. That one hardcoded word was
+ * a ceiling on the whole app: a generator could only ever ask something with
+ * a numeric answer, so the three lanes with nothing countable in them
+ * (English, Connections, Teardowns — 23 days) got no practice at all. Not
+ * because their ideas cannot be drilled, but because the duel had no way to
+ * show a question that is not a number.
+ *
+ * A generator may now return `choices` alongside `answer`, where answer is
+ * the INDEX of the right one, and it renders as multiple choice. Anything
+ * without `choices` keeps the exact numeric behaviour it had.
+ *
+ * ON GUESSING. Multiple choice reintroduces luck, and a previous pass spent
+ * a whole session removing 116 true/false questions for exactly that reason.
+ * The duel is different from a quiz: it needs a streak, and level only rises
+ * on consecutive hits. At four choices, guessing to a streak of six is
+ * 0.25^6 — about 1 in 4,000. That is what keeps the "beat its duel" route
+ * through a readiness gate honest, so MC drills must never offer fewer than
+ * three choices; a test enforces it. */
+export function asQuestion(drill, level = 1) {
+  const q = drill.gen(level);
+  return { ...q, type: q && q.choices ? 'mc' : 'numeric' };
+}

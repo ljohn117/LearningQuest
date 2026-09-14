@@ -99,6 +99,72 @@ console.log('completed days preserved:',
   Object.keys(afterDuel.completed).length === Object.keys(beforeDuel.completed).length);
 console.log('practice recorded:', Object.keys(afterDuel.practice).length > 0);
 
+/* ---- a multiple-choice duel --------------------------------------------
+ *
+ * Until now every duel question was a number, because Duel.jsx wrote
+ * type:'numeric' onto whatever a generator returned. A drill that answers
+ * with choices would have rendered its prompt above an empty number box —
+ * a question with no way to answer it, which the unit suite cannot see and
+ * which would have looked to him exactly like the app being broken.
+ *
+ * So this plays one for real: English day 1, options as buttons, clicked,
+ * checked, cast, all the way to a finished duel with XP recorded.
+ *
+ * Winning needs eight correct and the driver cannot read English. It learns
+ * instead: after each reveal the right option is the one painted green, so it
+ * remembers prompt -> answer and converges within a few passes of the bank. */
+await p.evaluate(() => {
+  const completed = {};
+  for (let i = 1; i <= 10; i++) completed['ela:ela' + i] = { best: 4, total: 4 };
+  localStorage.setItem('lq_v3', JSON.stringify({
+    version: 3,
+    profiles: [{ id: 'p1', name: 'Reader', xp: 300, completed, practice: {}, review: {},
+      writing: {}, calibration: {}, streak: { count: 2, last: '2026-01-01' }, skips: 0 }],
+    lastActive: 'p1',
+  }));
+});
+await p.reload({ waitUntil: 'domcontentloaded' }); await p.waitForTimeout(600);
+const beforeMc = await p.evaluate(() => JSON.parse(localStorage.getItem('lq_v3')).profiles[0]);
+
+await p.locator('button[aria-label^="Skill Duel"]').first().click(); await p.waitForTimeout(400);
+const mcDrillRow = p.getByRole('button', { name: /Sentence Building/ }).first();
+const mcDrillListed = (await mcDrillRow.count()) > 0;
+let mcRendered = false, mcDone = false, mcRounds = 0, sawNumberBox = false;
+if (mcDrillListed) {
+  await mcDrillRow.click(); await p.waitForTimeout(400);
+
+  /* The whole point: choice buttons, and NOT a number input. */
+  const choiceCount = await p.evaluate(() => document.querySelectorAll('[role="radiogroup"] button').length);
+  sawNumberBox = (await p.locator('input[type="number"], input[inputmode="numeric"]').count()) > 0;
+  mcRendered = choiceCount >= 3;
+
+  const learned = new Map();
+  for (let i = 0; i < 70; i++) {
+    const txt = await p.evaluate(() => document.body.innerText);
+    if (/DEFEATED/i.test(txt)) { mcDone = true; break; }
+    const opts = await p.evaluate(() => [...document.querySelectorAll('[role="radiogroup"] button')].map((b) => b.textContent));
+    if (!opts.length) break;
+    const key = await p.evaluate(() => (document.querySelector('h2')?.textContent || '') + '|'
+      + [...document.querySelectorAll('[role="radiogroup"] button')].map((b) => b.textContent).join('~'));
+    const known = learned.get(key);
+    const pick = known !== undefined && opts[known] !== undefined ? known : Math.floor(Math.random() * opts.length);
+    await p.locator('[role="radiogroup"] button').nth(pick).click(); await p.waitForTimeout(80);
+    await p.getByRole('button', { name: /^Check answer$/ }).click(); await p.waitForTimeout(150);
+    /* After the reveal the correct option carries the green swatch. */
+    const rightIdx = await p.evaluate(() => [...document.querySelectorAll('[role="radiogroup"] button')]
+      .findIndex((b) => getComputedStyle(b).borderColor.replace(/\s/g, '') === 'rgb(61,220,151)'));
+    if (rightIdx >= 0) learned.set(key, rightIdx);
+    const cast = p.getByRole('button', { name: /^Cast$/ });
+    if (!(await cast.count())) break;
+    await cast.click(); await p.waitForTimeout(200);
+    mcRounds++;
+  }
+}
+const afterMc = await p.evaluate(() => JSON.parse(localStorage.getItem('lq_v3')).profiles[0]);
+console.log('mc drill offered:', mcDrillListed, '| choices rendered:', mcRendered,
+  '| no stray number box:', !sawNumberBox);
+console.log('mc duel completed:', mcDone, `(${mcRounds} rounds)`, '| xp went up:', afterMc.xp > beforeMc.xp);
+
 /* ---- writing ------------------------------------------------------------
  * The write box renders, files what he types under the prompt's id, and is
  * never required to finish a day. Checked in a real browser because all
@@ -224,6 +290,11 @@ if (Object.keys(afterDuel.completed).length !== Object.keys(beforeDuel.completed
 if (rows.length >= 3 && (rows[0].disabled || rows[1].disabled || !rows[2].disabled)) {
   failures.push('unlock cascade wrong: ' + JSON.stringify(rows.slice(0, 3)));
 }
+if (!mcDrillListed) failures.push('no multiple-choice drill was offered in the duel list');
+if (!mcRendered) failures.push('a multiple-choice duel rendered no choice buttons');
+if (sawNumberBox) failures.push('a multiple-choice duel also showed a number input');
+if (!mcDone) failures.push('a multiple-choice duel could not be finished');
+if (!(afterMc.xp > beforeMc.xp)) failures.push('finishing a multiple-choice duel did not record XP');
 if (!writeRendered) failures.push('the write prompt did not render');
 if (writeRendered && !writeFiled) failures.push('writing was not filed under the prompt id');
 if (!noStrayKey) failures.push('writing was filed under a positional key');

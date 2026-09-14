@@ -110,11 +110,12 @@ repo.
 Run all four. They take about a minute together.
 
 ```bash
-npm run check          # validate + 2,005 unit assertions + content audit
+npm run check             # validate + 3,723 unit assertions + content audit
 npm run build && node scripts/build-singlefile.mjs
-npm run smoke          # real browser: dashboard, a duel, a write prompt
-npm run restore-check  # real browser: Back up -> Restore across origins
-npm run visual-check   # real browser: every diagram actually paints shapes
+npm run smoke             # real browser: dashboard, a numeric duel, an MC duel, a write prompt
+npm run restore-check     # real browser: Back up -> Restore across origins
+npm run visual-check      # real browser: every diagram actually paints shapes
+npm run interactive-check # real browser: sliders and orderings respond
 ```
 
 `npm run check` alone is not enough. The browser checks catch the class of bug
@@ -167,13 +168,24 @@ Same URL keeps the same origin, which is what keeps his progress.
   `scripts/build-singlefile.mjs`. Only external request is Google Fonts.
 - **Content** is data, in `src/content/`. A day is
   `{id, tag, title, subtitle, pages[], recap[], quiz[], requires?}`.
-  Blocks: `text | concept | example | callout | formula | visual | codelab | write | scale`.
-  Questions: `mc | tf | numeric`, each needing a `hint` and an `explain`.
+  Blocks: `text | concept | example | callout | formula | visual | codelab | write | scale | slider | order`.
+  Questions: `mc | numeric`, each needing a `hint` and an `explain`. (`tf` is
+  retired — 116 of them went in Phase 2 and a test keeps the count at zero.)
 - **Merging** happens in `src/content/index.js`. Depth days *append* to
   existing lanes; spiral callbacks, scale blocks and write prompts are
   injected there by day id so the original prose stays untouched.
-- **Drills** are generators in `src/engine/drills.js`:
-  `{id, subj, day, name, gen(level)}` returning `{prompt, answer, hint}`.
+- **Drills** are generators: shared helpers in `src/engine/drill-kit.js`,
+  maths and science in `src/engine/drills.js`, English in `drills-language.js`,
+  Connections and Teardowns in `drills-systems.js`.
+  `{id, subj, day, name, gen(level)}` returns either `{prompt, answer, hint}`
+  for a numeric answer or `{prompt, choices, answer, hint}` where `answer` is
+  an index. Add `passage` for the text a question is about. `asQuestion()` is
+  the only place a drill becomes a question — never write `type` by hand.
   Levels 1–3, rising on a streak and falling on a miss.
+- **A generated question must not be guessable.** Tests measure how often the
+  right option is the longest AND the shortest, against chance for the number
+  of options. Fixing one direction tends to create the other; measure, do not
+  reason about it. Minimum three choices, since a duel streak of six is what a
+  readiness gate accepts as understanding.
 - **Storage** is `src/store.js`, key `lq_v3`. `normalize()` fills fields added
   after an old save was written and migrates legacy keys additively.

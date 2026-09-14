@@ -1,10 +1,10 @@
 # LearningQuest — Build Roadmap
 
-> **Status: Phases 1–7 done (2b partial and parked). Every day has a visual.
-> Phase 7 became STATISTICS, inside the maths lane — the original three
-> proposed tracks were rejected by the owner as ad hoc, correctly.
+> **Status: Phases 1–8 done (2b partial and parked). Every lane can now be
+> practised: English, Connections and Teardowns had zero generated drills
+> between them because the duel could only ask for a number.
 > NOTHING SINCE PHASE 1 HAS BEEN VALIDATED AGAINST THE LEARNER: he last did
-> a lesson on 2026-09-10 and all seven phases landed after it.**
+> a lesson on 2026-09-10 and all eight phases landed after it.**
 > Update the status line and the phase table at the bottom of a phase when it
 > lands. This file is the handoff between sessions — it is the only thing that
 > survives a context reset, so it must always say where work actually stands.
@@ -551,6 +551,57 @@ spatial.
 
 ---
 
+## Phase 8 — Every lane can be practised  — **done**
+
+**Why.** Three lanes had no generated practice at all: English & Writing (10
+days), Connections (7) and Teardowns (6). Twenty-three days he could finish
+and then never revisit.
+
+That looked like a content gap and was not. `Duel.jsx` wrote
+`type: 'numeric'` onto whatever a generator returned, in four places, so a
+drill could only ever ask something with a numeric answer. `drills.js` said as
+much: it extended "to the lanes with something countable in them". English has
+nothing countable, so English got nothing — not because sentence structure,
+evidence and revision cannot be drilled, but because the duel had no way to
+show a question that is not a number.
+
+**What changed.**
+
+- `asQuestion(drill, level)` is now the single place a drill becomes a
+  question. A generator may return `choices` with `answer` as an index, and it
+  renders as multiple choice; anything without `choices` behaves exactly as
+  before.
+- `Question` gained a `passage` field — the text a question is ABOUT, set in
+  body type below the prompt, so a four-sentence paragraph is not crammed into
+  a 22px heading.
+- `drill-kit.js` holds the shared helpers (levels, RNG, `mc()`), so per-lane
+  drill files can use them without importing `drills.js` back.
+- 23 new generators: `drills-language.js` (ela1–ela10) and
+  `drills-systems.js` (cx1–cx7, td1–td6).
+
+**On guessing.** Multiple choice reintroduces luck, and Phase 2 spent a whole
+session removing 116 true/false questions for that reason. A duel is not a
+quiz: level rises only on consecutive hits, and a readiness gate opens on a
+streak of six. At four choices that is 0.25⁶ — about 1 in 4,000. Tests enforce
+at least three options, no duplicates, and that the right answer moves around.
+
+**The tells, measured rather than intended.** A test now measures how often
+the correct option is the longest — and the shortest, because the first fix
+for one produced the other. The bar scales with the number of options
+(chance + 15 points), since three choices sit at 33% when perfectly fair. Both
+directions caught real bias in content I had just written.
+
+**What the screenshots caught that nothing else did.** `qPassage` was styled
+almost identically to `S.choice`, so the sentence under analysis rendered as
+one more thing to click — "What is missing here?" above four identical boxes,
+three of which were answers. And `cx7` level 1 drew its wrong options from
+other domains, so a question about body heat offered "insulin is released and
+sugar is stored": rejectable without knowing anything about feedback. Both
+passed every test. Fixed, then re-shot.
+
+**Done when.** No lane has zero drills; an MC duel plays to a win in a real
+browser; his real profile survives. All met.
+
 ## Status
 
 | phase | state | moved |
@@ -562,7 +613,8 @@ spatial.
 | 5 — Depth in the science lanes | **done** 2026-09-13 | chemistry **rates → stoichiometry**; physics **no equations → F = ma**; biology **one gene → Punnett squares**; 6 days, 7 drills; **readiness gating introduced** |
 | 6 — Presentation | **done** 2026-09-13 | days with no visual: **94 → 73**; interactive block types: **1 → 3** (`slider` 5 uses / 3 lanes, `order` 5 uses / 5 lanes) |
 | 7 — Statistics | **done** 2026-09-13 | maths days **30 → 38**; a named subject, not a new lane; drills **65 → 70** |
-| — parked — | | 2b remainder; MAX_LEVEL 3 → 6; practice coverage 43/131 |
+| 8 — Every lane can be practised | **done** 2026-09-14 | lanes with no practice at all: **3 → 0**; days with a drill **62/153 → 85/153** (41% → 56%); drills **70 → 93**; assertions **3,012 → 3,723** |
+| — parked — | | 2b remainder (strictly-longest 47% vs 35% target); MAX_LEVEL 3 → 6 (coupled to MASTERY_STREAK); prose tightening (34% plain text) |
 
 ## Deferred
 
@@ -574,5 +626,15 @@ that found them. Add here rather than widening a phase.
 - The audit script measures reading level and hint quality but has no notion
   of whether a question is guessable. The tell checks live in the test suite
   instead; they arguably belong in the audit output where they would be seen.
+- The lesson QUIZZES have never had the length check the drills now have.
+  Phase 2b measured 47% strictly-longest against a 25% chance baseline and
+  parked it; the test only guards generated drills, so nothing stops a new
+  quiz question from being written the same way.
+- Practice coverage is 85/153. The thinnest lanes left are Fossils & Deep Time
+  (2/10), Earth & Space (2/7), Computer Science (3/12), Business & Money
+  (3/12), Government & Civics (3/10) and Biology (3/11).
+- `ela9a` level 1 has the correct answer in the middle of the length ordering
+  almost every time. Both measured tells are at zero, and spotting "middle of
+  four" needs comparing all four, but it is a pattern.
 - Git history still contains the school name and address (see `PRIVACY.md`).
   Owner's decision; making the repo private was chosen but not yet done.

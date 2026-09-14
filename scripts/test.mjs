@@ -181,6 +181,9 @@ const FROZEN_AT_PHASE_5 = {
 };
 
 const FROZEN_DRILLS = [
+  'ela1a','ela2a','ela3a','ela4a','ela5a','ela6a','ela7a','ela8a','ela9a','ela10a',
+  'cx1a','cx2a','cx3a','cx4a','cx5a','cx6a','cx7a',
+  'td1a','td2a','td3a','td4a','td5a','td6a',
   'm27a', 'm28a', 'm31a', 'm32a', 'm33a',
   'ch6a',
   'ch11a', 'ch12a', 'ch13a', 'phy7a', 'phy8a', 'bio11a',
@@ -341,32 +344,137 @@ ok('an unearned rung never lights', !rungEarned(LADDERS[0].rungs.find((r) => r.s
 
 /* ---- 5. drill generators ----------------------------------------------- */
 section('Drill generators');
+
+/* A generator may answer with a number, or with a set of choices and the
+ * index of the right one. Both shapes are checked here, because both now
+ * reach a real duel: Duel.jsx used to hardcode type:'numeric' on everything
+ * it rendered, which is why three whole lanes had no practice at all. */
+const isMc = (q) => !!(q && q.choices);
+const wellFormed = (q) => {
+  if (!q || typeof q.prompt !== 'string' || !q.prompt || !q.hint) return false;
+  if (q.passage !== undefined && (typeof q.passage !== 'string' || !q.passage)) return false;
+  if (!isMc(q)) return Number.isFinite(q.answer);
+  return Array.isArray(q.choices)
+    && q.choices.every((c) => typeof c === 'string' && c.length > 0)
+    && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.choices.length;
+};
+
 for (const d of ALL_DRILLS) {
   ok(`${d.id}: has a lane and a gating day`, !!d.subj && !!d.day && dayExists(d.subj, d.day), `${d.subj}:${d.day}`);
   for (let L = 1; L <= MAX_LEVEL; L++) {
-    let bad = 0;
-    const answers = new Set(), prompts = new Set();
+    let bad = 0, mcSeen = 0, numSeen = 0, longest = 0, shortest = 0, fewest = 99, dupes = 0, echoed = 0;
+    const answers = new Set(), prompts = new Set(), slots = new Set();
     let ugly = null;
     for (let i = 0; i < 300; i++) {
       const q = d.gen(L);
-      if (!q || typeof q.prompt !== 'string' || !q.prompt || !Number.isFinite(q.answer) || !q.hint) { bad++; continue; }
-      answers.add(q.answer); prompts.add(q.prompt);
-      /* A repeating decimal tests typing, not understanding. */
-      if (!Number.isInteger(q.answer) && Math.abs(q.answer * 100 - Math.round(q.answer * 100)) > 1e-9) ugly = q.answer;
+      if (!wellFormed(q)) { bad++; continue; }
+      /* What varies is what he READS. For a numeric drill that is the prompt;
+         for multiple choice the stem can sit still while the options change,
+         and that is a different question every time even so. */
+      prompts.add(`${q.prompt}|${q.passage || ''}|${(q.choices || []).join('~')}`);
+      /* Whole lines, not substrings. A drill that shows a sentence and asks
+         which WORD in it is the subject is meant to repeat part of the
+         passage; a drill that prints four sentences and then offers the same
+         four as options is not. */
+      if (q.passage) {
+        const lines = q.passage.split('\n').map((t) => t.replace(/^[\u2022\-*]\s*/, '').trim());
+        if ((q.choices || []).some((c) => lines.includes(c.trim()))) echoed++;
+      }
+      if (isMc(q)) {
+        mcSeen++;
+        answers.add(q.choices[q.answer]);
+        slots.add(q.answer);
+        fewest = Math.min(fewest, q.choices.length);
+        if (new Set(q.choices).size !== q.choices.length) dupes++;
+        const lens = q.choices.map((c) => c.length);
+        const max = Math.max(...lens), min = Math.min(...lens);
+        if (lens[q.answer] === max && lens.filter((l) => l === max).length === 1) longest++;
+        if (lens[q.answer] === min && lens.filter((l) => l === min).length === 1) shortest++;
+      } else {
+        numSeen++;
+        answers.add(q.answer);
+        /* A repeating decimal tests typing, not understanding. */
+        if (!Number.isInteger(q.answer) && Math.abs(q.answer * 100 - Math.round(q.answer * 100)) > 1e-9) ugly = q.answer;
+      }
     }
     eq(`${d.id} L${L}: 300 generated questions are well formed`, bad, 0);
     /* A level whose answer never changes is not practice — it is a password.
        This caught three real generators that always answered 1. */
     ok(`${d.id} L${L}: the answer actually varies`, answers.size > 1, 'always ' + [...answers][0]);
-    ok(`${d.id} L${L}: the wording actually varies`, prompts.size > 1, 'single fixed prompt');
+    ok(`${d.id} L${L}: the wording actually varies`, prompts.size > 1, 'single fixed question');
     ok(`${d.id} L${L}: answers are clean numbers`, ugly === null, `e.g. ${ugly}`);
+
+    if (mcSeen) {
+      /* A passage that repeats one of the options is noise. Two drills shipped
+         that way and looked fine in every test: the paragraph was printed
+         above the question and then offered again, sentence for sentence, as
+         the four things to click. Only a screenshot showed it. */
+      eq(`${d.id} L${L}: the passage does not repeat an option`, echoed, 0);
+      /* GUESSING. The duel raises difficulty on consecutive hits and a
+         readiness gate opens on a streak of six, so a drill he can guess is a
+         door with no lock. Three options make that 1 in 729; two would make
+         it 1 in 64, which is a bad afternoon away from happening by luck. */
+      ok(`${d.id} L${L}: never fewer than three choices`, fewest >= 3, `saw ${fewest}`);
+      eq(`${d.id} L${L}: no option is offered twice`, dupes, 0);
+      ok(`${d.id} L${L}: the right answer moves around`, slots.size > 1,
+        'the correct option is always in the same place');
+      /* And the oldest tell of all: the longest option is the right one.
+         Chance is 25% at four choices; the lesson quizzes measured 47%. */
+      /* The bar has to scale with the number of options. Picking at random
+         from three choices lands on the longest one a third of the time
+         however fairly it was written, so a flat 40% failed honest drills at
+         random. Chance plus 15 points is the line: clearly above luck, with
+         room for the noise in 300 draws. */
+      const chance = 100 / fewest;
+      const bar = Math.round(chance + 15);
+      const pct = Math.round((longest / mcSeen) * 100);
+      ok(`${d.id} L${L}: length does not give the answer away`, pct <= bar,
+        `longest ${pct}% of the time, against ${Math.round(chance)}% by chance`);
+      /* And both ways. Fixing a longest-answer bias by making every right
+         answer the SHORTEST one just moves the tell; the scale drill did
+         exactly that on the first attempt. The revision drill is the one
+         deliberate exception — being shorter is the skill it teaches. */
+      const spct = Math.round((shortest / mcSeen) * 100);
+      ok(`${d.id} L${L}: shortness does not give it away either`,
+        spct <= bar || d.id === 'ela9a',
+        `shortest ${spct}% of the time, against ${Math.round(chance)}% by chance`);
+    }
   }
   /* Levels must differ from each other, or the ramp is decoration. */
-  const shape = (L) => new Set(Array.from({ length: 60 }, () => d.gen(L).prompt.replace(/\d+/g, '#'))); 
+  const shape = (L) => new Set(Array.from({ length: 60 }, () => {
+    const q = d.gen(L);
+    return `${q.prompt}|${(q.choices || []).length}`.replace(/\d+/g, '#');
+  }));
   const [a, b, c] = [shape(1), shape(2), shape(3)];
   const same = (x, y) => [...x].every((v) => y.has(v)) && [...y].every((v) => x.has(v));
   ok(`${d.id}: level 1 and 3 ask different things`, !same(a, c), 'identical question shapes');
   ok(`${d.id}: level 2 differs from level 1`, !same(a, b), 'identical question shapes');
+}
+
+/* ---- 5b. the duel can actually show what the generators produce --------- */
+section('Every generated question reaches the duel in a form it can render');
+
+/* asQuestion is the single place a drill becomes a question now. Before it
+ * existed, four call sites each wrote type:'numeric' by hand and a
+ * multiple-choice generator would have rendered as an empty number box. */
+const { asQuestion } = await import('../src/engine/drills.js');
+{
+  let wrongType = 0, unrenderable = 0;
+  for (const d of ALL_DRILLS) {
+    for (let L = 1; L <= MAX_LEVEL; L++) {
+      for (let i = 0; i < 20; i++) {
+        const q = asQuestion(d, L);
+        const want = q.choices ? 'mc' : 'numeric';
+        if (q.type !== want) wrongType++;
+        /* Question.jsx renders exactly two shapes. Anything else paints a
+           prompt with no way to answer it. */
+        if (q.type === 'mc' && !Array.isArray(q.choices)) unrenderable++;
+        if (q.type === 'numeric' && !Number.isFinite(q.answer)) unrenderable++;
+      }
+    }
+  }
+  eq('every drill is typed to match what it returned', wrongType, 0);
+  eq('every drill renders as something answerable', unrenderable, 0);
 }
 
 /* ---- writing prompts --------------------------------------------------- */
@@ -892,6 +1000,31 @@ for (const q of mcs) {
     `answer ${q.answer} is "${q.choices[q.answer]}" — a permutation moved choices without moving answer`);
 }
 
+/* ---- no lane is left out of practice ------------------------------------ */
+section('Every lane has something to duel with');
+
+/* English, Connections and Teardowns had ZERO generated practice between
+ * them — 23 days he could finish and then never revisit. Not a content
+ * decision: Duel.jsx hardcoded type:'numeric', so a lane with nothing
+ * countable in it could not have a drill however much it deserved one.
+ *
+ * If this ever fails it means a lane was added without practice, or one was
+ * removed from a lane that had only that. Either way the duel just quietly
+ * stopped covering part of the app, which is exactly how the first three
+ * went unnoticed. */
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  const n = lane.days.filter((d) => ALL_DRILLS.some((x) => x.subj === subj && x.day === d.id)).length;
+  ok(`${lane.name}: has generated practice`, n > 0, `${lane.days.length} days, no drills`);
+}
+
+/* A drill is only reachable once its gating day is finished, so a drill on a
+   day nobody can get to is a drill nobody can get to. */
+for (const d of ALL_DRILLS) {
+  const day = (CURRICULUM[d.subj]?.days || []).find((x) => x.id === d.day);
+  ok(`${d.id}: its gating day exists and is not itself gated behind it`,
+    !!day && !(day.readiness || []).includes(`${d.subj}:${d.day}`), 'circular unlock');
+}
+
 /* ---- routing him to the practice that exists --------------------------- */
 section('The practice engine is reachable from where he actually is');
 
@@ -900,7 +1033,19 @@ section('The practice engine is reachable from where he actually is');
  * was looking. Six of his nine weakest days have a generator sitting right
  * there producing fresh questions on exactly what he missed. */
 eq('a day with a drill resolves to it', drillForDay('math', 'm15')?.id, 'm15a');
-eq('a day without one resolves to nothing', drillForDay('ela', 'ela1'), undefined);
+
+/* Found rather than named. This used to be hardcoded to ela:ela1, which was
+   true until English got generators and then quietly became a test asserting
+   something false. 85 of 153 days have a drill now and the rest still need
+   handling, so the example is whichever day happens not to have one. */
+let bareSubj = null, bareDay = null;
+for (const [subj, lane] of Object.entries(CURRICULUM)) {
+  const found = lane.days.find((d) => !drillForDay(subj, d.id));
+  if (found) { bareSubj = subj; bareDay = found.id; break; }
+}
+ok('some day still has no drill, so this case is worth testing', !!bareDay,
+  'every single day has a generator now — delete this test rather than faking one');
+eq('a day without one resolves to nothing', drillForDay(bareSubj, bareDay), undefined);
 
 /* The suggestion names his weakest finished day that has a drill — not the
    most recent, and not just any unlocked one. */
@@ -908,12 +1053,13 @@ const fakeProfile = {
   completed: {
     'math:m15': { best: 1, total: 4 },   // 25% — worst, and has a drill
     'math:m12': { best: 2, total: 5 },   // 40% — has a drill
-    'ela:ela1': { best: 1, total: 4 },   // 25% but NO drill exists
+    [`${bareSubj}:${bareDay}`]: { best: 1, total: 4 },  // 25% but NO drill exists
     'math:m1':  { best: 5, total: 5 },   // fine, must not be suggested
   },
 };
 eq('it suggests the weakest day that has a drill', suggestedDrill(fakeProfile)?.drill?.id, 'm15a');
-eq('a day with no drill is skipped, not crashed on', suggestedDrill({ completed: { 'ela:ela1': { best: 1, total: 4 } } }), null);
+eq('a day with no drill is skipped, not crashed on',
+  suggestedDrill({ completed: { [`${bareSubj}:${bareDay}`]: { best: 1, total: 4 } } }), null);
 eq('nothing is suggested when nothing is shaky', suggestedDrill({ completed: { 'math:m1': { best: 5, total: 5 } } }), null);
 eq('an empty profile suggests nothing', suggestedDrill({}), null);
 eq('a junk profile does not crash', suggestedDrill(null), null);

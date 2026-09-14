@@ -53,6 +53,17 @@ export const S = {
   iconBtn: { width: 40, height: 40, borderRadius: 11, background: '#161a28', border: '1px solid #262b3a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 },
   quizTop: { display: 'flex', alignItems: 'center', gap: 12 },
   qPrompt: { fontFamily: "'Bricolage Grotesque', sans-serif", fontSize: 22, fontWeight: 700, lineHeight: 1.25, margin: '8px 0 0' },
+  /* The text a question is ABOUT, as opposed to the question itself.
+     Set in body type, not the 22px display face — a four-sentence paragraph
+     in the prompt heading is a wall.
+
+     A FILLED ROUNDED BOX WAS WRONG. The first version used the same dark fill
+     and rounded border as S.choice, and on screen the sentence under analysis
+     read as one more thing to click: "What is missing here?" sat above four
+     identical boxes, only three of which were answers. A left rule in the
+     question's accent colour with no fill reads as quoted material instead,
+     and cannot be confused with a button. */
+  qPassage: { marginTop: 14, padding: '2px 0 2px 14px', borderLeft: '3px solid', borderColor: '#3a4154', fontFamily: "'DM Sans', sans-serif", fontSize: 16, lineHeight: 1.55, color: '#c3c8d6', whiteSpace: 'pre-line' },
   choice: { textAlign: 'left', padding: '15px 16px', borderRadius: 13, border: '1.5px solid', fontSize: 16, fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: '#e7e9f0' },
   numInput: { width: '100%', marginTop: 18, padding: '15px 16px', borderRadius: 13, border: '1.5px solid', background: '#161a28', color: '#fff', fontSize: 18, fontFamily: "'JetBrains Mono', monospace", outline: 'none' },
   miniInput: { padding: '8px 12px', borderRadius: 10, border: '1px solid #3a4154', background: '#161a28', color: '#fff', fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: 'none', width: 150 },

@@ -53,6 +53,8 @@ export function Question({ q, accent, eyebrow, nextLabel = 'Next question', xp =
       {eyebrow && <div style={{ ...S.eyebrow, color: accent }}>{eyebrow}</div>}
       <h2 style={S.qPrompt}>{q.prompt}</h2>
 
+      {q.passage && <div style={{ ...S.qPassage, borderColor: accent }}>{q.passage}</div>}
+
       {q.type === 'mc' && (
         <div role="radiogroup" aria-label="Answer choices" style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 18 }}>
           {q.choices.map((c, idx) => (

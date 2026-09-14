@@ -3,7 +3,7 @@ import { ArrowLeft, Zap, Sparkles } from 'lucide-react';
 import { S } from './styles.jsx';
 import { Question } from './Question.jsx';
 import { Bar } from './views.jsx';
-import { EXTRA_DRILLS, MATH_DRILLS, rnd, pickOne, clampLevel, MAX_LEVEL } from './drills.js';
+import { EXTRA_DRILLS, MATH_DRILLS, rnd, pickOne, clampLevel, MAX_LEVEL, asQuestion } from './drills.js';
 import { CURRICULUM, SUBJECT_ORDER } from '../content/index.js';
 import { COMPANIONS, GUARDIANS, earnedCompanions } from '../content/companions.js';
 import { dayKey, PRACTICE_XP } from './progress.js';
@@ -151,7 +151,7 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
 
   const [hp, setHp] = useState(HP);
   const [level, setLevel] = useState(1);
-  const [q, setQ] = useState(() => ({ ...pickOne(pool).gen(1), type: 'numeric' }));
+  const [q, setQ] = useState(() => asQuestion(pickOne(pool), 1));
   const [asked, setAsked] = useState(0);
   const [right, setRight] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -170,7 +170,7 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
       setSay(pickOne(ally.lines?.miss || ['Go again.']));
       const eased = clampLevel(level - 1);
       setLevel(eased);
-      setQ({ ...pickOne(pool).gen(eased), type: 'numeric' });
+      setQ(asQuestion(pickOne(pool), eased));
       return;
     }
 
@@ -194,7 +194,7 @@ export function DuelSession({ drillId, allyKey, profile, onExit, onDone }) {
     }
     const next = levelFor(nextStreak);
     setLevel(next);
-    setQ({ ...pickOne(pool).gen(next), type: 'numeric' });
+    setQ(asQuestion(pickOne(pool), next));
   }
 
   return (
