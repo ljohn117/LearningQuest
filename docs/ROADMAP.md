@@ -711,6 +711,55 @@ thing — only looking can, which is what the screenshot sweep is for.
 **Done when.** No visual is handed a prop its renderer ignores; every kind in
 use has been looked at, not just asserted. Both met.
 
+## Phase 11 — Motion  — **done (first pass; more staged)**
+
+**Why.** Some ideas here are not shapes, they are shapes CHANGING. The water
+cycle is a loop that turns. A physical change is atoms moving while staying
+themselves. Exponential growth is a line leading and then losing. A still
+picture of any of those shows the aftermath and asks the learner to infer the
+event that mattered.
+
+**The rule that makes it safe.** `src/engine/motion.js`. A diagram is
+**complete at rest** — `stage` starts at the FINAL frame, not the first — so
+with no JavaScript, a broken observer, or a headless screenshot the picture is
+whole. Motion replays from the first frame when the diagram scrolls into view,
+runs once, and settles back. **Nothing is ever visible only while it moves.**
+
+`prefers-reduced-motion: reduce` starts no timers at all. Not a faster
+animation — none.
+
+**Animated so far (8 kinds, 21 diagrams).**
+
+| kind | what moves, and why it is the lesson |
+|---|---|
+| `flow` | steps arrive in turn; the return arrow closes only at the last one — the moment a chain becomes a cycle |
+| `rearrange` | BEFORE alone for a beat, then AFTER — that pause is what makes it read as a CHANGE |
+| `curves` | the two curves draw left to right, so you watch the line lead and then lose |
+| `percentbar` | each bar arrives after the one it is measured against (m15, his worst day, 1/4) |
+| `mapping` | one arrow at a time — on the `bad` example the second arrow leaving one input is the point |
+| `plates` | the plates actually travel |
+| `parabola` | the three discriminant cases arrive in sequence |
+| `funnel` | narrows stage by stage |
+
+**What the new gate caught in my own work.** `npm run motion-check` compares a
+fingerprint of the picture against what a reduced-motion reader sees. It found
+**four kinds that declared stages and never read them** — `mapping`,
+`parabola`, `plates`, `funnel` sat perfectly still while a replay button
+promised otherwise. Same class as a renderer ignoring its props.
+
+**And twice the test itself was wrong.** It first counted any opacity under
+0.9 as mid-animation, which reported `percentbar` as permanently incomplete —
+its rows are deliberately translucent. Then the fingerprint omitted
+`transform`, so `plates` (which animates by translating) read as never moving.
+
+**Done when.** Every animated diagram is whole at rest, provably moves, and is
+completely still under reduced motion. All three hold for all 8 kinds.
+
+**Deferred to the next motion pass:** `strata`, `branches`, `particles`,
+`layers`, `pyramid`, `numberline`, `twobars`, `spectrum` — and the `grid`
+replacements from Phase 10, several of which want motion more than they want
+a still diagram.
+
 ## Status
 
 | phase | state | moved |
@@ -725,6 +774,7 @@ use has been looked at, not just asserted. Both met.
 | 8 — Every lane can be practised | **done** 2026-09-14 | lanes with no practice at all: **3 → 0**; days with a drill **62/153 → 85/153** (41% → 56%); drills **70 → 93**; assertions **3,012 → 3,723** |
 | 9 — The meter measured my output | **done** 2026-09-14 | his maths bar **47% → 60%** on identical progress; appending days can no longer lower a part-finished lane; headline is a count, not a fraction |
 | 10 — Diagrams that drew the wrong thing | **done** 2026-09-14 | 4 days had a programming flowchart for their subject; `math:m2` drew half of every ratio; `es2` taught stratigraphy. Kinds **30 → 30** (`machine` out, `plates` in); a test now catches ignored props |
+| 11 — Motion | **first pass done** 2026-09-14 | 8 kinds / 21 diagrams play once on scroll-in; complete at rest; silent under reduced motion. New gate `motion-check` — caught 4 kinds claiming stages they never read |
 | — parked — | | 2b remainder (strictly-longest 47% vs 35% target); MAX_LEVEL 3 → 6 (coupled to MASTERY_STREAK); prose tightening (34% plain text) |
 
 ## Deferred

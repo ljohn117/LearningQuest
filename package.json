@@ -16,7 +16,8 @@
     "visual-check": "node scripts/visual-check.mjs",
     "profile-check": "node scripts/profile-check.mjs",
     "screenshot-visuals": "node scripts/screenshot-visuals.mjs",
-    "interactive-check": "node scripts/interactive-check.mjs"
+    "interactive-check": "node scripts/interactive-check.mjs",
+    "motion-check": "node scripts/motion-check.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.460.0",

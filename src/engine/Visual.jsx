@@ -1,11 +1,31 @@
 import React from 'react';
 import { S } from './styles.jsx';
+import { useStages, stageCount } from './motion.js';
 
 /* Named SVG diagrams. Union of both prototypes' cases — the three that
-   appeared in both (branches, supplydemand, strata) were byte-identical. */
+   appeared in both (branches, supplydemand, strata) were byte-identical.
+ *
+ * MOTION. Some of these teach a sequence rather than a shape, and those play
+ * once when they scroll into view. See motion.js for the rule that keeps it
+ * safe: `stage` rests at the FINAL frame, so a diagram is complete without
+ * JavaScript and nothing is ever visible only while it is moving.
+ *
+ * The hook is called once, unconditionally, before any of the kind branches —
+ * every branch below returns early, so calling it inside one would break the
+ * rules of hooks the first time a page rendered two different kinds. */
 export function Visual({ v, accent }) {
+  const { ref, stage, playing, replay, last } = useStages(stageCount(v));
+  const shown = (i) => i <= stage;            // is part i revealed yet
   const wrap = (children, h = 150) => (
-    <div style={S.vizBox}><svg viewBox={`0 0 320 ${h}`} width="100%" style={{ display: 'block' }}>{children}</svg></div>
+    <div ref={ref} style={{ ...S.vizBox, position: 'relative' }}>
+      <svg viewBox={`0 0 320 ${h}`} width="100%" style={{ display: 'block' }}>{children}</svg>
+      {last > 0 && (
+        <button type="button" onClick={replay} aria-label="Play this diagram again"
+                title="Play again" style={S.vizReplay} disabled={playing}>
+          {'\u21bb'}
+        </button>
+      )}
+    </div>
   );
   if (v.kind === 'bars') {
     /* SCALED MODE USED TO DRAW HALF THE RATIO.
@@ -181,7 +201,11 @@ export function Visual({ v, accent }) {
       );
     };
     return wrap(<>
-      {panels.map((q, i) => plot(q, pad + i * (pw + gap)))}
+      {panels.map((q, i) => (
+        <g key={i} style={{ opacity: shown(i) ? 1 : 0.1, transition: 'opacity .45s ease-out' }}>
+          {plot(q, pad + i * (pw + gap))}
+        </g>
+      ))}
       <text x="160" y={h - 6} textAnchor="middle" fill="#8b91a3" fontSize="10"
             fontFamily="JetBrains Mono, monospace">
         {v.caption || 'y = x\u00b2 \u2014 a parabola, not a line'}
@@ -242,28 +266,39 @@ export function Visual({ v, accent }) {
       const cx = (i) => pad + i * (w + gap) + w / 2;
       const h = v.cycle ? 122 : 96;
       return wrap(<>
-        {steps.map((t, i) => (
-          <g key={i}>
-            <rect x={pad + i * (w + gap)} y={yTop} width={w} height={boxH} rx={7}
-                  fill={accent + '1f'} stroke={accent} strokeWidth="1.5" />
-            <text x={cx(i)} y={yTop + boxH / 2 + 3} textAnchor="middle" fill="#e7e9f0"
-                  fontSize={fs} fontWeight="700" fontFamily="JetBrains Mono, monospace">
-              {t.label || t}
-            </text>
-            {i < n - 1 && (
-              <line x1={pad + i * (w + gap) + w + 1} y1={yTop + boxH / 2}
-                    x2={pad + (i + 1) * (w + gap) - 2} y2={yTop + boxH / 2}
-                    stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
-            )}
-          </g>
-        ))}
+        {/* Each step arrives in turn. A step that has not arrived yet is dimmed
+            rather than absent, so the shape of the whole process is visible
+            from the first frame and only the ORDER is what moves. */}
+        {steps.map((t, i) => {
+          const on = shown(i);
+          return (
+            <g key={i} style={{ opacity: on ? 1 : 0.22, transition: 'opacity .35s ease-out' }}>
+              <rect x={pad + i * (w + gap)} y={yTop} width={w} height={boxH} rx={7}
+                    fill={accent + (on ? '1f' : '0d')} stroke={accent} strokeWidth="1.5" />
+              <text x={cx(i)} y={yTop + boxH / 2 + 3} textAnchor="middle" fill="#e7e9f0"
+                    fontSize={fs} fontWeight="700" fontFamily="JetBrains Mono, monospace">
+                {t.label || t}
+              </text>
+              {i < n - 1 && (
+                <line x1={pad + i * (w + gap) + w + 1} y1={yTop + boxH / 2}
+                      x2={pad + (i + 1) * (w + gap) - 2} y2={yTop + boxH / 2}
+                      stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)"
+                      style={{ opacity: shown(i + 1) ? 1 : 0.22, transition: 'opacity .35s ease-out' }} />
+              )}
+            </g>
+          );
+        })}
         {/* A cycle returns. Drawn under the row so it cannot cross a label. */}
         {v.cycle && (
           <>
+            {/* The return closes only once the last step has arrived — that is
+                the moment the thing becomes a cycle rather than a chain. */}
             <path d={`M${cx(n - 1)} ${yTop + boxH} V ${yTop + boxH + 20} H ${cx(0)} V ${yTop + boxH + 3}`}
-                  fill="none" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)" />
+                  fill="none" stroke="#8b91a3" strokeWidth="2" markerEnd="url(#fa)"
+                  style={{ opacity: shown(n - 1) ? 1 : 0.15, transition: 'opacity .5s ease-out .15s' }} />
             <text x="160" y={yTop + boxH + 34} textAnchor="middle" fill="#8b91a3"
-                  fontSize="9.5" fontFamily="JetBrains Mono, monospace">
+                  fontSize="9.5" fontFamily="JetBrains Mono, monospace"
+                  style={{ opacity: shown(n - 1) ? 1 : 0.15, transition: 'opacity .5s ease-out .15s' }}>
               {v.cycleLabel || 'and round again — nothing is used up'}
             </text>
           </>
@@ -331,8 +366,15 @@ export function Visual({ v, accent }) {
             {q.kind === 'out' && (
               <rect x={lx + lw} y={y + 5} width={rx - lx - lw} height={bh - 10} fill={accent + '66'} />
             )}
-            <rect x={lx} y={y - lift} width={lw} height={bh} rx={3} fill="#6b7689" stroke="#0c0e16" strokeWidth="1" />
-            <rect x={rx} y={y} width={lw} height={bh} rx={3} fill="#8b96a9" stroke="#0c0e16" strokeWidth="1" />
+            {/* The plates actually travel. Two blocks sitting still under an
+                arrow asks him to imagine the motion; a few centimetres a
+                year is exactly the thing that is hard to imagine. */}
+            <rect x={lx} y={y - lift} width={lw} height={bh} rx={3} fill="#6b7689" stroke="#0c0e16" strokeWidth="1"
+                  style={{ transform: shown(1) ? 'none' : `translate(${q.kind === 'out' ? 7 : q.kind === 'in' ? -9 : 0}px, ${q.kind === 'shear' ? 5 : lift}px)`,
+                           transition: 'transform .9s cubic-bezier(.3,.6,.3,1)' }} />
+            <rect x={rx} y={y} width={lw} height={bh} rx={3} fill="#8b96a9" stroke="#0c0e16" strokeWidth="1"
+                  style={{ transform: shown(1) ? 'none' : `translate(${q.kind === 'out' ? -7 : q.kind === 'in' ? 9 : 0}px, ${q.kind === 'shear' ? -5 : 0}px)`,
+                           transition: 'transform .9s cubic-bezier(.3,.6,.3,1)' }} />
             {/* Each arrow sits under its OWN plate, so it cannot wander into
                 the neighbouring panel. The first version drew the converging
                 left arrow from lx-16, which is outside this panel entirely:
@@ -465,7 +507,9 @@ export function Visual({ v, accent }) {
       {rows.map((r, i) => {
         const y = 18 + i * 34, w = r[1];
         return (
-          <g key={i}>
+          /* Narrowing in turn is the point: the shape is a story about how
+             many fall away at each step, not a stack of labelled bars. */
+          <g key={i} style={{ opacity: shown(i) ? 1 : 0.12, transition: 'opacity .4s ease-out' }}>
             <rect x={160 - w / 2} y={y} width={w} height="28" rx="5" fill={accent + '22'} stroke={accent} strokeWidth="1.5" />
             <text x="160" y={y + 19} textAnchor="middle" fill={accent} fontSize="10.5" fontWeight="700" fontFamily="JetBrains Mono, monospace">{r[0]}</text>
           </g>
@@ -612,11 +656,18 @@ export function Visual({ v, accent }) {
                fill="none" stroke="#2a2f3d" strokeWidth="1.3" />
       <ellipse cx="250" cy={top + (outs.length - 1) * gap / 2} rx="46" ry={outs.length * gap / 2 + 10}
                fill="none" stroke="#2a2f3d" strokeWidth="1.3" />
+      {/* Arrows arrive one at a time. The definition of a function is a rule
+          about ARROWS — exactly one leaving each input — and on the `bad`
+          example the second arrow leaving the same input is the whole point.
+          Watching it appear is stronger than finding it in a finished
+          tangle. */}
       {links.map(([a, b], i) => {
         const dup = links.filter((l) => l[0] === a).length > 1;
         const col = bad && dup ? '#ff6b6b' : accent;
         return <line key={i} x1={96} y1={iy(a)} x2={224} y2={oy(b)} stroke={col} strokeWidth="1.8"
-                     markerEnd={bad && dup ? 'url(#mapBad)' : 'url(#mapOk)'} opacity={.95} />;
+                     markerEnd={bad && dup ? 'url(#mapBad)' : 'url(#mapOk)'}
+                     opacity={shown(i) ? .95 : 0.08}
+                     style={{ transition: 'opacity .4s ease-out' }} />;
       })}
       {ins.map((t, i) => (
         <g key={'i' + i}>
@@ -654,7 +705,12 @@ export function Visual({ v, accent }) {
     const money = (n) => (v.prefix || '$') + (Math.round(n * 100) / 100).toLocaleString();
     return wrap(<>
       {seq.map((st, i) => (
-        <g key={i}>
+        /* Each row arrives after the one it is measured against. m15 is his
+           worst-scoring day in the app and the trap is that the second
+           percentage is taken from a SHORTER bar; seeing the bars appear in
+           order puts the two lengths next to each other in time as well as
+           in space. */
+        <g key={i} style={{ opacity: shown(i) ? 1 : 0.1, transition: 'opacity .4s ease-out' }}>
           <rect x={x0} y={16 + i * rowH} width={Math.max(3, (st.val / maxV) * wMax)} height={20} rx={4}
                 fill={i === 0 ? accent : accent} opacity={i === 0 ? .95 : .55 + .15 * i} />
           <text x={x0 + 6} y={16 + i * rowH + 14} fill="#0c0e16" fontSize="10" fontWeight="700"
@@ -700,11 +756,17 @@ export function Visual({ v, accent }) {
     return wrap(<>
       <text x="16" y="22" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">BEFORE</text>
       {lay(before, 46)}
-      <line x1="150" y1="70" x2="170" y2="70" stroke="#5b6275" strokeWidth="2" markerEnd="url(#reArrow)" />
-      <text x="16" y="100" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">AFTER</text>
-      {lay(after, 122)}
+      {/* The whole day is one comparison, so the second half arrives second.
+          Showing BEFORE alone for a beat is what makes AFTER read as a
+          CHANGE rather than as a second unrelated picture. */}
+      <g style={{ opacity: shown(1) ? 1 : 0.12, transition: 'opacity .45s ease-out' }}>
+        <line x1="150" y1="70" x2="170" y2="70" stroke="#5b6275" strokeWidth="2" markerEnd="url(#reArrow)" />
+        <text x="16" y="100" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">AFTER</text>
+        {lay(after, 122)}
+      </g>
       <text x="160" y={152} textAnchor="middle" fill={v.chemical ? '#f6b73c' : '#3ddc97'} fontSize="10"
-            fontWeight="700" fontFamily="JetBrains Mono, monospace">
+            fontWeight="700" fontFamily="JetBrains Mono, monospace"
+            style={{ opacity: shown(1) ? 1 : 0.12, transition: 'opacity .45s ease-out .1s' }}>
         {v.caption || (v.chemical ? 'CHEMICAL — atoms regrouped' : 'PHYSICAL — same groups, moved')}
       </text>
       <text x="160" y={168} textAnchor="middle" fill="#8b91a3" fontSize="9.5"
@@ -735,8 +797,16 @@ export function Visual({ v, accent }) {
     return wrap(<>
       <line x1={x0} y1={yBase} x2={x1} y2={yBase} stroke="#3a4154" strokeWidth="2" />
       <line x1={x0} y1={yTop - 4} x2={x0} y2={yBase} stroke="#3a4154" strokeWidth="2" />
+      {/* Drawn left to right rather than simply appearing. On m23 the claim is
+          that the line LEADS at first and then loses forever, which is an
+          event in time; watching the two race across the axis is the lesson,
+          and a finished pair of curves only shows the aftermath.
+          pathLength normalises every curve to 1 so one dashoffset works for
+          all of them regardless of their real length. */}
       {series.map((s, i) => (
-        <path key={i} d={path(s.ys)} fill="none" stroke={COL[s.k]} strokeWidth="2.5" strokeLinecap="round" />
+        <path key={i} d={path(s.ys)} fill="none" stroke={COL[s.k]} strokeWidth="2.5" strokeLinecap="round"
+              pathLength={1} strokeDasharray={1} strokeDashoffset={shown(1) ? 0 : 1}
+              style={{ transition: 'stroke-dashoffset .85s cubic-bezier(.25,.6,.3,1)' }} />
       ))}
       {/* Labels sit left: a growth curve leaves the upper left empty, and
           right-anchored labels clipped the viewBox edge. */}

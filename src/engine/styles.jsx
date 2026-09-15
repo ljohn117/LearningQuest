@@ -46,6 +46,9 @@ export const S = {
   formula: { padding: '16px 14px', borderRadius: 13, background: '#10131d', border: '1.5px dashed' },
   formulaText: { fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 19, textAlign: 'center', letterSpacing: .5 },
   vizBox: { padding: '10px 6px', borderRadius: 13, background: '#10131d', border: '1px solid #1f2433' },
+  /* Sits over the diagram's top-right. Deliberately quiet: a diagram that has
+     already played is finished, and this is for the second look. */
+  vizReplay: { position: 'absolute', top: 6, right: 8, width: 24, height: 24, lineHeight: '20px', textAlign: 'center', borderRadius: 7, border: '1px solid #2a2f3d', background: '#161a28', color: '#6e7688', fontSize: 13, cursor: 'pointer', padding: 0 },
   recapItem: { display: 'flex', alignItems: 'flex-start', gap: 10, padding: 12, borderRadius: 12, background: '#141826', border: '1px solid #232838' },
   recapCheck: { width: 24, height: 24, borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 1 },
   primaryBtn: { width: '100%', border: 'none', borderRadius: 14, padding: '15px 18px', fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700, fontSize: 16, color: '#0c0e16', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 },

@@ -1085,6 +1085,61 @@ section('No visual silently throws away its data');
   eq('no fixed illustration is reused across unrelated days', spread.length, 0, spread.join(' | '));
 }
 
+/* ---- motion is declared and wired in the same place ---------------------- */
+section('A diagram that claims to move actually moves');
+
+/* motion.js says how many stages each kind plays; Visual.jsx decides what to
+ * do with them. Nothing connects the two, so a kind can claim four stages and
+ * have a renderer that never reads `stage` — it then sits perfectly still
+ * while the replay button promises otherwise. Four kinds shipped exactly that
+ * way in the first draft of this phase.
+ *
+ * The browser gate (npm run motion-check) is the real proof, since only a
+ * browser can tell whether the picture changed. This is the cheap version
+ * that runs on every `npm run check`. */
+const { stageCount } = await import('../src/engine/motion.js');
+{
+  const vizSrc = readFileSync(new URL('../src/engine/Visual.jsx', import.meta.url), 'utf8');
+  const marks = [...vizSrc.matchAll(/if \(v\.kind === '([a-z]+)'\)/g)];
+  const body = {};
+  for (let i = 0; i < marks.length; i++) {
+    body[marks[i][1]] = vizSrc.slice(marks[i].index, i + 1 < marks.length ? marks[i + 1].index : vizSrc.length);
+  }
+  /* Every kind that any real content makes animate. */
+  const claims = new Map();
+  for (const lane of Object.values(CURRICULUM)) {
+    for (const day of lane.days) {
+      for (const page of day.pages || []) {
+        for (const b of page.blocks || []) {
+          if (b.type !== 'visual') continue;
+          const n = stageCount(b);
+          if (n > 1) claims.set(b.kind, Math.max(claims.get(b.kind) || 0, n));
+        }
+      }
+    }
+  }
+  ok('some diagrams are animated at all', claims.size > 0);
+  const unwired = [...claims.keys()].filter((k) => body[k] && !/\bshown\(|\bstage\b/.test(body[k]));
+  eq('every kind that claims stages reads them', unwired.length, 0,
+    unwired.map((k) => `${k} claims ${claims.get(k)} stages, renderer ignores them`).join(' | '));
+
+  /* And the reverse: a renderer that reads `stage` but is never given more
+     than one is dead code dressed as a feature. */
+  const readsStage = Object.keys(body).filter((k) => /\bshown\(/.test(body[k]));
+  const never = readsStage.filter((k) => !claims.has(k));
+  eq('no renderer stages something that never animates', never.length, 0, never.join(', '));
+}
+
+/* Reduced motion is not a preference this app negotiates with. */
+{
+  const motionSrc = readFileSync(new URL('../src/engine/motion.js', import.meta.url), 'utf8');
+  ok('motion.js honours prefers-reduced-motion', /prefers-reduced-motion:\s*reduce/.test(motionSrc));
+  const guards = (motionSrc.match(/prefersReducedMotion\(\)/g) || []).length;
+  ok('and checks it before starting anything', guards >= 3, `only ${guards} guard(s)`);
+  ok('a diagram starts COMPLETE, not blank', /useState\(last\)/.test(motionSrc),
+    'if stage started at 0 a broken observer would leave the picture unfinished');
+}
+
 /* ---- what he SEES may never go backwards -------------------------------- */
 section('Adding content never shrinks his progress');
 

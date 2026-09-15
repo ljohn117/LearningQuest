@@ -110,12 +110,13 @@ repo.
 Run all four. They take about a minute together.
 
 ```bash
-npm run check             # validate + 3,733 unit assertions + content audit
+npm run check             # validate + 3,742 unit assertions + content audit
 npm run build && node scripts/build-singlefile.mjs
 npm run smoke             # real browser: dashboard, a numeric duel, an MC duel, a write prompt
 npm run restore-check     # real browser: Back up -> Restore across origins
 npm run visual-check      # real browser: every diagram actually paints shapes
 npm run interactive-check # real browser: sliders and orderings respond
+npm run motion-check      # real browser: animated diagrams are whole at rest, and still under reduced motion
 ```
 
 `npm run check` alone is not enough. The browser checks catch the class of bug
@@ -201,5 +202,12 @@ Same URL keeps the same origin, which is what keeps his progress.
   after any visual change run `screenshot-visuals` and LOOK. A renderer that
   reads no props can only ever draw one picture; do not reuse one across days
   that are not about the same thing.
+- **A diagram that moves is complete when it stops.** `src/engine/motion.js`.
+  `stage` starts at the FINAL frame, so a diagram is whole without JavaScript
+  and nothing is ever visible only mid-animation. Motion plays once on
+  scroll-in and settles back. `prefers-reduced-motion: reduce` starts no
+  timers at all. Declaring stages in `stageCount` is only half the job — the
+  renderer must read `shown(i)`, and `npm run motion-check` fails if it does
+  not.
 - **Storage** is `src/store.js`, key `lq_v3`. `normalize()` fills fields added
   after an old save was written and migrates legacy keys additively.
