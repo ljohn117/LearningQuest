@@ -157,6 +157,10 @@ export function stageCount(v) {
        shell permanently hidden, since `shown(i)` rests at the last stage. */
     case 'atom': return shellCount(v.protons ?? 6, v.shells);
     case 'graph': return v.line || v.mean !== undefined ? 2 : 1;
+    /* Four cells, filled one at a time -- which is how you DO a Punnett
+       square, not just what one looks like when finished. */
+    case 'punnett': return (v.top || ['B', 'b']).length * (v.side || ['B', 'b']).length;
+    case 'argument': return 3;                       // claim, support, objection
     default: return 1;
   }
 }

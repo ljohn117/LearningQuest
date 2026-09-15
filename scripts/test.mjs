@@ -1070,15 +1070,14 @@ section('No visual silently throws away its data');
       }
     }
   }
-  const FIXED_ON_PURPOSE = new Set([
-    'rtriangle',     // m10, m26 — both are right-angle triangles
-    'supplydemand',  // b2, cx7 — cx7 is explicitly the same curve in another costume
-    'argument',      // ela6, lg4, lgr1 — one shape of argument, taught three times
-    'punnett',       // bio4, bio11, cx3 — a Punnett square is a Punnett square
-    'particles',     // phy1, phyr1 — states of matter, and its own checkpoint
-    'strata',        // f3, es2, cx4 — see Deferred in docs/ROADMAP.md
-    'funnel',        // b8, b11 — same customer funnel
-  ]);
+  /* Kinds that read nothing AND are used on more than one day would be the
+     same picture beside different ideas. This list is for the ones where that
+     is genuinely correct, and it must shrink as kinds are parameterised -- a
+     whitelist naming kinds that now read their data would hide the next one.
+     Empty is the goal and, as of Phase 14, the state: everything reused now
+     reads something. cell, paragraph, orbit and gravity still read nothing,
+     but each appears on exactly one day and so cannot be misapplied. */
+  const FIXED_ON_PURPOSE = new Set([]);
   const spread = Object.entries(uses)
     .filter(([k, days]) => days.length > 1 && reads[k] && reads[k].size === 0 && !FIXED_ON_PURPOSE.has(k))
     .map(([k, days]) => `${k} on ${days.join(', ')}`);

@@ -247,14 +247,34 @@ export function Visual({ v, accent }) {
     </>, 160);
   }
 
-  if (v.kind === 'rtriangle') return wrap(<>
-    <polygon points="62,118 62,42 256,118" fill={accent + '22'} stroke={accent} strokeWidth="2" strokeLinejoin="round" />
-    <rect x="62" y="102" width="16" height="16" fill="none" stroke={accent} strokeWidth="1.5" />
-    <text x="46" y="84" fill="#8b91a3" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">a</text>
-    <text x="150" y="134" fill="#8b91a3" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">b</text>
-    <text x="166" y="74" fill={accent} fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">c</text>
-    <text x="160" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">a² + b² = c²</text>
-  </>, 156);
+  /* A right triangle with its sides named, and optionally measured.
+     m10 teaches Pythagoras and m26 teaches the ratios; both want a right
+     triangle, but only one wants 3-4-5 on it. */
+  if (v.kind === 'rtriangle') {
+    const la = v.a ?? 'a', lb = v.b ?? 'b', lc = v.c ?? 'c';
+    /* Drawn to the given proportions when they are numbers, so a 3-4-5
+       actually looks like a 3-4-5. */
+    const na = Number(la), nb = Number(lb);
+    const scale = Number.isFinite(na) && Number.isFinite(nb) ? Math.min(84 / na, 194 / nb) : null;
+    const hgt = scale ? na * scale : 76, wid = scale ? nb * scale : 194;
+    /* Centred. A 3-4-5 is limited by its height, so at a fixed left margin it
+       sat in the left half with the right half empty. */
+    const bx = scale ? Math.max(46, (320 - wid) / 2) : 62, by = 118;
+    return wrap(<>
+      <polygon points={`${bx},${by} ${bx},${by - hgt} ${bx + wid},${by}`}
+               fill={accent + '22'} stroke={accent} strokeWidth="2" strokeLinejoin="round" />
+      <rect x={bx} y={by - 16} width="16" height="16" fill="none" stroke={accent} strokeWidth="1.5" />
+      <text x={bx - 16} y={by - hgt / 2 + 5} fill="#8b91a3" fontSize="14" fontWeight="700"
+            fontFamily="JetBrains Mono, monospace">{la}</text>
+      <text x={bx + wid / 2 - 6} y={by + 16} fill="#8b91a3" fontSize="14" fontWeight="700"
+            fontFamily="JetBrains Mono, monospace">{lb}</text>
+      <text x={bx + wid / 2 + 8} y={by - hgt / 2 - 4} fill={accent} fontSize="14" fontWeight="700"
+            fontFamily="JetBrains Mono, monospace">{lc}</text>
+      <text x="160" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11"
+            fontFamily="JetBrains Mono, monospace">{v.caption || 'a\u00b2 + b\u00b2 = c\u00b2'}</text>
+    </>, 156);
+  }
+
   /* Parabolas, from real coefficients.
    *
    * This drew a fixed y = x² and read no data at all, which is why it was
@@ -441,9 +461,9 @@ export function Visual({ v, accent }) {
     <line x1="72" y1="116" x2="268" y2="34" stroke={accent} strokeWidth="2.5" strokeLinecap="round" />
     <line x1="72" y1="34" x2="268" y2="116" stroke="#5aa9ff" strokeWidth="2.5" strokeLinecap="round" />
     <circle cx="170" cy="75" r="6" fill="#fff" stroke="#0c0e16" strokeWidth="1.5" />
-    <text x="240" y="30" fill={accent} fontSize="10" fontFamily="JetBrains Mono, monospace">supply</text>
-    <text x="232" y="128" fill="#5aa9ff" fontSize="10" fontFamily="JetBrains Mono, monospace">demand</text>
-    <text x="160" y="150" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">they cross at the equilibrium price</text>
+    <text x="240" y="30" fill={accent} fontSize="10" fontFamily="JetBrains Mono, monospace">{v.up || 'supply'}</text>
+    <text x="232" y="128" fill="#5aa9ff" fontSize="10" fontFamily="JetBrains Mono, monospace">{v.down || 'demand'}</text>
+    <text x="160" y="150" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">{v.caption || 'they cross at the equilibrium price'}</text>
   </>, 158);
   /* Plate boundaries. es2 Plate Tectonics used to borrow `strata` — flat
      sedimentary layers captioned "deeper = older (law of superposition)",
@@ -618,23 +638,53 @@ export function Visual({ v, accent }) {
     <text x="160" y="156" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">the membrane controls what goes in and out</text>
   </>, 166);
 
+  /* A Punnett square for any cross, filled in one cell at a time.
+   *
+   * It was fixed at Bb \u00d7 Bb with a hardcoded "3:1 ratio" caption. That is
+   * correct on all three days that use it \u2014 bio4, bio11 and cx3 are each
+   * genuinely about that cross \u2014 so this is a reuse fix, not a bug fix.
+   *
+   * The cell-by-cell fill is the real gain. bio11 reads "put one parent's two
+   * alleles along the top and the other's down the side; each cell combines
+   * the row and column", which is a PROCEDURE. Watching the four cells arrive
+   * in turn is that sentence; a finished square is its answer. */
   if (v.kind === 'punnett') {
-    const cells = [['BB', 1], ['Bb', 1], ['Bb', 1], ['bb', 0]];
+    const top = v.top || ['B', 'b'];
+    const side = v.side || ['B', 'b'];
+    const dominant = v.dominant || String(top[0]).toUpperCase();
+    const cells = [];
+    for (const r of side) for (const c of top) {
+      /* Dominant allele first, the way it is always written. */
+      const pair = [r, c].sort((a, b) => (a === a.toUpperCase() ? -1 : 1) - (b === b.toUpperCase() ? -1 : 1));
+      cells.push(pair.join(''));
+    }
+    const showsDominant = (g) => g.includes(dominant);
+    const nDom = cells.filter(showsDominant).length;
     return wrap(<>
-      <text x="122" y="26" textAnchor="middle" fill="#8b91a3" fontSize="12" fontFamily="JetBrains Mono, monospace">B</text>
-      <text x="196" y="26" textAnchor="middle" fill="#8b91a3" fontSize="12" fontFamily="JetBrains Mono, monospace">b</text>
-      <text x="70" y="66" textAnchor="middle" fill="#8b91a3" fontSize="12" fontFamily="JetBrains Mono, monospace">B</text>
-      <text x="70" y="122" textAnchor="middle" fill="#8b91a3" fontSize="12" fontFamily="JetBrains Mono, monospace">b</text>
-      {cells.map((c, i) => {
-        const x = 86 + (i % 2) * 74, y = 36 + Math.floor(i / 2) * 56;
+      {top.map((t, i) => (
+        <text key={'t' + i} x={122 + i * 74} y="26" textAnchor="middle" fill="#8b91a3" fontSize="12"
+              fontFamily="JetBrains Mono, monospace">{t}</text>
+      ))}
+      {side.map((t, i) => (
+        <text key={'s' + i} x="70" y={66 + i * 56} textAnchor="middle" fill="#8b91a3" fontSize="12"
+              fontFamily="JetBrains Mono, monospace">{t}</text>
+      ))}
+      {cells.map((g, i) => {
+        const x = 86 + (i % top.length) * 74, y = 36 + Math.floor(i / top.length) * 56;
+        const dom = showsDominant(g);
         return (
-          <g key={i}>
-            <rect x={x} y={y} width="72" height="54" rx="6" fill={c[1] ? accent + '2a' : '#1b2030'} stroke={c[1] ? accent : '#3a4154'} strokeWidth="1.5" />
-            <text x={x + 36} y={y + 33} textAnchor="middle" fill={c[1] ? accent : '#8b91a3'} fontSize="16" fontWeight="700" fontFamily="JetBrains Mono, monospace">{c[0]}</text>
+          <g key={i} style={{ opacity: shown(i) ? 1 : 0.1, transition: 'opacity .35s ease-out' }}>
+            <rect x={x} y={y} width="72" height="54" rx="6" fill={dom ? accent + '2a' : '#1b2030'}
+                  stroke={dom ? accent : '#3a4154'} strokeWidth="1.5" />
+            <text x={x + 36} y={y + 33} textAnchor="middle" fill={dom ? accent : '#8b91a3'} fontSize="16"
+                  fontWeight="700" fontFamily="JetBrains Mono, monospace">{g}</text>
           </g>
         );
       })}
-      <text x="160" y="166" textAnchor="middle" fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">3 dominant to 1 recessive — a 3:1 ratio</text>
+      <text x="160" y="166" textAnchor="middle" fill="#8b91a3" fontSize="10.5"
+            fontFamily="JetBrains Mono, monospace">
+        {v.caption || `${nDom} dominant to ${cells.length - nDom} recessive \u2014 a ${nDom}:${cells.length - nDom} ratio`}
+      </text>
     </>, 176);
   }
 
@@ -705,21 +755,42 @@ export function Visual({ v, accent }) {
     </>, 172);
   }
 
-  if (v.kind === 'argument') return wrap(<>
-    <rect x="96" y="14" width="128" height="34" rx="8" fill={accent + '33'} stroke={accent} strokeWidth="1.6" />
-    <text x="160" y="36" textAnchor="middle" fill={accent} fontSize="11" fontWeight="700" fontFamily="JetBrains Mono, monospace">CLAIM</text>
-    <line x1="160" y1="48" x2="160" y2="60" stroke="#3a4154" strokeWidth="2" />
-    <line x1="72" y1="60" x2="248" y2="60" stroke="#3a4154" strokeWidth="2" />
-    <line x1="72" y1="60" x2="72" y2="74" stroke="#3a4154" strokeWidth="2" />
-    <line x1="248" y1="60" x2="248" y2="74" stroke="#3a4154" strokeWidth="2" />
-    <rect x="20" y="74" width="104" height="32" rx="7" fill="#161a28" stroke={accent} strokeWidth="1.4" />
-    <text x="72" y="94" textAnchor="middle" fill="#e7e9f0" fontSize="10" fontFamily="JetBrains Mono, monospace">REASON</text>
-    <rect x="196" y="74" width="104" height="32" rx="7" fill="#161a28" stroke={accent} strokeWidth="1.4" />
-    <text x="248" y="94" textAnchor="middle" fill="#e7e9f0" fontSize="10" fontFamily="JetBrains Mono, monospace">EVIDENCE</text>
-    <rect x="86" y="118" width="148" height="30" rx="7" fill="#1b2030" stroke="#5b6275" strokeWidth="1.4" strokeDasharray="4 3" />
-    <text x="160" y="137" textAnchor="middle" fill="#aeb4c4" fontSize="9.5" fontFamily="JetBrains Mono, monospace">COUNTERARGUMENT</text>
-    <text x="160" y="166" textAnchor="middle" fill="#8b91a3" fontSize="10" fontFamily="JetBrains Mono, monospace">answer the objection to get stronger</text>
-  </>, 176);
+  /* Claim, support, objection. The shape is genuinely general \u2014 ela6, lg4 and
+     lgr1 all teach it \u2014 so the labels are the only thing worth varying.
+     Arriving in order matters: an argument is built, and the counterargument
+     is the part people forget, so it lands last. */
+  if (v.kind === 'argument') {
+    const claim = v.claim || 'CLAIM';
+    const left = v.reason || 'REASON';
+    const right = v.evidence || 'EVIDENCE';
+    const counter = v.counter || 'COUNTERARGUMENT';
+    const fit = (t, w) => (String(t).length * 6.2 > w ? 8.5 : 10);
+    return wrap(<>
+      <rect x="96" y="14" width="128" height="34" rx="8" fill={accent + '33'} stroke={accent} strokeWidth="1.6" />
+      <text x="160" y="36" textAnchor="middle" fill={accent} fontSize={fit(claim, 122)} fontWeight="700"
+            fontFamily="JetBrains Mono, monospace">{claim}</text>
+      <g style={{ opacity: shown(1) ? 1 : 0.12, transition: 'opacity .4s ease-out' }}>
+        <line x1="160" y1="48" x2="160" y2="60" stroke="#3a4154" strokeWidth="2" />
+        <line x1="72" y1="60" x2="248" y2="60" stroke="#3a4154" strokeWidth="2" />
+        <line x1="72" y1="60" x2="72" y2="74" stroke="#3a4154" strokeWidth="2" />
+        <line x1="248" y1="60" x2="248" y2="74" stroke="#3a4154" strokeWidth="2" />
+        <rect x="20" y="74" width="104" height="32" rx="7" fill="#161a28" stroke={accent} strokeWidth="1.4" />
+        <text x="72" y="94" textAnchor="middle" fill="#e7e9f0" fontSize={fit(left, 98)}
+              fontFamily="JetBrains Mono, monospace">{left}</text>
+        <rect x="196" y="74" width="104" height="32" rx="7" fill="#161a28" stroke={accent} strokeWidth="1.4" />
+        <text x="248" y="94" textAnchor="middle" fill="#e7e9f0" fontSize={fit(right, 98)}
+              fontFamily="JetBrains Mono, monospace">{right}</text>
+      </g>
+      <g style={{ opacity: shown(2) ? 1 : 0.12, transition: 'opacity .45s ease-out' }}>
+        <rect x="86" y="118" width="148" height="30" rx="7" fill="#1b2030" stroke="#5b6275"
+              strokeWidth="1.4" strokeDasharray="4 3" />
+        <text x="160" y="137" textAnchor="middle" fill="#aeb4c4" fontSize={fit(counter, 140)}
+              fontFamily="JetBrains Mono, monospace">{counter}</text>
+      </g>
+      <text x="160" y="166" textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">{v.caption || 'answer the objection to get stronger'}</text>
+    </>, 176);
+  }
 
   /* ---- primitives added for the days he is actually failing -------------
    *

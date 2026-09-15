@@ -857,6 +857,81 @@ the plot, crossing the data. The mean is now a legend row above the axes.
 `orbit` and `gravity` remain fixed illustrations, each on a day it genuinely
 suits.
 
+---
+
+# The gameplan (set by the owner, 2026-09-15)
+
+Four phases, in this order. Recorded here because this file is the only thing
+that survives a context reset.
+
+## Phase 14 — Finish the visual build-out  — **done 2026-09-15**
+
+Eight kinds still read no data: `punnett`, `argument`, `rtriangle`,
+`supplydemand`, `cell`, `paragraph`, `orbit`, `gravity`. None is wrong today
+— each was checked against every day that uses it, unlike `atom` and `graph`,
+which were drawing the wrong element and the wrong subject.
+
+**Done when** every kind either reads its data, or is documented as a
+deliberate single-day illustration with the day named. No kind is both
+hardcoded AND reused across days that are not about the same thing.
+
+**Met.** `punnett` takes any cross and fills cell by cell (bio11's page reads
+"each cell combines the row and column" — a procedure, now shown as one);
+`rtriangle` takes real sides and draws to proportion, so m10 gets an actual
+3-4-5; `argument` takes labels and builds claim → support → objection;
+`supplydemand` takes its curve names and caption. Output is byte-identical
+where no day passes anything new.
+
+Four kinds still read nothing — `cell`, `paragraph`, `orbit`, `gravity` — and
+each appears on exactly ONE day, so none can be misapplied. The test's
+`FIXED_ON_PURPOSE` whitelist is now **empty**: it used to name seven kinds,
+and a whitelist listing kinds that have since been parameterised would hide
+the next `atom`.
+
+## Phase 15 — Content level check
+
+Is this pitched at the right level? Everything so far has been built to an
+assumed middle-school band and a 7th-grade reading test from before the app
+existed. His real data is the only evidence and it says something specific:
+everything he called "easy" scored 75–100%, everything he called "hard"
+scored 25–60%, with one exception (Functions, called "right", scored 40%).
+
+**Done when** there is a MEASURED answer per lane — reading grade, question
+difficulty, and how his finished days actually scored against the grade band
+each day claims in its tag — plus a recommendation. Not a guess.
+
+## Phase 16 — More lanes
+
+Standing candidate: Economics (Business & Money is entrepreneurship, not
+economics). History maps cleanly to the world but is a department, not a
+track, and needs scoping before it can be built.
+
+**Done when** each new lane ships to the same standard as the rest: a visual
+on every day, generated practice, spiral callbacks, write prompts, and
+readiness gates where a day genuinely rests on an earlier one.
+
+## Phase 17 — Actual games
+
+The owner pays for Prodigy and **has never tested the duel system here**. That
+pair of facts is the whole brief. Two possibilities, and they need separating
+before anything is built:
+
+1. The duel already IS the game and simply has never been opened. 93 drills,
+   a guardian, companions, an escalating streak — all of it unplayed.
+2. A turn-based question-duel is thin next to a commercial RPG with a world,
+   a character, collection and progression, and no amount of polish closes
+   that gap.
+
+**Do not start building a game until (1) is ruled out.** The cheapest possible
+next step is him opening a duel once. Everything else is speculation about a
+system nobody has tried.
+
+**Done when** there is a written comparison of what Prodigy actually provides
+against what this app has, a judgement on which of the two possibilities is
+true, and a scoped recommendation — not a half-built game.
+
+---
+
 ## Status
 
 | phase | state | moved |

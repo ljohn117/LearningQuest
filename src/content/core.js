@@ -342,7 +342,8 @@ export const CORE = {
         pages: [
           { title: 'A special triangle', blocks: [
             { type: 'text', text: 'A right triangle has one 90° corner (a perfect "L"). The two short sides are legs; the longest side, always opposite the right angle, is the hypotenuse.' },
-            { type: 'visual', kind: 'rtriangle' },
+            { type: 'visual', kind: 'rtriangle', a: 3, b: 4, c: 5,
+              caption: '3\u00b2 + 4\u00b2 = 5\u00b2  \u2192  9 + 16 = 25' },
           ]},
           { title: 'The theorem', blocks: [
             { type: 'concept', term: 'Pythagorean Theorem', def: 'In any right triangle, the squares of the two legs add up to the square of the hypotenuse.' },
