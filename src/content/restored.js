@@ -536,7 +536,15 @@ export const RESTORED = {
           ]},
           { title: 'One data point is not a trend', blocks: [
             { type: 'text', text: 'A single cold day tells you nothing about climate, the same way one coin flip tells you nothing about the coin. You need many measurements over a long time before a pattern is real.' },
-            { type: 'visual', kind: 'graph' },
+            { type: 'visual', kind: 'graph',
+              /* Weather is the jagged line; climate is the flat one through it.
+                 This day used to render a y = 2x + 1 algebra graph, because
+                 `graph` drew three hardcoded points whatever it was handed. */
+              points: [[1, 4], [2, 11], [3, 3], [4, 14], [5, 8], [6, 17], [7, 6],
+                [8, 15], [9, 9], [10, 18], [11, 7], [12, 12]],
+              mean: 10.3, meanLabel: 'the average = climate',
+              xLabel: 'one year, month by month', yLabel: '\u00b0C',
+              caption: 'one cold month proves nothing about the line' },
           ]},
           { title: 'Where you have seen this before', blocks: [
             { type: 'callout', text: 'In Math you read trends off a graph rather than off single points. And in Logic: one example neither proves nor disproves a general claim. Weather is the example; climate is the claim.' },

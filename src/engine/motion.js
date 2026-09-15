@@ -119,6 +119,19 @@ export function useStages(n, ms = STAGE_MS) {
  * Kept as data, next to the hook, so a test can assert that every kind
  * claiming stages actually has a renderer that reads `stage` — the same class
  * of bug as a renderer ignoring its props. */
+/* Electrons fill 2, then 8, then 8, then 2 — correct to calcium, which is as
+   far as this curriculum goes. Visual.jsx uses the same rule to draw them;
+   both need it, and getting them out of step hides a shell. */
+export function shellCount(protons, shells) {
+  if (Array.isArray(shells)) return Math.max(1, shells.length);
+  let n = Math.max(0, protons | 0), rings = 0;
+  for (const cap of [2, 8, 8, 2]) {
+    if (n <= 0) break;
+    rings++; n -= Math.min(cap, n);
+  }
+  return Math.max(1, rings);
+}
+
 export function stageCount(v) {
   if (!v) return 1;
   switch (v.kind) {
@@ -140,6 +153,10 @@ export function stageCount(v) {
     case 'spectrum': return Array.isArray(v.zones) ? v.zones.length : 1;
     case 'pyramid': return 4;                        // built from the producers up
     case 'twobars': return 2;                        // honest axis, then the truncated one
+    /* One stage per electron shell. A flat 2 would have left sodium's third
+       shell permanently hidden, since `shown(i)` rests at the last stage. */
+    case 'atom': return shellCount(v.protons ?? 6, v.shells);
+    case 'graph': return v.line || v.mean !== undefined ? 2 : 1;
     default: return 1;
   }
 }

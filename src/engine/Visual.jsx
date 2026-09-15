@@ -90,23 +90,74 @@ export function Visual({ v, accent }) {
     <text x="242" y="76" textAnchor="middle" fill="#5aa9ff" fontSize="14" fontWeight="700" fontFamily="JetBrains Mono, monospace">{v.right}</text>
     <text x="160" y="128" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">balanced — both sides equal</text>
   </>, 140);
+  /* An atom, from its proton count.
+   *
+   * THIS DREW CARBON WHATEVER IT WAS GIVEN. It read `v.protons` for the
+   * nucleus label and then hardcoded the shells at [2, 4] and the caption at
+   * "carbon: 6 protons". Three days pass a different element:
+   *
+   *   chem:ch2  protons 11 (sodium)  -> nucleus said 11p, shells said carbon
+   *   chem:ch3  protons 10 (neon)    -> same
+   *   connect:cx6 protons 6          -> correct by luck
+   *
+   * ch3 is the bad one. Its page reads "the innermost holds 2, the next holds
+   * 8" and "an atom whose outer layer is full is content ... neon ... does not
+   * react", and the diagram beside it drew neon with four outer electrons.
+   * The picture contradicted the prose on the same page, on the day whose
+   * entire subject is the outer shell.
+   *
+   * Shells now fill 2, 8, 8, 2 — correct for every element up to calcium,
+   * which is all this curriculum uses — so the existing content is fixed
+   * without touching a single day. */
   if (v.kind === 'atom') {
-    const shells = [[2, 30], [4, 56]];
+    const NAMES = ['', 'hydrogen', 'helium', 'lithium', 'beryllium', 'boron', 'carbon', 'nitrogen',
+      'oxygen', 'fluorine', 'neon', 'sodium', 'magnesium', 'aluminium', 'silicon', 'phosphorus',
+      'sulfur', 'chlorine', 'argon', 'potassium', 'calcium'];
+    const z = v.protons ?? 6;
+    const fill = (n) => {
+      const out = [];
+      for (const cap of [2, 8, 8, 2]) {
+        if (n <= 0) break;
+        out.push(Math.min(cap, n));
+        n -= Math.min(cap, n);
+      }
+      return out.length ? out : [0];
+    };
+    const shells = v.shells || fill(z);
+    const name = v.element || NAMES[z] || `element ${z}`;
+    const outer = shells[shells.length - 1];
+    const outerCap = shells.length === 1 ? 2 : 8;
+    const cy = 78, rIn = 26, rOut = 60;
+    const rOf = (i) => (shells.length === 1 ? 34 : rIn + (i / (shells.length - 1)) * (rOut - rIn));
     return wrap(<>
-      <circle cx="160" cy="74" r="14" fill={accent} opacity=".9" />
-      <text x="160" y="78" textAnchor="middle" fill="#0c0e16" fontSize="10" fontWeight="800" fontFamily="JetBrains Mono, monospace">{v.protons}p</text>
-      {shells.map(([n, r], si) => (
-        <g key={si}>
-          <circle cx="160" cy="74" r={r} fill="none" stroke="#3a4154" strokeWidth="1.5" strokeDasharray="3 4" />
-          {Array.from({ length: n }).map((_, i) => {
-            const a = (i / n) * Math.PI * 2 + si;
-            return <circle key={i} cx={160 + r * Math.cos(a)} cy={74 + r * Math.sin(a)} r="5" fill="#5aa9ff" style={{ animation: `drift ${3 + si}s ease-in-out infinite` }} />;
-          })}
-        </g>
-      ))}
-      <text x="160" y="146" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">carbon: 6 protons · electrons in shells</text>
-    </>, 156);
+      <circle cx="160" cy={cy} r="15" fill={accent} opacity=".9" />
+      <text x="160" y={cy + 4} textAnchor="middle" fill="#0c0e16" fontSize="10" fontWeight="800"
+            fontFamily="JetBrains Mono, monospace">{z}p</text>
+      {shells.map((n, si) => {
+        const r = rOf(si);
+        const isOuter = si === shells.length - 1;
+        return (
+          /* Filled inner to outer, which is the order electrons actually take
+             and the order ch3 needs: the outer shell arrives last. */
+          <g key={si} style={{ opacity: shown(si) ? 1 : 0.1, transition: 'opacity .4s ease-out' }}>
+            <circle cx="160" cy={cy} r={r} fill="none" stroke={isOuter ? accent + '77' : '#3a4154'}
+                    strokeWidth="1.5" strokeDasharray="3 4" />
+            {Array.from({ length: n }).map((_, i) => {
+              const a = (i / Math.max(1, n)) * Math.PI * 2 + si * 0.7;
+              return <circle key={i} cx={160 + r * Math.cos(a)} cy={cy + r * Math.sin(a)} r="4.5"
+                             fill={isOuter ? '#7fd4ff' : '#5aa9ff'}
+                             style={{ animation: `drift ${3 + si}s ease-in-out infinite` }} />;
+            })}
+          </g>
+        );
+      })}
+      <text x="160" y="152" textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">
+        {v.caption || `${name} \u00b7 ${z} protons \u00b7 outer shell ${outer} of ${outerCap}`}
+      </text>
+    </>, 164);
   }
+
   if (v.kind === 'particles') {
     const Box = ({ x, label, dots }) => (
       <g>
@@ -127,22 +178,75 @@ export function Visual({ v, accent }) {
       <g style={{ opacity: shown(2) ? 1 : 0.12, transition: 'opacity .4s ease-out' }}><Box x={216} label="gas" dots={gas} /></g>
     </>, 134);
   }
+  /* Points, and optionally a line through them or a mean across them.
+   *
+   * This was three hardcoded points for y = 2x + 1 with `v.label` dropped
+   * into the caption, which meant earth:es4 Weather vs Climate — a day with
+   * no label and nothing to do with linear functions — rendered an algebra
+   * graph captioned "— every input lands on the line". */
   if (v.kind === 'graph') {
-    const pts = [[0, 1], [1, 3], [2, 5]];
-    const px = (x) => 60 + x * 84, py = (y) => 124 - y * 17;
+    const pts = v.points || [[0, 1], [1, 3], [2, 5]];
+    const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]);
+    const xMin = v.xMin ?? Math.min(...xs), xMax = v.xMax ?? Math.max(...xs);
+    const yMin = v.yMin ?? Math.min(0, ...ys), yMax = v.yMax ?? Math.max(...ys) * 1.15;
+    /* T leaves a legend row clear at the top. The mean label used to sit just
+       above its own line, in the middle of the plot, where it ran straight
+       through the data; and the x-axis label shared a row with the caption. */
+    const L = 46, R = 302, B = 118, T = v.mean !== undefined ? 36 : 24;
+    const px = (x) => L + ((x - xMin) / ((xMax - xMin) || 1)) * (R - L);
+    const py = (y) => B - ((y - yMin) / ((yMax - yMin) || 1)) * (B - T);
+    const joined = v.join !== false && pts.length > 3;
+    const path = pts.map((q, i) => `${i ? 'L' : 'M'}${px(q[0]).toFixed(1)},${py(q[1]).toFixed(1)}`).join(' ');
+    const line = v.line;
     return wrap(<>
-      <line x1="48" y1="124" x2="300" y2="124" stroke="#3a4154" strokeWidth="2" />
-      <line x1="60" y1="18" x2="60" y2="136" stroke="#3a4154" strokeWidth="2" />
-      <line x1={px(-0.1)} y1={py(0.8)} x2={px(2.6)} y2={py(6.2)} stroke={accent} strokeWidth="2.5" strokeLinecap="round" />
-      {pts.map(([x, y], i) => (
-        <g key={i}>
-          <circle cx={px(x)} cy={py(y)} r="6" fill={accent} stroke="#0c0e16" strokeWidth="2" />
-          <text x={px(x) + 11} y={py(y) - 7} fill="#8b91a3" fontSize="10.5" fontFamily="JetBrains Mono, monospace">({x},{y})</text>
+      <line x1={L - 8} y1={B} x2={R} y2={B} stroke="#3a4154" strokeWidth="2" />
+      <line x1={L} y1={T - 6} x2={L} y2={B + 6} stroke="#3a4154" strokeWidth="2" />
+      {v.yLabel && <text x={L - 10} y={T + 2} textAnchor="end" fill="#8b91a3" fontSize="9"
+                         fontFamily="JetBrains Mono, monospace">{v.yLabel}</text>}
+      {v.xLabel && <text x={R} y={B + 15} textAnchor="end" fill="#8b91a3" fontSize="9"
+                         fontFamily="JetBrains Mono, monospace">{v.xLabel}</text>}
+      {/* A flat reference across the data: the long-run average, which is
+          exactly the difference between weather and climate. */}
+      {v.mean !== undefined && (
+        <g style={{ opacity: shown(1) ? 1 : 0.1, transition: 'opacity .5s ease-out .1s' }}>
+          <line x1={L} y1={py(v.mean)} x2={R} y2={py(v.mean)} stroke="#3ddc97" strokeWidth="2" strokeDasharray="5 4" />
+          {v.meanLabel && (
+            /* Legend row, clear of the plot: a dashed swatch and the words. */
+            <>
+              <line x1={L} y1="17" x2={L + 18} y2="17" stroke="#3ddc97" strokeWidth="2" strokeDasharray="5 4" />
+              <text x={L + 24} y="21" fill="#3ddc97" fontSize="9.5" fontWeight="700"
+                    fontFamily="JetBrains Mono, monospace">{v.meanLabel}</text>
+            </>
+          )}
+        </g>
+      )}
+      {line && (
+        <line x1={px(xMin)} y1={py(line.m * xMin + line.b)} x2={px(xMax)} y2={py(line.m * xMax + line.b)}
+              stroke={accent} strokeWidth="2.5" strokeLinecap="round"
+              pathLength={1} strokeDasharray={1} strokeDashoffset={shown(1) ? 0 : 1}
+              style={{ transition: 'stroke-dashoffset .8s cubic-bezier(.25,.6,.3,1)' }} />
+      )}
+      {joined && (
+        <path d={path} fill="none" stroke={accent} strokeWidth="2" strokeLinejoin="round"
+              pathLength={1} strokeDasharray={1} strokeDashoffset={shown(0) ? 0 : 1}
+              style={{ transition: 'stroke-dashoffset .9s ease-out' }} />
+      )}
+      {!joined && pts.map((q, i) => (
+        <g key={i} style={{ opacity: shown(0) ? 1 : 0.12, transition: 'opacity .4s ease-out' }}>
+          <circle cx={px(q[0])} cy={py(q[1])} r="5.5" fill={accent} stroke="#0c0e16" strokeWidth="2" />
+          {v.showCoords !== false && (
+            <text x={px(q[0]) + 10} y={py(q[1]) - 7} fill="#8b91a3" fontSize="10"
+                  fontFamily="JetBrains Mono, monospace">({q[0]},{q[1]})</text>
+          )}
         </g>
       ))}
-      <text x="174" y="148" textAnchor="middle" fill="#8b91a3" fontSize="11" fontFamily="JetBrains Mono, monospace">{v.label} — every input lands on the line</text>
-    </>, 156);
+      <text x="174" y="150" textAnchor="middle" fill="#8b91a3" fontSize="10"
+            fontFamily="JetBrains Mono, monospace">
+        {v.caption || (v.label ? `${v.label} \u2014 every input lands on the line` : '')}
+      </text>
+    </>, 160);
   }
+
   if (v.kind === 'rtriangle') return wrap(<>
     <polygon points="62,118 62,42 256,118" fill={accent + '22'} stroke={accent} strokeWidth="2" strokeLinejoin="round" />
     <rect x="62" y="102" width="16" height="16" fill="none" stroke={accent} strokeWidth="1.5" />

@@ -175,7 +175,8 @@ export const CORE = {
         pages: [
           { title: 'Every rule draws a picture', blocks: [
             { type: 'text', text: 'Take the function machine y = 2x + 1 and feed it inputs: x = 0 gives y = 1. x = 1 gives 3. x = 2 gives 5. Plot those (x, y) pairs as points… and they line up. Perfectly. Every rule like this draws a straight line.' },
-            { type: 'visual', kind: 'graph', label: 'y = 2x + 1' },
+            { type: 'visual', kind: 'graph', label: 'y = 2x + 1',
+              points: [[0, 1], [1, 3], [2, 5]], line: { m: 2, b: 1 }, xMin: 0, xMax: 2.6 },
           ]},
           { title: 'Slope and starting value', blocks: [
             { type: 'formula', text: 'y = mx + b', label: 'm = slope (the rate) · b = starting value' },

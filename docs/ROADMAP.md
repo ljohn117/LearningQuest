@@ -811,6 +811,52 @@ stage-driven state.
 **Done when.** No spatial day is left with a filler table, every animatable
 kind animates, and all 47 are whole at rest and silent under reduced motion.
 
+## Phase 13 — Two more diagrams that drew the wrong thing  — **done**
+
+**Found by working through the ten kinds that still read no data.** Two were
+not merely unreusable — they were actively wrong wherever they were reused,
+the same bug as the water cycle's programming flowchart.
+
+**1. `atom` drew carbon whatever it was given.** It read `v.protons` for the
+nucleus label and then hardcoded the shells at `[2, 4]` and the caption at
+*"carbon: 6 protons"*.
+
+| day | passes | drew |
+|---|---|---|
+| `chem:ch2` The Table Is a Map | `protons: 11` (sodium) | nucleus "11p", carbon's 6 electrons, captioned *carbon* |
+| `chem:ch3` **Only the Outside Matters** | `protons: 10` (neon) | same |
+| `connect:cx6` | `protons: 6` | correct, by luck |
+
+`ch3` is the bad one. Its page reads *"the innermost holds 2, the next holds
+8"* and *"an atom whose outer layer is full is content … neon … does not
+react"* — and the diagram beside it drew neon with four outer electrons. The
+picture contradicted the prose on the same page, on the day whose entire
+subject is the outer shell.
+
+Shells now fill 2, 8, 8, 2 — correct to calcium, which is as far as this
+curriculum goes — so **both days are fixed without touching any content.**
+
+**2. `graph` drew y = 2x + 1 whatever it was given.** Three hardcoded points
+with `v.label` dropped into the caption. `earth:es4` Weather vs Climate passes
+no label and has nothing to do with linear functions; it rendered an algebra
+graph captioned *"— every input lands on the line"*. It now draws a jagged
+year against a flat average, which is the actual distinction the day teaches.
+
+**A bug I caught in my own fix before testing.** `stageCount` returned a flat
+2 for `atom`, but sodium has three shells and `shown(i)` rests at the last
+stage — its outer electron would have been permanently invisible. `motion.js`
+and `Visual.jsx` now share one filling rule, because getting them out of step
+hides a shell.
+
+**And two layout bugs only the screenshots showed:** the new graph's x-axis
+label shared a row with the caption, and the mean label sat in the middle of
+the plot, crossing the data. The mean is now a legend row above the axes.
+
+**Done when.** No diagram contradicts the page it sits on. Met for these two;
+`punnett`, `rtriangle`, `argument`, `supplydemand`, `cell`, `paragraph`,
+`orbit` and `gravity` remain fixed illustrations, each on a day it genuinely
+suits.
+
 ## Status
 
 | phase | state | moved |
@@ -827,6 +873,7 @@ kind animates, and all 47 are whole at rest and silent under reduced motion.
 | 10 — Diagrams that drew the wrong thing | **done** 2026-09-14 | 4 days had a programming flowchart for their subject; `math:m2` drew half of every ratio; `es2` taught stratigraphy. Kinds **30 → 30** (`machine` out, `plates` in); a test now catches ignored props |
 | 11 — Motion | **first pass done** 2026-09-14 | 8 kinds / 21 diagrams play once on scroll-in; complete at rest; silent under reduced motion. New gate `motion-check` — caught 4 kinds claiming stages they never read |
 | 12 — The rest of the visuals | **done** 2026-09-15 | 9 spatial days lose their filler table; `grid` **49% → 44%**; kinds that read no data **13 → 10**; animated kinds **8 → 18**, diagrams **21 → 47** |
+| 13 — Two more wrong diagrams | **done** 2026-09-15 | `atom` drew carbon for sodium and neon — including on the day about outer shells; `graph` drew an algebra line on Weather vs Climate. Both fixed; `atom` needed no content change |
 | — parked — | | 2b remainder (strictly-longest 47% vs 35% target); MAX_LEVEL 3 → 6 (coupled to MASTERY_STREAK); prose tightening (34% plain text) |
 
 ## Deferred
@@ -839,10 +886,12 @@ that found them. Add here rather than widening a phase.
   lookups, the fallacy and source checklists — plus three kept on purpose
   (`m16`, `m17`, `phy5`; see Phase 12 for why). A future pass should justify
   any further replacement rather than chase the number down.
-- Ten kinds still read no data and so can draw only one picture: `punnett`,
+- Eight kinds still read no data and so can draw only one picture: `punnett`,
   `argument`, `rtriangle`, `supplydemand`, `cell`, `paragraph`, `orbit`,
-  `gravity`, `atom`, `graph`. All are used on days they genuinely suit, so
-  this is not urgent — but each is a kind the next author cannot reuse.
+  `gravity`. Each was checked against every day that uses it and is correct
+  there — unlike `atom` and `graph`, which were not. `punnett` is the one
+  worth parameterising next: it is fixed at Bb × Bb with a 3:1 caption, and
+  `bio11` has a drill that generates other crosses.
 - Session shape does not match behaviour: he binges 3–10 lessons every few
   days; the app is designed around 12 minutes daily.
 - The audit script measures reading level and hint quality but has no notion
