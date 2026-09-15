@@ -250,8 +250,13 @@ export const VISUALS = {
     rows: [['H\u2082O', '2 H, 1 O'], ['CO\u2082', '1 C, 2 O'], ['Ca(OH)\u2082', '1 Ca, 2 O, 2 H'], ['H\u2082SO\u2084', '2 H, 1 S, 4 O']],
     caption: 'a bracket doubles everything inside it' }],
 
-  ch8: [{ page: 1, kind: 'grid', cols: ['pH', 'compared with pH 7'],
-    rows: [['4', '1,000× more acidic'], ['5', '100× more acidic'], ['6', '10× more acidic'], ['7', 'neutral'], ['9', '100× more basic']],
+  /* ch8 Acids and bases. pH is literally a scale; it had a lookup table. */
+  ch8: [{ page: 1, kind: 'spectrum', left: 'acid', right: 'base',
+    zones: [
+      { label: 'pH 4', note: '1000× acid' }, { label: 'pH 5', note: '100×' },
+      { label: 'pH 6', note: '10×' }, { label: 'pH 7', note: 'neutral' },
+      { label: 'pH 9', note: '100× base' },
+    ],
     caption: 'every step is ten times, not one' }],
 
   lg3: [{ page: 1, kind: 'grid', cols: ['P', 'Q', 'if P then Q'],
@@ -270,8 +275,16 @@ export const VISUALS = {
     rows: [['income', 'defence, health, benefits'], ['sales', 'state services'], ['property', 'schools, fire, police']],
     caption: 'things nobody could buy alone' }],
 
-  f5: [{ page: 1, kind: 'grid', cols: ['era', 'began', 'life then'],
-    rows: [['Precambrian', '4,600 mya', 'single cells'], ['Paleozoic', '541 mya', 'fish, first plants'], ['Mesozoic', '252 mya', 'dinosaurs'], ['Cenozoic', '66 mya', 'mammals, us']],
+  /* f5 The geologic time scale. The caption said "we arrive in the last
+     sliver" above four EQUAL table rows, which shows the opposite. Weighted
+     by real duration, the Precambrian is most of the picture. */
+  f5: [{ page: 1, kind: 'strata',
+    bands: [
+      { name: 'Cenozoic', note: '66 mya · mammals, us', weight: 66 },
+      { name: 'Mesozoic', note: '252 mya · dinosaurs', weight: 186 },
+      { name: 'Paleozoic', note: '541 mya · fish, plants', weight: 289 },
+      { name: 'Precambrian', note: '4,600 mya · single cells', weight: 4059 },
+    ],
     caption: 'we arrive in the last sliver of the last one' }],
 
   f4: [{ page: 1, kind: 'grid', cols: ['method', 'tells you'],
@@ -286,9 +299,17 @@ export const VISUALS = {
     steps: [{ pct: 50, label: '50% markup' }],
     caption: 'cost £20, markup 50%, price £30' }],
 
-  bio5: [{ page: 1, kind: 'grid', cols: ['rank', 'example for us'],
-    rows: [['Kingdom', 'Animalia'], ['Phylum', 'Chordata'], ['Class', 'Mammalia'], ['Genus', 'Homo'], ['Species', 'sapiens']],
-    caption: 'broad at the top, one species at the bottom' }],
+  /* bio5 Classifying living things. Each rank sits INSIDE the one above it;
+     a flat two-column list is the one shape that hides nesting. */
+  bio5: [{ page: 1, kind: 'layers', shape: 'concentric',
+    items: [
+      { name: 'Kingdom', note: 'Animalia', color: '#3a4a63' },
+      { name: 'Phylum', note: 'Chordata', color: '#46617f' },
+      { name: 'Class', note: 'Mammalia', color: '#52789b' },
+      { name: 'Genus', note: 'Homo', color: '#6a97b8' },
+      { name: 'Species', note: 'sapiens', color: '#9fc4dc' },
+    ],
+    caption: 'each one sits inside the one above' }],
 
   cx1: [{ page: 1, kind: 'curves', series: ['linear', 'exponential'],
     xMax: 8, m: 5, b: 0, base: 2, linearLabel: 'adding 5', expLabel: 'doubling',
@@ -400,8 +421,16 @@ export const VISUALS = {
     rows: [['ratio', '3 : 2', 'a comparison'], ['unit rate', '1.50 each', 'a ratio per one'], ['proportion', '3/2 = 9/6', 'two equal ratios'], ['slope', 'rise ÷ run', 'a rate on a graph']],
     caption: 'four names, one underlying idea' }],
 
-  m11: [{ page: 1, kind: 'grid', cols: ['the two lines', 'meet at', 'means'],
-    rows: [['cross once', 'one point', 'one solution'], ['parallel', 'never', 'no solution'], ['same line', 'everywhere', 'infinitely many']],
+  /* m11 Systems of equations. Two lines cross once, never, or everywhere, and
+     that IS one solution, none, or infinitely many. It was a three-row table
+     reading "cross once | one point | one solution" — the most spatial idea
+     in the lane, spelled out in words. */
+  m11: [{ page: 1, kind: 'lines',
+    panels: [
+      { m1: 1, b1: 0, m2: -1, b2: 2, meet: 1, label: 'they cross', note: 'one solution' },
+      { m1: 1, b1: 2, m2: 1, b2: -2, label: 'parallel', note: 'no solution' },
+      { m1: 1, b1: 0, m2: 1, b2: 0, same: true, label: 'the same line', note: 'infinitely many' },
+    ],
     caption: 'the solution is where both are true' }],
 
   mr2: [{ page: 0, kind: 'grid', cols: ['operation', 'undone by'],
@@ -412,9 +441,10 @@ export const VISUALS = {
     rows: [['2 shirts', '×', '2'], ['3 trousers', '×', '6'], ['4 hats', '×', '24'], ['2 coats', '×', '48']],
     caption: 'independent choices multiply, never add' }],
 
-  m19: [{ page: 2, kind: 'grid', cols: ['side', 'area', 'volume'],
-    rows: [['1', '1', '1'], ['2', '4', '8'], ['3', '9', '27'], ['4', '16', '64']],
-    caption: 'one doubles, one quadruples, one ×8' }],
+  /* m19 Why size changes everything. The table gave the arithmetic (1/1/1,
+     2/4/8) without the reason, which is that each step adds a dimension. */
+  m19: [{ page: 2, kind: 'cubes', steps: [1, 2, 3],
+    caption: 'side ×2 → area ×4 → volume ×8' }],
 
   mr3: [{ page: 0, kind: 'grid', cols: ['the trap', 'what to ask'],
     rows: [['percent change', 'percent OF what?'], ['averages', 'which average?'], ['counting', 'do these multiply?'], ['probability', 'does it remember?'], ['scaling', 'area or volume?']],
@@ -521,9 +551,14 @@ export const VISUALS = {
     rows: [['H₂O', '2(1) + 16', '18'], ['CO₂', '12 + 2(16)', '44'], ['Ca(OH)₂', '40 + 2(17)', '74']],
     caption: 'a bracket multiplies everything inside' }],
 
-  ch13: [{ page: 1, kind: 'grid', cols: ['2H₂', '+ O₂', '→ 2H₂O'],
-    rows: [['2 mol', '1 mol', '2 mol'], ['4 mol', '2 mol', '4 mol'], ['10 mol', '5 mol', '10 mol']],
-    caption: 'the ratio holds at every scale' }],
+  /* ch13 Stoichiometry. The 2:1:2 is a fact about MOLECULES, and rearrange
+     already draws atoms regrouping — counting them is the proof that nothing
+     was created or destroyed, which is the readiness gate for this day. */
+  ch13: [{ page: 1, kind: 'rearrange', chemical: true,
+    before: [['A', 'A'], ['A', 'A'], ['B', 'B']],
+    after: [['A', 'B', 'A'], ['A', 'B', 'A']],
+    caption: '2H₂ + O₂ → 2H₂O',
+    note: 'six atoms before, six after — count them' }],
 
   /* ---- phase 6b batch 3: the last of them -------------------------------
      English, Business, Civics, Fossils. Several of these are ranges rather
@@ -596,8 +631,16 @@ export const VISUALS = {
     rows: [['1st', 'being silenced by government'], ['4th', 'searches without cause'], ['5th', 'being made to accuse yourself'], ['8th', 'cruel punishment']],
     caption: 'each one restrains the government' }],
 
-  g5: [{ page: 2, kind: 'grid', cols: ['stage', 'can it die here?'],
-    rows: [['introduced', 'yes — most do'], ['committee', 'yes'], ['House vote', 'yes'], ['Senate vote', 'yes'], ['President', 'yes — unless overridden']],
+  /* g5 How a bill becomes a law. Every row of the table answered "yes" to
+     "can it die here?", which is a funnel described in words. */
+  g5: [{ page: 2, kind: 'funnel',
+    rows: [
+      { label: 'introduced', note: 'most die here' },
+      { label: 'committee', note: 'many die here' },
+      { label: 'House vote' },
+      { label: 'Senate vote' },
+      { label: 'signed', note: 'or vetoed' },
+    ],
     caption: 'stopping bills is the design, not a fault' }],
 
   g7: [{ page: 1, kind: 'spectrum', left: 'fully protected', right: 'not protected',
@@ -653,8 +696,15 @@ export const VISUALS = {
     rows: [['telephone', 'anyone without a phone'], ['a news website', 'readers of other sites'], ['at a football ground', 'people who dislike football'], ['a random national list', 'nobody in particular']],
     caption: 'only the last one has no built-in lean' }],
 
-  m28: [{ page: 0, kind: 'grid', cols: ['class', 'scores', 'mean', 'range'],
-    rows: [['A', '68, 70, 70, 72', '70', '4'], ['B', '20, 60, 80, 120', '70', '100']],
+  /* m28 The average is half the story. Two classes with the SAME mean and
+     nothing else in common — a claim about spread, carried in a table, which
+     is the one format that cannot show spread. */
+  m28: [{ page: 0, kind: 'dots', min: 10, max: 130,
+    sets: [
+      { values: [68, 70, 70, 72], label: 'class A', note: 'range 4' },
+      { values: [20, 60, 80, 120], label: 'class B', note: 'range 100' },
+    ],
+    markers: [{ at: 70, label: 'both average 70' }],
     caption: 'same centre, nothing else the same' }],
 
   m29: [{ page: 1, kind: 'twobars', values: [48, 52], labels: ['48%', '52%'],
@@ -673,9 +723,13 @@ export const VISUALS = {
     rows: [['10 are ill', '10 — all of them'], ['9,990 are healthy', 'about 100 anyway'], ['total positives', '110'], ['actually ill', '10 of 110 ≈ 9%']],
     caption: '1% of nearly everyone beats 100% of few' }],
 
-  m33: [{ page: 1, kind: 'grid', cols: ['poll says', '±3 points', 'so the truth is'],
-    rows: [['52%', '49 – 55', 'somewhere in there'], ['48%', '45 – 51', 'somewhere in there'], ['gap of 4', 'ranges overlap', 'too close to call']],
-    caption: 'the gap is smaller than the uncertainty' }],
+  /* m33 Margin of error. A margin is a RANGE on a line; the table asked him
+     to hold two overlapping intervals in his head and notice they overlap. */
+  m33: [{ page: 1, kind: 'dots', min: 43, max: 61,
+    sets: [{ values: [52], label: 'this poll says 52%' }],
+    band: { from: 49, to: 55, label: '±3 points' },
+    markers: [{ at: 48, label: 'the other one: 48%', color: '#ff9f5a' }],
+    caption: '48 sits inside the range — too close to call' }],
 
   mr5: [{ page: 1, kind: 'grid', cols: ['ask', 'catches'],
     rows: [['where is it from?', 'bias — nothing later fixes it'], ['what is the spread?', 'an average hiding the range'], ['what are the axes?', 'a chart arguing at you'], ['cause or company?', 'the confounder'], ['how wrong may it be?', 'a gap inside the margin']],

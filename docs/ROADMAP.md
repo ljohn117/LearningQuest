@@ -760,6 +760,57 @@ completely still under reduced motion. All three hold for all 8 kinds.
 replacements from Phase 10, several of which want motion more than they want
 a still diagram.
 
+## Phase 12 — The rest of the visuals  — **done**
+
+**Two halves of what Phases 10 and 11 deferred.**
+
+### The tables that were standing in for diagrams
+
+Nine replaced. `grid` **49% → 44%** of all visuals, and more importantly the
+days whose idea is most spatial no longer have a table:
+
+| day | was | now |
+|---|---|---|
+| `m11` Systems of equations | table: "the two lines \| meet at \| means" | **`lines`** — three panels: crossing (intersection marked), parallel, coincident |
+| `m19` Why size changes everything | table: 1/1/1, 2/4/8 | **`cubes`** — three solids; each step adds a dimension |
+| `m28` The average is half the story | table of two classes | **`dots`** — A clustered on the mean, B spread across it |
+| `m33` Margin of error | table of overlapping ranges | **`dots`** with a band — 48 visibly sits inside 49–55 |
+| `ch8` Acids and bases | pH lookup table | **`spectrum`** — pH is literally a scale |
+| `f5` Geologic time scale | four EQUAL table rows | **`strata`** weighted by real duration |
+| `g5` How a bill becomes a law | every row answered "yes, it can die here" | **`funnel`** |
+| `bio5` Classifying living things | flat two-column list | **`layers`** concentric — each rank inside the one above |
+| `ch13` Stoichiometry | mole-ratio table | **`rearrange`** — six atoms before, six after |
+
+`f5` is the sharpest: the caption read *"we arrive in the last sliver of the
+last one"* above four equal rows, which shows the opposite. Weighted by real
+duration the Precambrian is most of the picture, and the caption becomes true.
+
+**Three grids kept, deliberately.** `m16` mean-vs-median has a 900 outlier
+next to values of 20–28 — no honest axis fits both, and a broken one is what
+`m29` teaches against. `m17` counting is a running product, which is tabular.
+`phy5` heat vs temperature is a genuine 2×2. A table is the right answer for
+all three; the point was never to reach zero grids.
+
+### Motion, finished
+
+`strata`, `branches`, `funnel`, `particles`, `layers`, `spectrum`, `pyramid`,
+`twobars` and the three new kinds all animate. **18 kinds, 47 diagrams**, up
+from 8 and 21.
+
+`strata`, `branches` and `funnel` had to be parameterised first — they read
+one prop each and could only draw one picture, which is why they sat unused
+while `grid` absorbed everything.
+
+**What the gate caught.** `particles` failed "complete at rest" because it
+carries a pre-existing perpetual `drift` animation — the gas molecules
+jiggling, which IS the physics of the day — so its transform never settles.
+The fingerprint now skips elements driven by CSS keyframes: that is a separate
+system with its own reduced-motion guard, and what this check is about is
+stage-driven state.
+
+**Done when.** No spatial day is left with a filler table, every animatable
+kind animates, and all 47 are whole at rest and silent under reduced motion.
+
 ## Status
 
 | phase | state | moved |
@@ -775,6 +826,7 @@ a still diagram.
 | 9 — The meter measured my output | **done** 2026-09-14 | his maths bar **47% → 60%** on identical progress; appending days can no longer lower a part-finished lane; headline is a count, not a fraction |
 | 10 — Diagrams that drew the wrong thing | **done** 2026-09-14 | 4 days had a programming flowchart for their subject; `math:m2` drew half of every ratio; `es2` taught stratigraphy. Kinds **30 → 30** (`machine` out, `plates` in); a test now catches ignored props |
 | 11 — Motion | **first pass done** 2026-09-14 | 8 kinds / 21 diagrams play once on scroll-in; complete at rest; silent under reduced motion. New gate `motion-check` — caught 4 kinds claiming stages they never read |
+| 12 — The rest of the visuals | **done** 2026-09-15 | 9 spatial days lose their filler table; `grid` **49% → 44%**; kinds that read no data **13 → 10**; animated kinds **8 → 18**, diagrams **21 → 47** |
 | — parked — | | 2b remainder (strictly-longest 47% vs 35% target); MAX_LEVEL 3 → 6 (coupled to MASTERY_STREAK); prose tightening (34% plain text) |
 
 ## Deferred
@@ -782,15 +834,15 @@ a still diagram.
 Things noticed while building that are real but out of scope for the phase
 that found them. Add here rather than widening a phase.
 
-- **The table problem is only half fixed.** `grid` is still 79 of 158 visuals.
-  Many are correct — a truth table is a table, and so are the exponent,
-  logarithm and molar-mass lookups — but the days whose idea is most spatial
-  still have one: `m11` systems of equations (“the two lines | meet at”),
-  `m16` mean vs median, `m19` the square-cube law, `m28` spread, `m33` margin
-  of error, `ch8` pH, `phy5` heat vs temperature, `f5` the geologic time scale,
-  `g5` how a bill becomes a law, `bio5` taxonomy, `m17` counting, `ch13`
-  stoichiometry. Most need an existing primitive parameterised first —
-  `strata`, `branches`, `funnel`, `particles` still read no data.
+- **The table problem is mostly closed.** `grid` is 69 of 158 (44%). What is
+  left is genuinely tabular — truth tables, the exponent/logarithm/molar-mass
+  lookups, the fallacy and source checklists — plus three kept on purpose
+  (`m16`, `m17`, `phy5`; see Phase 12 for why). A future pass should justify
+  any further replacement rather than chase the number down.
+- Ten kinds still read no data and so can draw only one picture: `punnett`,
+  `argument`, `rtriangle`, `supplydemand`, `cell`, `paragraph`, `orbit`,
+  `gravity`, `atom`, `graph`. All are used on days they genuinely suit, so
+  this is not urgent — but each is a kind the next author cannot reuse.
 - Session shape does not match behaviour: he binges 3–10 lessons every few
   days; the app is designed around 12 minutes daily.
 - The audit script measures reading level and hint quality but has no notion

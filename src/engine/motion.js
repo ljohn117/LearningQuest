@@ -129,7 +129,17 @@ export function stageCount(v) {
     case 'plates': return 2;             // at rest, then moved
     case 'parabola': return Array.isArray(v.panels) ? v.panels.length : 1;
     case 'mapping': return Array.isArray(v.links) && v.links.length ? v.links.length : 1;
-    case 'funnel': return 4;
+    case 'funnel': return Array.isArray(v.rows) ? v.rows.length : 4;
+    case 'strata': return Array.isArray(v.bands) ? v.bands.length : 4;
+    case 'branches': return Array.isArray(v.children) ? v.children.length : 3;
+    case 'dots': return (Array.isArray(v.sets) ? v.sets.length : 0) + 1;
+    case 'cubes': return Array.isArray(v.steps) ? v.steps.length : 3;
+    case 'lines': return Array.isArray(v.panels) ? v.panels.length : 1;
+    case 'particles': return 3;                      // solid, liquid, gas
+    case 'layers': return Array.isArray(v.items) ? v.items.length : 1;
+    case 'spectrum': return Array.isArray(v.zones) ? v.zones.length : 1;
+    case 'pyramid': return 4;                        // built from the producers up
+    case 'twobars': return 2;                        // honest axis, then the truncated one
     default: return 1;
   }
 }

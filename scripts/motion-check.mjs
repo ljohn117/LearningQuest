@@ -69,6 +69,13 @@ const SIG = () => {
   const out = [];
   for (const el of svg.querySelectorAll('*')) {
     const cs = getComputedStyle(el);
+    /* Skip anything driven by a CSS keyframe animation. `particles` jiggles
+       its liquid and gas molecules forever with `drift` -- that IS the
+       physics of the day, not a stage -- so its transform never settles and
+       no fingerprint of it could ever be stable. Those animations are a
+       separate system that the app's own prefers-reduced-motion CSS already
+       switches off. What is being checked here is STAGE-driven state. */
+    if (cs.animationName && cs.animationName !== 'none') continue;
     /* Transform too: `plates` animates by translating, and a fingerprint of
        only opacity and dash offset reported it as never moving. */
     out.push(`${parseFloat(cs.opacity).toFixed(2)}:${parseFloat(cs.strokeDashoffset || 0).toFixed(2)}:${cs.transform}`);
