@@ -161,6 +161,15 @@ Artifact url=https://claude.ai/code/artifact/f1d62d1b-15ab-49e1-a84f-541842a932a
 
 Same URL keeps the same origin, which is what keeps his progress.
 
+**Two URL forms name the SAME artifact. Do not create a second one.**
+Publishing with the `/code/artifact/f1d62d1b-…` id above works and returns
+`https://claude.ai/artifact/Ws4C5hHBxtsxQ7ig6fd6xV`, which is what
+`action: "list"` shows. Verified on 2026-09-15: the version counter went 35 →
+36 rather than restarting, and only one "Learning Quest" is listed. Either
+form is safe to pass as `url`. What is NOT safe is publishing with no `url`
+at all — that makes a new artifact on a new origin, and his ~35 finished days
+live on the old one.
+
 ---
 
 ## Architecture, briefly
